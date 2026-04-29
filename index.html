@@ -13,7 +13,15 @@
 
     <!-- START SCREEN -->
     <section id="start-screen" class="screen active">
+      <!-- Layer 1: scrolling space, visible through the porthole's transparent center.
+           Two identical tiles side-by-side animate together so the loop is seamless. -->
+      <div class="start-bg-space" aria-hidden="true">
+        <img class="start-bg-space-tile" src="Images/starlock_start_screen_space.png" alt="" />
+        <img class="start-bg-space-tile" src="Images/starlock_start_screen_space.png" alt="" />
+      </div>
+      <!-- Layer 2: porthole frame (alpha PNG with transparent center). -->
       <img class="start-bg" src="Images/starlock_start_screen.png" alt="" />
+      <!-- Layer 3: foreground content. -->
       <div class="start-content">
         <img class="start-logo" src="Images/starlock_logo.png" alt="Starlock" />
         <button id="start-button" class="start-btn" type="button">START</button>
@@ -49,6 +57,40 @@
       <div id="message-bar" class="message-bar"></div>
       <div id="inventory" class="inventory"></div>
 
+      <!-- Hamburger menu toggle (top-left) -->
+      <button id="menu-toggle" class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+
+      <!-- Equipped-item indicator (only visible when an item is equipped) -->
+      <div id="equipped-indicator" class="equipped-indicator hidden" aria-live="polite">
+        <span class="eq-label">Equipped</span>
+        <span class="eq-icon" aria-hidden="true"></span>
+        <span class="eq-name"></span>
+      </div>
+
+      <!-- Slide-in game menu (Inventory / Settings / Return to Start) -->
+      <aside id="game-menu" class="game-menu" aria-label="Game menu" aria-hidden="true">
+        <header class="game-menu-header">
+          <h2>Menu</h2>
+          <button id="menu-close" class="menu-close" type="button" aria-label="Close menu">&times;</button>
+        </header>
+        <nav class="game-menu-nav" role="tablist">
+          <button class="game-menu-tab active" data-tab="inventory" type="button" role="tab" aria-selected="true">Inventory</button>
+          <button class="game-menu-tab" data-tab="settings" type="button" role="tab" aria-selected="false">Settings</button>
+        </nav>
+        <div class="game-menu-body">
+          <section data-panel="inventory" class="game-menu-panel active" role="tabpanel">
+            <div id="menu-inventory-grid" class="menu-inventory-grid"></div>
+            <p id="menu-inventory-empty" class="menu-empty-msg">No items collected yet. Look around the ship.</p>
+          </section>
+          <section data-panel="settings" class="game-menu-panel" role="tabpanel">
+            <p class="menu-placeholder">Settings coming soon.</p>
+          </section>
+        </div>
+        <footer class="game-menu-footer">
+          <button id="menu-return-start" class="menu-action-btn danger" type="button">Return to Start Screen</button>
+        </footer>
+      </aside>
+
       <!-- Debug toggle (press D in-game) -->
       <div id="debug-badge" class="debug-badge hidden">DEBUG</div>
     </section>
@@ -59,6 +101,7 @@
   <script src="js/scenes.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/engine.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -52,6 +52,12 @@ const Inventory = (() => {
       stageEl.style.cursor = "";
       stageEl.classList.remove("cursor-equipped");
     }
+
+    // Broadcast so other UI (the slide-in menu, the equipped indicator)
+    // can stay in sync without reaching into Inventory's internals.
+    document.dispatchEvent(new CustomEvent("inventory:change", {
+      detail: { items: state.items.slice(), equipped: state.equipped },
+    }));
   }
 
   function addItem(id) {
@@ -71,6 +77,7 @@ const Inventory = (() => {
 
   function hasItem(id) { return state.items.includes(id); }
   function getEquipped() { return state.equipped; }
+  function getItems()   { return state.items.slice(); }
 
   function equip(id) {
     if (id !== null && !state.items.includes(id)) return;
@@ -83,5 +90,5 @@ const Inventory = (() => {
     if (e.key === "Escape" && state.equipped) equip(null);
   });
 
-  return { addItem, removeItem, hasItem, getEquipped, equip, render };
+  return { addItem, removeItem, hasItem, getEquipped, getItems, equip, render };
 })();
