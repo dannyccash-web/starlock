@@ -59,8 +59,8 @@ spaceship_escape_room_game_rundown.txt   -- the design doc
 ## HUD overview
 
 - **Inventory bar** (bottom-center): always-on quick-equip strip. Click a slot to equip / unequip.
-- **Hamburger menu** (☰, top-left): opens a slide-in panel with two tabs — *Inventory* (full cards with descriptions) and *Settings* (TBD) — plus a "Return to Start Screen" action.
-- **Equipped indicator** (top-left, under the menu toggle): shows the icon and name of whatever item is currently equipped. Hidden when nothing is equipped.
+- **Hamburger menu** (☰, top-right): opens a slide-in panel from the right with two tabs — *Inventory* (full cards with descriptions) and *Settings* (TBD) — plus a "Return to Start Screen" action.
+- **Equipped indicator** (top-left): shows the icon and name of whatever item is currently equipped. Hidden when nothing is equipped.
 - **Cursor swap**: when an item is equipped, the cursor over the scene becomes that item's icon.
 
 ## Architecture in one paragraph
@@ -128,7 +128,7 @@ you progress.
 | Use item on environment | Equip, then click hot spot    |
 | Toggle debug outlines   | **D**                         |
 | Close zoom-in           | Click ← Back / Esc            |
-| Open / close game menu  | Click **☰** (top-left) / Esc  |
+| Open / close game menu  | Click **☰** (top-right) / Esc |
 | Return to start screen  | Menu → "Return to Start"      |
 
 ## What's stubbed

@@ -72,7 +72,12 @@ html, body {
   width: 1920px;
   height: 100%;
   display: block;
-  animation: star-drift 90s linear infinite;
+  /* Single-shot drift: starts at ~10.7 px/s (half the previous loop's
+     peak of 1920px / 90s ≈ 21.3 px/s) and decelerates to a complete
+     stop over 10s. The cubic-bezier approximates linear deceleration
+     (slope 2 at t=0, slope 0 at t=1), so total drift ≈ v0·T/2 ≈ 53 px.
+     `forwards` holds the final position once movement stops. */
+  animation: star-drift 10s cubic-bezier(0.5, 1, 1, 1) forwards;
   will-change: transform;
   pointer-events: none;
   user-drag: none;
@@ -82,7 +87,7 @@ html, body {
 .start-bg-space-tile:nth-child(2) { left: -1920px; }
 @keyframes star-drift {
   from { transform: translateX(0); }
-  to   { transform: translateX(1920px); }
+  to   { transform: translateX(53px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .start-bg-space-tile { animation: none; }
@@ -386,7 +391,7 @@ html, body {
 .menu-toggle {
   position: absolute;
   top: 20px;
-  left: 20px;
+  right: 20px;
   width: 56px;
   height: 56px;
   font: 600 28px/1 system-ui;
@@ -407,15 +412,15 @@ html, body {
 .game-menu {
   position: absolute;
   top: 0;
-  left: 0;
+  right: 0;
   width: 420px;
   height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--hud-bg-strong);
-  border-right: 1px solid var(--frame-stroke);
-  box-shadow: 6px 0 32px rgba(0, 0, 0, 0.6);
-  transform: translateX(-100%);
+  border-left: 1px solid var(--frame-stroke);
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.6);
+  transform: translateX(100%);
   transition: transform 280ms ease;
   backdrop-filter: blur(6px);
   z-index: 9;
@@ -566,11 +571,11 @@ html, body {
 }
 
 /* ---------- Equipped-item indicator ----------
-   Sits under the hamburger toggle, top-left. Visible only when an
-   inventory item is currently equipped. */
+   Top-left of the screen, mirroring the hamburger's top-right. Visible
+   only when an inventory item is currently equipped. */
 .equipped-indicator {
   position: absolute;
-  top: 88px;
+  top: 24px;
   left: 20px;
   display: flex;
   align-items: center;
@@ -604,10 +609,11 @@ html, body {
   letter-spacing: 0.08em;
 }
 
-/* ---------- Debug badge ---------- */
+/* ---------- Debug badge ----------
+   Sits below the hamburger menu toggle so they don't collide. */
 .debug-badge {
   position: absolute;
-  top: 20px;
+  top: 88px;
   right: 24px;
   font: 600 16px/1 monospace;
   color: var(--hud-blue);
