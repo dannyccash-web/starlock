@@ -1,0 +1,599 @@
+SPACESHIP ESCAPE ROOM GAME - COMPLETE RUNDOWN
+
+Working Title Options:
+- Wake Protocol
+- Cryo Drift
+- Last Orbit
+- The Empty Pods
+- Emergency Wake
+- No Crew Remaining
+
+CORE PREMISE
+
+The player awakens from cryo sleep aboard a damaged spaceship drifting far from home. The ship is divided into a small number of adjacent rooms separated by locked or sealed doors. The player begins in the central cryo sleep room and must gradually restore access to the rest of the ship.
+
+At first, the immediate goal is survival: restore power, open locked doors, avoid being vented into space, and bring basic ship systems back online. As the player explores, the larger mystery unfolds: what happened to the rest of the crew?
+
+The answer is that the crew discovered a dangerous alien organism. One crew member wanted to steal the organism, escape in the shuttle, and sell it to the highest bidder. Another crew member, after seeing what the organism did to the fourth crew member, tried to stop them. During a struggle in the shuttle bay, the thief escaped with the organism in the shuttle, while the other crew member was sucked into space trying to prevent the escape.
+
+The player is the last person left aboard the main ship.
+
+SHIP LAYOUT
+
+From rear to front:
+
+ENGINEERING -> SHUTTLE BAY -> CRYO SLEEP -> SCIENCE LAB -> BRIDGE
+
+The cryo sleep room is the middle room of the ship. This is important because the player initially has possible paths in both directions, but both are blocked:
+
+- Rearward, the shuttle bay is exposed to open space, making entry impossible.
+- Forward, the science lab door is locked and the ship has limited power.
+
+The player must first solve problems in the cryo sleep room, then push forward into the science lab and bridge, then use the bridge to close and repressurize the shuttle bay, allowing exploration toward engineering.
+
+MAIN GAME FLOW
+
+1. Wake in Cryo Sleep
+2. Restore emergency power
+3. Investigate the four cryo pods
+4. Unlock the Science Lab
+5. Discover evidence of the organism and crew conflict
+6. Unlock the Bridge
+7. Contact command center and close the shuttle bay doors
+8. Enter the Shuttle Bay safely
+9. Discover what happened during the attempted escape
+10. Reach Engineering
+11. Backtrack through the ship to gather components
+12. Build an engine repair tool
+13. Restart the engines
+14. Return to the Bridge
+15. Plot a course home or make a final decision based on what was discovered
+
+THE FOUR CRYO PODS
+
+There are four cryo pods in the cryo sleep room.
+
+POD 1 - PLAYER
+
+The player wakes from this pod due to the ship's emergency wake protocol. The ship awakened them because they are the only remaining person aboard with the technical ability or authorization needed to repair the vessel.
+
+POD 2 - EMPTY
+
+This pod belonged to the crew member who stole the organism and escaped in the shuttle. It was opened normally using proper authorization. This detail should not be obvious at first, but careful inspection later reveals that it was not forced open.
+
+POD 3 - EMPTY
+
+This pod belonged to the crew member who tried to stop the thief. It was opened in a hurry, possibly with warning errors still logged in the system. This crew member pursued the thief into the shuttle bay and was ultimately sucked into space during the struggle.
+
+POD 4 - DECEASED CREW MEMBER
+
+This pod contains the body of the crew member who was exposed to the organism. They were placed into cryo quarantine after the organism began affecting them. The attempt to preserve or isolate them failed, and they died inside the pod.
+
+This pod is one of the most important clues in the game. Its medical logs reveal that the organism was dangerous, invasive, and possibly still viable after exposure.
+
+CREW ROLES
+
+THE PLAYER - Systems Technician / Junior Engineer
+
+The player is not the captain and does not begin with full access to the ship. This justifies many of the locked systems. They understand ship repair, power routing, tools, and mechanical systems, but they need codes, authorization, and evidence from other crew members to regain control.
+
+THE THIEF - Pilot / Navigation Officer
+
+This crew member wanted to steal the organism, escape in the shuttle, and sell it. They knew enough about the shuttle systems to leave the main ship behind. Their pod opened normally, indicating premeditation.
+
+Possible name placeholders:
+- Elias Venn
+- Mara Vale
+- Cassian Rook
+- Juno Mercer
+
+THE INTERCEPTOR - Security Officer / Mission Commander / Engineer
+
+This crew member saw the danger, understood that the organism could not be allowed to reach civilization, and tried to stop the thief from escaping. They opened their pod after the thief and followed them into the shuttle bay. They were killed when the bay decompressed during the struggle.
+
+Possible name placeholders:
+- Commander Hale
+- Sera Knox
+- Anton Reyes
+- Talia Rusk
+
+THE DECEASED - Science Officer / Medical Researcher
+
+This crew member was exposed to the organism during research. They were quarantined inside cryo once symptoms appeared, but the organism continued to affect them or caused fatal complications. Their death is what convinced the interceptor that the organism could not be allowed off the ship.
+
+Possible name placeholders:
+- Dr. Ilyan Cross
+- Dr. Mina Sato
+- Dr. Len Orra
+- Dr. Petra Voss
+
+ROOM-BY-ROOM BREAKDOWN
+
+ROOM 1: CRYO SLEEP
+
+Purpose:
+The starting room introduces the mystery, establishes the player's vulnerability, and teaches the player how the game works.
+
+Initial State:
+- Emergency lighting only
+- Frost on glass and panels
+- Alarm tones repeating at low volume
+- Two cryo pods empty
+- One cryo pod occupied by a dead crew member
+- Player's pod recently opened
+- Main power is down
+- Door to shuttle bay is sealed because the bay is exposed to space
+- Door to science lab is locked
+- Some power cables in the room have been cut or disconnected
+
+Primary Goals:
+- Restore partial power to the cryo room
+- Identify the four cryo pod occupants
+- Determine that two crew members are missing
+- Access the deceased crew member's pod logs
+- Unlock the science lab door
+
+Puzzle Ideas:
+
+1. Cryo Power Reroute
+The player finds that several power cables have been cut or pulled from the wall. They must reconnect working cables to restore emergency power without overloading the system.
+
+2. Pod Identity Puzzle
+The pod nameplates are damaged or frosted over. The player must match pod numbers to crew roles using partial logs, locker labels, and biometric readouts.
+
+3. Deceased Pod Diagnostic
+The dead crew member's pod has a locked medical diagnostic screen. The player must retrieve enough information from nearby systems to access the cause-of-death summary.
+
+4. Emergency Door Override
+Once partial power is restored, the player can operate the science lab door, but only after entering a code built from pod numbers, crew IDs, or the deceased scientist's medical file.
+
+Important Clues:
+- Two pods are empty.
+- One empty pod was opened cleanly.
+- One empty pod was opened in a hurry.
+- The dead crew member was in quarantine status, not normal cryo sleep.
+- The shuttle bay is currently open to space.
+- Someone cut or disabled local power before the player woke up.
+
+Story Beat:
+The player realizes the ship was not simply damaged by an accident. Something happened involving the other crew members before or during cryo sleep.
+
+ROOM 2: SCIENCE LAB
+
+Purpose:
+The science lab reveals the existence of the organism and reframes the mystery. The missing crew were not merely trying to survive; they were fighting over something dangerous and valuable.
+
+Initial State:
+- Lab is locked down
+- Some storage cabinets are sealed
+- Containment chamber is cracked or empty
+- Research terminal is damaged
+- Biological warning symbols appear throughout the room
+- Evidence suggests a rushed cleanup or cover-up
+
+Primary Goals:
+- Restore access to the lab terminal
+- Learn about the alien organism
+- Find evidence of the deceased crew member's exposure
+- Recover a bridge access component or code
+- Learn that the organism was dangerous enough to justify quarantine
+
+Puzzle Ideas:
+
+1. Research Log Reconstruction
+The player finds corrupted audio or text logs and must arrange them in chronological order. This reveals that the organism was discovered, brought aboard, studied, and then began affecting one of the crew.
+
+2. Sample Scanner Puzzle
+A scanner can analyze residue from the deceased cryo pod. The player must prepare the scanner using a calibration slide, wavelength setting, or sample tray.
+
+3. Containment Cabinet Puzzle
+A locked cabinet contains a bridge access chip or command override key. The unlock code is hidden in lab notes about specimen growth stages, hazard levels, or quarantine timestamps.
+
+4. Chemical Reveal Puzzle
+A chemical reagent can reveal residue trails or hidden writing on a lab surface. This may point toward the shuttle bay or identify who removed the organism from containment.
+
+Important Clues:
+- The organism was found during the mission and brought aboard for study.
+- The deceased crew member was exposed first.
+- Their symptoms were alarming enough that they were placed in cryo quarantine.
+- The organism may have extreme commercial or military value.
+- One crew member argued for returning with it.
+- Another argued that it had to be destroyed or contained.
+
+Story Beat:
+The player understands that the crew conflict centered around the organism. The dead crew member's fate proves the organism was dangerous, but someone still wanted to take it.
+
+ROOM 3: BRIDGE
+
+Purpose:
+The bridge is the command and information hub. It lets the player affect the ship's layout by closing the shuttle bay doors, making rearward exploration possible.
+
+Initial State:
+- Bridge door locked until science lab access is restored
+- Navigation offline
+- Communications damaged or weak
+- Engine status: offline
+- Shuttle bay status: open to vacuum
+- Some command logs are encrypted
+- Main captain-level controls require authorization the player does not initially have
+
+Primary Goals:
+- Restore communications
+- Contact command center
+- Access shuttle bay controls
+- Close the shuttle bay doors
+- Repressurize or prepare the shuttle bay for entry
+- Learn more about the final crew conflict
+
+Puzzle Ideas:
+
+1. Communications Alignment Puzzle
+The player must align a damaged antenna or frequency system using star chart data, signal waveforms, or command beacon coordinates.
+
+2. Command Authentication Puzzle
+The player must combine crew IDs, lab quarantine data, and cryo pod records to gain limited bridge access.
+
+3. Shuttle Bay Door Override
+The player cannot simply press a button. They must clear a safety lock, confirm no life signs in the bay, restore power to the door motors, and override an emergency decompression state.
+
+4. Captain's Log Decryption
+Some logs are locked behind multi-crew authorization. The player may only get partial access on the first bridge visit, encouraging later return.
+
+Important Clues:
+- The shuttle bay was opened during a manual launch sequence.
+- The main shuttle is gone.
+- One crew member's command badge or biometrics were used near the shuttle bay controls.
+- A distress or warning message was partially transmitted but never completed.
+- Command center may already know something went wrong, but communication is too damaged for a full answer at first.
+
+Story Beat:
+The player closes the shuttle bay doors, turning the ship's rear section from a death trap into an explorable space.
+
+ROOM 4: SHUTTLE BAY
+
+Purpose:
+The shuttle bay is the scene of the central crime. This is where the player discovers the most direct evidence of what happened to the two missing crew members.
+
+Initial State After Repressurization:
+- Bay doors closed but the room is damaged
+- Cargo is scattered from decompression
+- Tool lockers are broken or locked
+- Shuttle cradle is empty
+- Scrape marks, impact damage, and emergency warnings are visible
+- A tether, glove, badge, or broken helmet may remain near the bay doors
+
+Primary Goals:
+- Investigate the escape
+- Discover that one crew member launched the shuttle
+- Discover that the other crew member was sucked into space
+- Recover tools or parts needed to access engineering
+- Open the door to engineering
+
+Puzzle Ideas:
+
+1. Cargo Loader Puzzle
+Cargo shifted during decompression and blocks access to a locker or engineering door. The player must use a damaged loading arm or magnetic crane to move crates in the correct order.
+
+2. Shuttle Launch Log Puzzle
+The shuttle launch system contains a partial record. The player must restore power or replace a missing fuse to reveal who launched the shuttle and when.
+
+3. Tether Evidence Puzzle
+A torn safety tether is caught in the bay door mechanism. The player can analyze or retrieve it to confirm that someone was pulled out when the doors opened.
+
+4. Tool Locker Puzzle
+The engineering access tool or magnetic torque head is locked in a shuttle maintenance locker. The code is tied to shuttle preflight checks, cargo manifest numbers, or the thief's pilot credentials.
+
+5. Vacuum Damage Reconstruction
+The player pieces together the order of events by examining floating debris, impact marks, and launch logs.
+
+Important Clues:
+- The main shuttle escaped.
+- The organism was taken aboard the shuttle.
+- One crew member tried to stop the launch.
+- During the struggle, the bay decompressed.
+- The interceptor was pulled into space.
+- The thief escaped with the organism.
+- Engineering was disabled before or during the escape to prevent pursuit.
+
+Story Beat:
+The central mystery becomes clear: the missing crew members are not hiding somewhere on the ship. One escaped with the organism; the other died trying to stop them.
+
+ROOM 5: ENGINEERING
+
+Purpose:
+Engineering is the final major repair challenge. It proves that the ship was sabotaged and forces the player to backtrack through the vessel to build a repair tool.
+
+Initial State:
+- Engine systems offline
+- Reactor in safe shutdown
+- Coolant system unstable
+- Control relays damaged
+- Some tools missing
+- Engine ignition cannot be restored with standard controls
+- Evidence suggests the ship was deliberately disabled after the shuttle escape
+
+Primary Goals:
+- Determine why the engines are offline
+- Stabilize the reactor or power core
+- Build a specialized engine repair tool
+- Restore propulsion
+- Return to the bridge
+
+The Engine Repair Tool:
+The player must assemble a custom tool to repair or recalibrate the engine ignition system. This creates a reason to revisit earlier rooms.
+
+Possible Tool Name:
+- Engine Recalibration Tool
+- Plasma Ignition Spanner
+- Reactor Alignment Tool
+- Drive Core Recalibrator
+
+Required Components:
+
+1. Insulated Grip
+Found in the cryo room emergency kit. Initially inaccessible because the kit is frozen shut or lacks power. Later opened with a lab reagent or shuttle bay tool.
+
+2. Micro-Focusing Lens
+Found in the science lab scanner. The player uses the scanner earlier, then later removes the lens as a component.
+
+3. Command Authorization Chip
+Found or unlocked on the bridge after partial command access is restored. This allows the tool to interface with restricted engine systems.
+
+4. Magnetic Torque Head
+Found in the shuttle bay maintenance locker. Needed to physically open or adjust engine components.
+
+5. High-Density Power Cell
+Recovered from the deceased crew member's cryo pod, a lab containment unit, or an emergency bridge system.
+
+Engineering Puzzle Ideas:
+
+1. Coolant Pressure Puzzle
+The player must balance coolant across several valves. Too much pressure causes a shutdown; too little overheats the engine core.
+
+2. Relay Replacement Puzzle
+Damaged power relays must be replaced or rerouted using components found elsewhere.
+
+3. Tool Assembly Puzzle
+The player combines parts from multiple rooms into the engine repair tool. The assembled tool may require calibration using a science lab terminal.
+
+4. Reactor Restart Sequence
+The final engine restart requires a timed or ordered sequence using clues from engineering labels, bridge diagnostics, and the deceased science officer's notes.
+
+5. Sabotage Discovery
+The player discovers that the engines were not damaged by the organism or general ship failure. They were disabled intentionally to stop the main ship from following the escaped shuttle.
+
+Important Clues:
+- The engines were sabotaged.
+- The sabotage was crude but effective, suggesting urgency.
+- The interceptor may have disabled the engines to prevent the thief's destination from being followed, or the thief disabled them to prevent pursuit.
+- A final log or damaged recording suggests the interceptor's last act was to try to stop the organism from leaving the ship.
+
+Story Beat:
+The player restores the engines and gains the ability to bring the ship home, but now knows the organism is no longer aboard. The larger threat is somewhere else: with the escaped shuttle.
+
+BACKTRACKING STRUCTURE
+
+The game should not feel like a simple sequence of rooms. Earlier rooms should gain new importance as the player acquires tools, access, and knowledge.
+
+Cryo Sleep Revisited:
+- Open the frozen emergency kit
+- Access deeper logs from the deceased pod
+- Retrieve a power cell
+- Reinspect pod opening records with bridge authorization
+- Confirm which missing crew member woke first
+
+Science Lab Revisited:
+- Use restored power to run the scanner properly
+- Analyze shuttle bay residue or cryo pod residue
+- Remove the micro-focusing lens for the engine repair tool
+- Unlock deeper research logs after bridge access is gained
+
+Bridge Revisited:
+- Receive clearer command center transmissions
+- Unlock additional crew logs after engines are restored
+- Use shipwide diagnostics to locate missing tool components
+- Make the final navigation decision
+
+Shuttle Bay Revisited:
+- Use engineering knowledge to access damaged launch logs
+- Recover additional evidence from the shuttle cradle
+- Retrieve tools from maintenance storage
+- Confirm the escaped shuttle's trajectory
+
+Engineering Revisited:
+- First visit reveals the engine problem
+- Later visit allows tool-assisted repair
+- Final visit restores propulsion
+
+COMMAND CENTER ROLE
+
+Command center should be distant, delayed, and not fully helpful at first. Their signal may be broken, distorted, or limited by the ship's damaged communications.
+
+Early Contact:
+- Static-heavy response
+- Basic confirmation that the ship is off-course
+- Instructions to stabilize the vessel
+- Possibly a warning not to contaminate evidence
+
+Later Contact:
+- Command confirms that the escaped shuttle may be on a return trajectory
+- They ask whether the organism is still aboard
+- They may order the player to retrieve all logs and return immediately
+- Or they may order the player to divert to a quarantine station
+
+Possible Tension:
+Command center may care more about recovering the organism than saving the player. This can make the final decision more morally complicated.
+
+KEY STORY REVEAL ORDER
+
+Reveal 1 - Cryo Room:
+Two crew members are missing, one is dead, and something is wrong with the official cryo records.
+
+Reveal 2 - Science Lab:
+The crew discovered and studied an alien organism. The deceased crew member was exposed to it.
+
+Reveal 3 - Science Lab / Bridge:
+The organism was dangerous but potentially valuable. The crew disagreed about what to do with it.
+
+Reveal 4 - Bridge:
+The shuttle launched during an emergency, and the shuttle bay was left open to space.
+
+Reveal 5 - Shuttle Bay:
+One missing crew member escaped with the organism. The other was sucked into space while trying to stop them.
+
+Reveal 6 - Engineering:
+The engines were sabotaged to prevent pursuit or prevent the ship from returning before the truth was known.
+
+Reveal 7 - Final Bridge Return:
+The organism is not on the ship anymore. The escaped shuttle is the real threat.
+
+FINAL ACT
+
+After restoring the engines, the player returns to the bridge. The ship can now move again, communications are clearer, and navigation is partially restored.
+
+The player has enough information to understand what happened:
+
+- The science officer was exposed to the organism and died in cryo quarantine.
+- The pilot/navigation officer stole the organism and escaped in the shuttle.
+- The commander/security officer tried to stop the escape and was sucked into space.
+- The ship was disabled and left drifting.
+- The player was awakened because they were the only remaining person who could restore the vessel.
+
+Final Goals:
+- Restore navigation
+- Contact command center
+- Transmit the ship logs
+- Plot a course
+- Decide what to do next
+
+ENDING OPTIONS
+
+Ending 1 - Return Home
+The player returns home with the main ship. This is the most straightforward survival ending, but the escaped shuttle may still be out there with the organism.
+
+Ending 2 - Pursue the Shuttle
+The player uses the restored engines to follow the escaped shuttle's trajectory. This ending sets up a sequel or final chase, with the player choosing to stop the organism from reaching civilization.
+
+Ending 3 - Divert to Quarantine Station
+The player follows command protocol and takes the main ship to a quarantine station, preserving the evidence and avoiding contamination risk.
+
+Ending 4 - Broadcast the Truth
+The player transmits all logs and evidence widely, preventing command center, corporations, or military interests from covering up the incident.
+
+Ending 5 - Dark Ending
+The player learns command center already knew the organism was valuable and wants it recovered. The escaped thief may have been acting for someone on the inside.
+
+RECOMMENDED CANON ENDING
+
+The strongest ending is not that the player simply goes home. Instead, the player restores the main ship and discovers the escaped shuttle's trajectory.
+
+Command center orders the player to return home and let them handle it.
+
+But the recovered logs suggest command may be compromised, or at least more interested in the organism than the dead crew.
+
+The player must choose:
+
+- Obey command and return home
+- Pursue the stolen organism
+- Divert to quarantine and transmit the truth
+
+This creates a strong final choice and leaves the story with tension beyond the ship itself.
+
+GAMEPLAY TONE
+
+Recommended tone:
+Lonely sci-fi mystery with light horror elements.
+
+The game should feel tense, quiet, and investigative rather than action-heavy. The danger has mostly already happened. The player is walking through the aftermath and reconstructing the disaster through puzzles.
+
+Inspirations in tone:
+- A locked-room mystery
+- A drifting spaceship survival story
+- A forensic investigation
+- A sci-fi quarantine thriller
+- A point-and-click adventure with escape room logic
+
+VISUAL AND AUDIO DIRECTION
+
+Cryo Sleep:
+Cold blue lighting, frost, condensation, alarms, muffled mechanical hum.
+
+Science Lab:
+Sterile whites and greens, cracked containment glass, biological hazard lights, microscope glow, sealed cabinets.
+
+Bridge:
+Dark control room, starfield views, flickering screens, static-filled communications, navigation maps.
+
+Shuttle Bay:
+Large dark chamber, warning lights, empty shuttle cradle, cargo scattered from decompression, heavy silence after repressurization.
+
+Engineering:
+Warm orange emergency lights, exposed machinery, coolant vapor, deep engine sounds, sparking panels.
+
+KEY DESIGN PRINCIPLES
+
+1. Every room should answer one question and create another.
+
+2. Every major puzzle should either unlock progress, reveal story, or both.
+
+3. Backtracking should feel purposeful, not like padding.
+
+4. The player should slowly shift from asking "Where is everyone?" to "Who caused this?" to "How do I stop what already left?"
+
+5. The organism should remain mysterious. The game does not need to show it directly. Its effects, value, and danger are more frightening than a full reveal.
+
+6. The dead crew member's pod should be emotionally and mechanically important throughout the game.
+
+7. The shuttle bay should be the centerpiece reveal location.
+
+8. The bridge should serve as both midpoint control room and final decision room.
+
+9. The player's inventory should connect the ship together physically and narratively.
+
+10. The final act should make the player question whether simply going home is the right thing to do.
+
+SAMPLE PUZZLE ITEM CHAIN
+
+Cryo Room:
+- Restore emergency power
+- Find damaged pod records
+- Retrieve cryo pod access clue
+
+Science Lab:
+- Analyze pod residue
+- Learn about organism
+- Unlock bridge access chip
+
+Bridge:
+- Restore communications
+- Close shuttle bay doors
+- Gain partial command authorization
+
+Shuttle Bay:
+- Move cargo
+- Retrieve magnetic torque head
+- Recover launch log fragment
+
+Engineering:
+- Discover engine sabotage
+- Learn repair tool requirements
+
+Backtracking:
+- Return to cryo for insulated grip and power cell
+- Return to science lab for micro-focusing lens
+- Return to bridge for authorization chip
+- Return to shuttle bay for torque head
+
+Engineering Return:
+- Assemble tool
+- Repair engine core
+- Restart propulsion
+
+Bridge Finale:
+- Plot course
+- Contact command
+- Decide what to do about the escaped shuttle
+
+ONE-SENTENCE SUMMARY
+
+A lone survivor awakens from cryo sleep aboard a crippled spaceship and must solve room-by-room puzzles to uncover how an alien organism drove two crew members into a deadly conflict, leaving one dead, one lost to space, and one escaped with a threat that may now be heading home.

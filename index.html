@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Starlock</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- The whole game lives in a fixed 1920x1080 stage that CSS scales to the viewport.
+       All hot-spot coordinates in scene data are expressed in this 1920x1080 space. -->
+  <div id="stage" class="stage">
+
+    <!-- START SCREEN -->
+    <section id="start-screen" class="screen active">
+      <img class="start-bg" src="Images/starlock_start_screen.png" alt="" />
+      <div class="start-content">
+        <img class="start-logo" src="Images/starlock_logo.png" alt="Starlock" />
+        <button id="start-button" class="start-btn" type="button">START</button>
+      </div>
+    </section>
+
+    <!-- GAME SCREEN -->
+    <section id="game-screen" class="screen">
+      <!-- Base plate (the wall image) -->
+      <div id="scene-plate" class="scene-plate"></div>
+
+      <!-- Sprite layer: items, decals, state overlays painted on top of the wall -->
+      <div id="sprite-layer" class="sprite-layer"></div>
+
+      <!-- Hot-spot layer: invisible click targets with optional debug outlines -->
+      <div id="hotspot-layer" class="hotspot-layer"></div>
+
+      <!-- Lighting / atmosphere overlay (CSS-tintable, free of new images) -->
+      <div id="atmosphere-layer" class="atmosphere-layer"></div>
+
+      <!-- Close-up / zoom-in viewer (hidden by default) -->
+      <div id="closeup" class="closeup hidden">
+        <img id="closeup-image" class="closeup-image" alt="" />
+        <div id="closeup-hotspots" class="closeup-hotspots"></div>
+        <button id="closeup-back" class="closeup-back" type="button">&larr; Back</button>
+      </div>
+
+      <!-- Turn arrows -->
+      <button id="arrow-left" class="turn-arrow turn-left" type="button" aria-label="Turn left">&#10094;</button>
+      <button id="arrow-right" class="turn-arrow turn-right" type="button" aria-label="Turn right">&#10095;</button>
+
+      <!-- HUD: inventory + message bar -->
+      <div id="message-bar" class="message-bar"></div>
+      <div id="inventory" class="inventory"></div>
+
+      <!-- Debug toggle (press D in-game) -->
+      <div id="debug-badge" class="debug-badge hidden">DEBUG</div>
+    </section>
+
+  </div>
+
+  <!-- Engine + data. Order matters: data first, then systems, then boot. -->
+  <script src="js/scenes.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

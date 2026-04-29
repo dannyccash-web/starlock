@@ -1,0 +1,265 @@
+/* ============================================================
+   STARLOCK - SCENE ENGINE
+   ------------------------------------------------------------
+   - Renders the current wall (base plate + sprites + hot spots)
+   - Handles turn-arrow navigation between walls of a room
+   - Handles hot-spot clicks, including item gating
+   - Handles close-up zoom views with their own hot spots
+   - Tracks game state flags used by showIf/hideIf and actions
+   ============================================================ */
+
+const Engine = (() => {
+  const plateEl     = document.getElementById("scene-plate");
+  const spriteEl    = document.getElementById("sprite-layer");
+  const hotspotEl   = document.getElementById("hotspot-layer");
+  const atmoEl      = document.getElementById("atmosphere-layer");
+  const messageEl   = document.getElementById("message-bar");
+  const closeupEl   = document.getElementById("closeup");
+  const closeupImg  = document.getElementById("closeup-image");
+  const closeupHs   = document.getElementById("closeup-hotspots");
+  const closeupBack = document.getElementById("closeup-back");
+  const arrowLeft   = document.getElementById("arrow-left");
+  const arrowRight  = document.getElementById("arrow-right");
+  const debugBadge  = document.getElementById("debug-badge");
+
+  const state = {
+    flags: new Set(),
+    currentRoom: "cryo",
+    currentWall: 0,
+    activeCloseup: null,
+    debug: false,
+  };
+
+  /* ----- Game state flag helpers ----- */
+  const hasFlag = (f) => state.flags.has(f);
+  const setFlag = (f) => state.flags.add(f);
+  // Visibility predicate: pass {all:[],any:[],none:[]}
+  function check(cond) {
+    if (!cond) return true;
+    if (cond.all && !cond.all.every(hasFlag)) return false;
+    if (cond.any && !cond.any.some(hasFlag)) return false;
+    if (cond.none && cond.none.some(hasFlag)) return false;
+    return true;
+  }
+
+  /* ----- Message bar ----- */
+  let msgTimer = null;
+  function showMessage(text, duration = 3500) {
+    if (!text) return;
+    messageEl.textContent = text;
+    messageEl.classList.add("show");
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(() => messageEl.classList.remove("show"), duration);
+  }
+
+  /* ----- Render the current wall ----- */
+  function renderWall() {
+    const room = STARLOCK_DATA.ROOMS[state.currentRoom];
+    const wall = room.walls[state.currentWall];
+
+    // Base plate
+    plateEl.innerHTML = "";
+    if (wall.plate) {
+      plateEl.style.backgroundImage = `url('${wall.plate}')`;
+      plateEl.classList.remove("placeholder-plate");
+    } else {
+      plateEl.style.backgroundImage = "none";
+      plateEl.classList.add("placeholder-plate");
+      const label = document.createElement("div");
+      label.className = "placeholder-label";
+      label.innerHTML = `${wall.placeholderLabel || "WALL"}<span class="placeholder-sub">art not yet generated</span>`;
+      plateEl.appendChild(label);
+    }
+    plateEl.dataset.atmosphere = wall.atmosphere || "";
+
+    // Atmosphere overlay
+    atmoEl.className = "atmosphere-layer vignette";
+
+    // Sprites (visible based on showIf/hideIf)
+    spriteEl.innerHTML = "";
+    (wall.sprites || []).forEach((sp) => {
+      if (!visibleByFlags(sp)) return;
+      const div = document.createElement("div");
+      div.className = "sprite";
+      div.style.backgroundImage = `url('${sp.image}')`;
+      div.style.left   = sp.x + "px";
+      div.style.top    = sp.y + "px";
+      div.style.width  = sp.w + "px";
+      div.style.height = sp.h + "px";
+      spriteEl.appendChild(div);
+    });
+
+    // Hot spots
+    hotspotEl.innerHTML = "";
+    (wall.hotspots || []).forEach((hs) => {
+      if (!visibleByFlags(hs)) return;
+      const btn = makeHotspot(hs, () => handleAction(hs));
+      hotspotEl.appendChild(btn);
+    });
+
+    // Arrows (always enabled in this build, since each room is a 4-wall ring)
+    arrowLeft.disabled  = room.walls.length <= 1;
+    arrowRight.disabled = room.walls.length <= 1;
+  }
+
+  function visibleByFlags(obj) {
+    return check({ all: obj.showIf?.all, any: obj.showIf?.any, none: obj.showIf?.none })
+        && (!obj.hideIf || !check({ all: obj.hideIf?.all, any: obj.hideIf?.any, none: obj.hideIf?.none }));
+  }
+
+  function makeHotspot(hs, onClick) {
+    const btn = document.createElement("button");
+    btn.className = "hotspot";
+    btn.type = "button";
+    btn.dataset.label = hs.label || hs.id;
+    if (hs.shape === "rect") {
+      const [x, y, w, h] = hs.geom;
+      btn.style.left = x + "px";
+      btn.style.top  = y + "px";
+      btn.style.width  = w + "px";
+      btn.style.height = h + "px";
+    } else if (hs.shape === "poly") {
+      // For polygons, use a clip-path on a wrapper rect. (Future work.)
+      const [x, y, w, h] = hs.bbox || [0, 0, 1920, 1080];
+      btn.style.left = x + "px";
+      btn.style.top  = y + "px";
+      btn.style.width  = w + "px";
+      btn.style.height = h + "px";
+    }
+    btn.addEventListener("click", (e) => { e.stopPropagation(); onClick(); });
+    return btn;
+  }
+
+  /* ----- Action dispatch -----
+     Action types:
+       message     - show the message text
+       setState    - set one or more flags, optionally show a message
+       pickup      - add item to inventory, set flags, show message
+       useItem     - if equipped item is in `accepts`, run onAccept;
+                     otherwise run onReject
+       openCloseup - load a close-up view by id
+  */
+  function handleAction(hs) {
+    const a = hs.action;
+    if (!a) return;
+
+    // Allow hot spot to require an equipped item before any action runs.
+    if (a.requires && Inventory.getEquipped() !== a.requires) {
+      showMessage(a.requireMessage || "You need to equip the right item first.");
+      return;
+    }
+
+    switch (a.type) {
+      case "message":
+        showMessage(a.message);
+        break;
+
+      case "setState":
+        (a.flags || []).forEach(setFlag);
+        if (a.message) showMessage(a.message);
+        renderActive();
+        break;
+
+      case "pickup":
+        Inventory.addItem(a.item);
+        (a.flags || []).forEach(setFlag);
+        if (a.message) showMessage(a.message);
+        renderActive();
+        break;
+
+      case "useItem": {
+        const eq = Inventory.getEquipped();
+        if (eq && (a.accepts || []).includes(eq)) {
+          (a.onAccept?.flags || []).forEach(setFlag);
+          if (a.onAccept?.message) showMessage(a.onAccept.message);
+          if (a.onAccept?.consume) Inventory.removeItem(eq);
+        } else {
+          if (a.onReject?.message) showMessage(a.onReject.message);
+        }
+        renderActive();
+        break;
+      }
+
+      case "openCloseup":
+        openCloseup(a.target);
+        break;
+
+      default:
+        console.warn("Unknown action type:", a.type, hs);
+    }
+  }
+
+  /* ----- Close-ups ----- */
+  function openCloseup(id) {
+    const c = STARLOCK_DATA.CLOSEUPS[id];
+    if (!c) { console.warn("Unknown closeup", id); return; }
+    state.activeCloseup = id;
+    closeupImg.src = c.image;
+    closeupHs.innerHTML = "";
+
+    // The close-up image is letterboxed inside the stage. Its hot spots
+    // are authored in stage coords (1920x1080), so we just place buttons
+    // on the closeupHs layer which fills the stage.
+    (c.hotspots || []).forEach((hs) => {
+      if (!visibleByFlags(hs)) return;
+      const btn = makeHotspot(hs, () => handleAction(hs));
+      closeupHs.appendChild(btn);
+    });
+    closeupEl.classList.remove("hidden");
+    if (state.debug) hotspotEl.classList.add("debug"), closeupHs.classList.add("debug");
+  }
+  function closeCloseup() {
+    state.activeCloseup = null;
+    closeupEl.classList.add("hidden");
+  }
+  closeupBack.addEventListener("click", closeCloseup);
+
+  /* ----- Re-render whatever is currently on screen (after state change) ----- */
+  function renderActive() {
+    if (state.activeCloseup) {
+      // Re-open to refresh hot-spot visibility.
+      openCloseup(state.activeCloseup);
+    } else {
+      renderWall();
+    }
+    if (state.debug) hotspotEl.classList.add("debug");
+  }
+
+  /* ----- Turn navigation (ring of walls) ----- */
+  function turn(delta) {
+    const room = STARLOCK_DATA.ROOMS[state.currentRoom];
+    const n = room.walls.length;
+    state.currentWall = (state.currentWall + delta + n) % n;
+    renderWall();
+  }
+  arrowLeft.addEventListener("click", () => turn(-1));
+  arrowRight.addEventListener("click", () => turn(+1));
+
+  /* ----- Debug toggle (D key) ----- */
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "d" || e.key === "D") {
+      state.debug = !state.debug;
+      hotspotEl.classList.toggle("debug", state.debug);
+      closeupHs.classList.toggle("debug", state.debug);
+      debugBadge.classList.toggle("hidden", !state.debug);
+    }
+    if (e.key === "Escape" && state.activeCloseup) closeCloseup();
+    if (e.key === "ArrowLeft" && !state.activeCloseup)  turn(-1);
+    if (e.key === "ArrowRight" && !state.activeCloseup) turn(+1);
+  });
+
+  /* ----- Boot a room ----- */
+  function startRoom(roomId) {
+    state.currentRoom = roomId;
+    state.currentWall = STARLOCK_DATA.ROOMS[roomId].startWall || 0;
+    renderWall();
+  }
+
+  return {
+    startRoom,
+    showMessage,
+    setFlag,
+    hasFlag,
+    _state: state, // for debugging in console
+  };
+})();
