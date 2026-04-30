@@ -1,51 +1,56 @@
 /* ============================================================
    STARLOCK - SCENE DATA
    ------------------------------------------------------------
-   This file is the entire game's content. Every wall view,
-   every hot spot, every item, every close-up.
+   Every wall view, every hot spot, every item, every close-up.
 
-   ARCHITECTURE NOTE
-   The art problem with AI-generated rooms is that the *base
-   plate* (the wall itself) is hard to keep consistent. So we
-   never bake state into the wall image. Instead:
+   ARCHITECTURE
+   The game is composed of stacked, transparent PNG layers, all
+   sized to the 1920x1080 stage and pinned to the same origin
+   (0,0). A wall is the sum of:
 
-     plate (1 image per wall view, never re-generated)
-       + sprites (transparent PNGs at fixed coords for each
-                  changeable item or detail)
-       + hot spots (invisible click rectangles, optionally
-                    gated on game state and on equipped item)
-       + close-ups (a separate full-screen image per zoomable
-                    detail; sub-hot-spots live on top of it)
+     plate    : 1 base wall image (e.g. "Cryo Room 1.png")
+     sprites  : 0..N transparent overlay PNGs sitting on top of
+                the plate. Each one is a full 1920x1080 PNG with
+                its prop in the correct position and the rest
+                fully transparent — so they "snap" into place.
+                Sprites can be turned on/off via showIf/hideIf,
+                or swapped (broken / fixed / opened / closed).
+     hotspots : invisible click rectangles whose geometry is
+                authored to match where the prop appears on the
+                composite, so clicking the *visual* item works.
+     close-ups: a separate full-stage image per zoomable detail,
+                with its own sub-hot-spots.
 
    Coordinates are in a virtual 1920x1080 stage. Engine scales.
 
    FIELDS
    rooms[id]          - a logical room (cryo, lab, bridge, etc)
-     walls[]          - clockwise list of wall views (left turn = -1)
+     walls[]          - clockwise list of wall views
        id             - unique within room
        plate          - URL of base image, OR null for placeholder
        placeholderLabel - shown if plate is null
-       atmosphere     - CSS atmosphere class (cryo-emergency, etc)
+       atmosphere     - CSS atmosphere class
        sprites[]      - { id, image, x, y, w, h, showIf?, hideIf? }
+                        Full-size overlay sprites use x:0,y:0,
+                        w:1920,h:1080. Smaller sprites (e.g. an
+                        item lying on the floor) can use a tighter
+                        rect.
        hotspots[]     - { id, shape: rect|poly, geom, label,
                           showIf?, hideIf?, requires?, action }
-   closeups[id]       - { image, hotspots[] } -- same hotspot format
+   closeups[id]       - { image, hotspots[] }
    items[id]          - { name, icon, description }
 
-   STATE FLAGS used so far (see engine.js applyAction):
-     crate_opened          - left crate has been pried/opened
+   STATE FLAGS:
      keycard_taken         - keycard sprite hidden, in inventory
-     viewed_pod_log        - close-up POD 4 log read at least once
-
-   To add new content: append to walls[], items[], or closeups{}.
-   Restart the page to reload.
+     viewed_pod_log        - pod 4 quarantine log read at least once
+     terminal_examined     - terminal panel has been read
    ============================================================ */
 
 const ITEMS = {
   keycard: {
     name: "Crew Keycard",
-    icon:   "Images/items/keycard.png",         // for inventory slot
-    cursor: "Images/items/keycard_cursor.png",  // small (<=128px) for cursor
+    icon:   "Images/items/keycard.png",
+    cursor: "Images/items/keycard_cursor.png",
     description: "Magnetic ID card. Unlocks low-level crew systems.",
   },
 };
@@ -54,67 +59,61 @@ const ROOMS = {
   cryo: {
     title: "Cryo Sleep Bay",
     startWall: 0,
+
+    /* The four walls form a clockwise ring. The player starts on
+       Wall 1 (terminal). Right arrow = next index, left = previous.
+         0: Wall 1 — Terminal      (front)
+         1: Wall 2 — Science Lab door (right)
+         2: Wall 3 — Cryo pods     (back)
+         3: Wall 4 — Shuttle Bay door (left)
+    */
     walls: [
-      // -------- WALL 1 (the real art) --------
+      // ============================================================
+      // WALL 1 — TERMINAL (the wall the player faces on wake-up)
+      // ============================================================
       {
-        id: "cryo_wall_1",
-        plate: "Images/cryo_room_1.png",
+        id: "cryo_wall_1_terminal",
+        plate: "Images/Cryo%20Room%201.png",
         atmosphere: "cryo-emergency",
         sprites: [
-          // The keycard, sitting on the crate, only visible after the crate is opened
-          // and before it's been taken. Coords are tuned to the existing wall art.
+          // Terminal mounted on the wall. Full-size transparent
+          // overlay PNG — props are pre-positioned in the file.
           {
-            id: "keycard_on_crate",
-            image: "Images/items/keycard.png",
-            x: 162,  y: 706,  w: 90, h: 56,
-            showIf: { all: ["crate_opened"], none: ["keycard_taken"] },
+            id: "wall_terminal",
+            image: "Images/Cryo%20Room%201%20Terminal.png",
+            x: 0, y: 0, w: 1920, h: 1080,
           },
         ],
         hotspots: [
-          // 1) The crate at the lower left. First click "opens" it (state flag),
-          //    revealing the keycard sprite. (You can later swap this for a real
-          //    "open crate" sprite using the same showIf/hideIf pattern.)
+          // Click the terminal screen → open the pod-status close-up.
+          // The hotspot bbox matches the visible terminal in the PNG
+          // (alpha bbox: x=728..1184, y=338..581).
           {
-            id: "crate",
+            id: "terminal",
             shape: "rect",
-            geom: [110, 670, 290, 200],
-            label: "Storage crate",
-            hideIf: { all: ["crate_opened"] },
-            action: {
-              type: "setState",
-              flags: ["crate_opened"],
-              message: "You pry the storage crate open. Something glints inside.",
-            },
-          },
-          // 2) Pick up the keycard. Hot spot only exists once the crate is open
-          //    and the keycard is still there.
-          {
-            id: "pickup_keycard",
-            shape: "rect",
-            geom: [150, 700, 120, 80],
-            label: "Pick up keycard",
-            showIf: { all: ["crate_opened"], none: ["keycard_taken"] },
-            action: {
-              type: "pickup",
-              item: "keycard",
-              flags: ["keycard_taken"],
-              message: "Crew keycard added to inventory.",
-            },
-          },
-          // 3) The central CRYO POD G4 panel. Click to zoom in.
-          {
-            id: "pod_panel",
-            shape: "rect",
-            geom: [675, 230, 580, 360],
-            label: "Cryo pod array (zoom)",
+            geom: [728, 338, 456, 243],
+            label: "Cryo control terminal",
             action: { type: "openCloseup", target: "cryo_panel_g4" },
           },
-          // 4) The right-hand "LOCKED" door. Requires the keycard.
+        ],
+      },
+
+      // ============================================================
+      // WALL 2 — SCIENCE LAB DOOR (turn right from terminal)
+      // ============================================================
+      {
+        id: "cryo_wall_2_lab_door",
+        plate: "Images/Cryo%20Room%202.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        hotspots: [
+          // The central pressure door. Locked; reader accepts the
+          // crew keycard but the lab circuit has no power yet.
           {
-            id: "locked_door",
+            id: "lab_door",
             shape: "rect",
-            geom: [1530, 110, 290, 740],
-            label: "Locked door (science lab)",
+            geom: [670, 80, 580, 840],
+            label: "Door — 02: Science Lab",
             action: {
               type: "useItem",
               accepts: ["keycard"],
@@ -122,60 +121,133 @@ const ROOMS = {
                 message: "The keycard reader blinks green, but the door's actuators have no power. You'll need to restore the lab circuit first.",
               },
               onReject: {
-                message: "The door is locked. There's a card reader.",
+                message: "The door is locked. There's a card reader beside it. Label: 02 — SCIENCE LAB.",
               },
-            },
-          },
-          // 5) The left "SEALED" door. Cannot be entered (shuttle bay is open to space).
-          {
-            id: "sealed_door",
-            shape: "rect",
-            geom: [50, 110, 280, 740],
-            label: "Sealed door (shuttle bay)",
-            action: {
-              type: "message",
-              message: "SEALED. The shuttle bay beyond is exposed to vacuum.",
             },
           },
         ],
       },
 
-      // -------- WALL 2 (placeholder, north) --------
+      // ============================================================
+      // WALL 3 — CRYO PODS (the wall the player awakened from)
+      // ============================================================
       {
-        id: "cryo_wall_2",
-        plate: null,
-        placeholderLabel: "CRYO BAY — NORTH",
+        id: "cryo_wall_3_pods",
+        plate: "Images/Cryo%20Room%203.png",
         atmosphere: "cryo-emergency",
-        sprites: [],
-        hotspots: [],
+        sprites: [
+          // The whole row of 4 cryo pods is one transparent overlay.
+          // (Later we can swap this for a "pod 4 opened" variant by
+          //  flipping showIf/hideIf flags.)
+          {
+            id: "wall_pods",
+            image: "Images/Cryo%20Room%203%20Pods.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+          // Crew keycard, dropped beside Pod 04 (the deceased crew
+          // member's pod). Hidden once the player picks it up.
+          {
+            id: "keycard_on_floor",
+            image: "Images/items/keycard.png",
+            x: 1500, y: 880, w: 90, h: 56,
+            hideIf: { all: ["keycard_taken"] },
+          },
+        ],
+        hotspots: [
+          // Four pod hotspots, sized to each pod's visible frame in
+          // the Pods.png overlay. Pods 2 and 3 are empty (others
+          // escaped); Pod 1 is the player's; Pod 4 is the corpse.
+          {
+            id: "pod1",
+            shape: "rect",
+            geom: [174, 80, 410, 800],
+            label: "Pod 01 — your pod",
+            action: {
+              type: "message",
+              message: "POD 01 — your own pod. Wake protocol triggered automatically. The frost is still on the inside of the glass.",
+            },
+          },
+          {
+            id: "pod2",
+            shape: "rect",
+            geom: [584, 80, 386, 800],
+            label: "Pod 02",
+            action: {
+              type: "message",
+              message: "POD 02 — empty. Pod log shows a clean, authorized open. Suspicious, in retrospect.",
+            },
+          },
+          {
+            id: "pod3",
+            shape: "rect",
+            geom: [970, 80, 365, 800],
+            label: "Pod 03",
+            action: {
+              type: "message",
+              message: "POD 03 — empty. Pod log shows a hurried open with override warnings.",
+            },
+          },
+          {
+            id: "pod4",
+            shape: "rect",
+            geom: [1335, 80, 385, 800],
+            label: "Pod 04 — quarantine",
+            action: {
+              type: "setState",
+              flags: ["viewed_pod_log"],
+              message: "POD 04 — occupant DECEASED. Cause: organism exposure. Quarantine protocol failed. The crewmember's hand still rests near the inner glass.",
+            },
+          },
+          // Pick up the keycard. Visible only while the keycard
+          // sprite is still on the floor.
+          {
+            id: "pickup_keycard",
+            shape: "rect",
+            geom: [1490, 870, 110, 80],
+            label: "Pick up keycard",
+            hideIf: { all: ["keycard_taken"] },
+            action: {
+              type: "pickup",
+              item: "keycard",
+              flags: ["keycard_taken"],
+              message: "Crew keycard added to inventory.",
+            },
+          },
+        ],
       },
-      // -------- WALL 3 (placeholder, opposite) --------
+
+      // ============================================================
+      // WALL 4 — SHUTTLE BAY DOOR (turn right again, or left from W1)
+      // ============================================================
       {
-        id: "cryo_wall_3",
-        plate: null,
-        placeholderLabel: "CRYO BAY — OPPOSITE",
+        id: "cryo_wall_4_shuttle_door",
+        plate: "Images/Cryo%20Room%204.png",
         atmosphere: "cryo-emergency",
         sprites: [],
-        hotspots: [],
-      },
-      // -------- WALL 4 (placeholder, south) --------
-      {
-        id: "cryo_wall_4",
-        plate: null,
-        placeholderLabel: "CRYO BAY — SOUTH",
-        atmosphere: "cryo-emergency",
-        sprites: [],
-        hotspots: [],
+        hotspots: [
+          // Sealed door — the shuttle bay beyond is exposed to vacuum.
+          {
+            id: "shuttle_door",
+            shape: "rect",
+            geom: [670, 80, 580, 840],
+            label: "Door — 04: Shuttle Bay",
+            action: {
+              type: "message",
+              message: "SEALED. Label: 04 — SHUTTLE BAY. The bay beyond is exposed to vacuum. Opening this would kill you.",
+            },
+          },
+        ],
       },
     ],
   },
 };
 
 const CLOSEUPS = {
+  // Pod-status terminal close-up (reached by clicking the terminal
+  // on Wall 1). Uses the existing cryo_panel_g4.png art.
   cryo_panel_g4: {
     image: "Images/closeups/cryo_panel_g4.png",
     hotspots: [
-      // Each pod is its own hot spot; pod 4 is the dead crew member's
       {
         id: "pod1",
         shape: "rect",
