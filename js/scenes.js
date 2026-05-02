@@ -39,12 +39,12 @@
    items[id]          - { name, icon, description }
 
    STATE FLAGS:
-     pod4_wiring_repaired - the sabotaged wiring next to pod 4 has
-                            been reconnected. Required before the
-                            terminal will release pod 4.
-                            TODO: gated by a wiring-panel puzzle
-                            that hasn't been built yet. For dev
-                            testing, run `Engine.setFlag('pod4_wiring_repaired')`
+     pod4_wiring_repaired - the sabotaged wiring panel next to pod 4
+                            has been reconnected using foil strips.
+                            Required before the cryo terminal will
+                            allow pod 4 to be released.
+                            For dev testing, run:
+                              Engine.setFlag('pod4_wiring_repaired')
                             in the browser console.
      pod4_opened          - the science officer's pod has been
                             unsealed via the terminal. The corpse
@@ -57,6 +57,12 @@
                             corpse vanishes; the infected science
                             officer becomes a roaming threat).
                             (Set later, in a future room.)
+
+   CRYO PODS IMAGE STATES (Cryo Room 3 Pods *.png):
+     [default]              Pods.png   — wiring sabotaged, pod 4 sealed
+     pod4_wiring_repaired   Pods B.png — wiring patched, pod 4 still sealed
+     pod4_opened            Pods C.png — pod 4 open, body visible inside
+     bridge_door_unlocked   Pods D.png — pod 4 empty (officer has left)
    ============================================================ */
 
 const ITEMS = {
@@ -65,6 +71,15 @@ const ITEMS = {
     icon:   "Images/items/keycard.png",
     cursor: "Images/items/keycard_cursor.png",
     description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
+  },
+
+  // TODO: add icon + cursor images when art is ready.
+  // Foil strips are found elsewhere in the ship and used to patch the
+  // severed wiring panel beside cryo pod 4.
+  foil_strips: {
+    name: "Foil Strips",
+    icon:   "Images/items/foil_strips.png",
+    description: "A few lengths of conductive foil tape. Thin enough to bridge a broken circuit.",
   },
 };
 
@@ -154,13 +169,38 @@ const ROOMS = {
         plate: "Images/Cryo%20Room%203.png?v=2",
         atmosphere: "cryo-emergency",
         sprites: [
-          // The whole row of 4 cryo pods is one transparent overlay.
-          // (Later we can swap this for a "pod 4 opened" variant by
-          //  flipping showIf/hideIf flags.)
+          // The pod overlay swaps between four variants depending on
+          // game state. Only one is ever visible at a time.
+          //
+          //   A — default: wiring sabotaged, pod 4 sealed
           {
-            id: "wall_pods",
-            image: "Images/Cryo%20Room%203%20Pods.png?v=2",
+            id: "wall_pods_a",
+            image: "Images/Cryo%20Room%203%20Pods.png?v=3",
             x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["pod4_wiring_repaired"] },
+          },
+          //   B — wiring patched, pod 4 still sealed
+          {
+            id: "wall_pods_b",
+            image: "Images/Cryo%20Room%203%20Pods%20B.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["pod4_wiring_repaired"] },
+            hideIf: { all: ["pod4_opened"] },
+          },
+          //   C — pod 4 open, body visible
+          {
+            id: "wall_pods_c",
+            image: "Images/Cryo%20Room%203%20Pods%20C.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["pod4_opened"] },
+            hideIf: { all: ["bridge_door_unlocked"] },
+          },
+          //   D — pod 4 empty (science officer has left)
+          {
+            id: "wall_pods_d",
+            image: "Images/Cryo%20Room%203%20Pods%20D.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["bridge_door_unlocked"] },
           },
           // Crew keycard, retrievable from the science officer's suit
           // ONLY after the pod has been unsealed via the terminal.
@@ -174,9 +214,34 @@ const ROOMS = {
           },
         ],
         hotspots: [
-          // Four pod hotspots. All flavour/lore lives in the
-          // terminal close-up; the pod hotspots themselves give
-          // only the bare physical observation.
+          // ---- Wiring access panel (bottom-right of the pod wall) ----
+          // Disappears once the wiring has been repaired.
+          // NOTE: geom is an estimate — press D in-game to enter debug
+          // mode and see the hotspot overlay; adjust x/y/w/h as needed
+          // once the final art is in place.
+          {
+            id: "wiring_box",
+            shape: "rect",
+            geom: [1720, 840, 165, 160],
+            label: "Wiring access panel",
+            hideIf: { all: ["pod4_wiring_repaired"] },
+            action: {
+              type: "useItem",
+              accepts: ["foil_strips"],
+              onReject: {
+                message: "A small panel hangs open beside pod 4, exposing a bundle of wiring. Each connection has been cleanly severed — this wasn't an accident. Maybe the right materials could bridge the breaks.",
+              },
+              onAccept: {
+                message: "You press the foil strips across each severed connection, bridging the breaks one by one. The wiring hums faintly. A status indicator near pod 4 flickers on.",
+                flags: ["pod4_wiring_repaired"],
+                consume: true,
+              },
+            },
+          },
+
+          // ---- Four pod hotspots ----
+          // All flavour/lore lives in the terminal close-up; the pod
+          // hotspots themselves give only the bare physical observation.
           {
             id: "pod1",
             shape: "rect",
