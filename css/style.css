@@ -228,6 +228,36 @@ html, body {
 .turn-right:hover { background: linear-gradient(270deg, rgba(20,50,80,0.7) 0%, rgba(0,0,0,0.0) 100%); }
 .turn-arrow:disabled { opacity: 0.25; cursor: not-allowed; }
 
+/* Down-arrow: same chrome as left/right turn arrows, but anchored
+   to the bottom-center. Used to back out of HTML close-ups (the
+   terminal). The original right-chevron glyph is hidden via
+   font-size:0 and a rotated ::before chevron is drawn instead, so
+   the visual weight matches the left/right arrows exactly. */
+.turn-down {
+  top: auto;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 86px;
+  font-size: 0;            /* hide the inline glyph */
+  background: linear-gradient(0deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.0) 100%);
+  z-index: 7;
+}
+.turn-down:hover {
+  background: linear-gradient(0deg, rgba(20,50,80,0.7) 0%, rgba(0,0,0,0.0) 100%);
+}
+.turn-down::before {
+  content: "\276F";        /* same chevron as turn-right */
+  display: inline-block;
+  font: 700 56px/86px system-ui;
+  color: rgba(180, 230, 255, 0.7);
+  transform: rotate(90deg);
+  text-shadow: 0 0 12px rgba(108, 208, 255, 0.55);
+  transition: color 150ms ease;
+}
+.turn-down:hover::before { color: #ffffff; }
+
 /* ---------- Inventory ---------- */
 .inventory {
   position: absolute;
@@ -345,6 +375,153 @@ html, body {
   cursor: pointer;
 }
 .closeup-back:hover { color: #fff; }
+
+/* HTML close-up overlay layer.
+   For "kind: html" close-ups, controllers mount their interface
+   into this layer. The base layer fills the full 1920x1080 stage
+   so individual controllers can position their UI in stage coords
+   matching the screen area of the closeup background image. */
+.closeup-html {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;     /* children opt-in below */
+}
+.closeup-html.active { pointer-events: auto; }
+.closeup-html:empty { display: none; }
+/* When HTML close-up is active we hide the top-left back button —
+   the bottom-center down-arrow is the player's exit. */
+.closeup.html-mode .closeup-back { display: none; }
+
+/* ---------- Cryo terminal close-up (HTML interface) ----------
+   Mounts inside .closeup-html. Positioned over the screen area of
+   "Cryo Room 1 Terminal Closeup.png" — coords are best-guess based
+   on a centered terminal screen and may need tuning once the final
+   art is in place.
+
+   No background fill: the closeup PNG carries the bezel/glass.
+   Text uses the terminal's blue HUD palette and a monospace face. */
+.cryo-terminal {
+  position: absolute;
+  /* Estimated screen area within the closeup image. Adjust these
+     four values once the actual PNG is in place to align with the
+     bezel. They're authored in 1920x1080 stage coords. */
+  left: 380px;
+  top:  200px;
+  width:  1160px;
+  height: 680px;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 36px;
+  pointer-events: auto;
+  font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
+  color: var(--hud-blue);
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+}
+
+.ct-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(108, 208, 255, 0.45);
+  padding-bottom: 10px;
+  margin-bottom: 18px;
+}
+.ct-title {
+  font: 600 22px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.32em;
+  color: var(--hud-blue);
+}
+.ct-subtitle {
+  font: 500 13px/1 monospace;
+  letter-spacing: 0.25em;
+  color: rgba(180, 220, 255, 0.7);
+}
+
+.ct-pod-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+.ct-pod-row {
+  display: grid;
+  grid-template-columns: 110px 1fr auto;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 16px;
+  background: rgba(8, 22, 38, 0.55);
+  border: 1px solid rgba(108, 208, 255, 0.25);
+  border-left: 3px solid rgba(108, 208, 255, 0.55);
+}
+.ct-pod-row.is-fault {
+  border-left-color: var(--warn-red);
+  box-shadow: inset 0 0 24px rgba(255, 80, 80, 0.08);
+}
+.ct-pod-row.is-self {
+  border-left-color: #9be7ff;
+}
+.ct-pod-num {
+  font: 700 16px/1 monospace;
+  letter-spacing: 0.18em;
+  color: var(--hud-blue);
+}
+.ct-pod-name {
+  font: 500 16px/1.2 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.1em;
+  color: #cfe7ff;
+}
+.ct-pod-name .ct-pod-name-sub {
+  display: block;
+  margin-top: 4px;
+  font: 400 12px/1.2 monospace;
+  letter-spacing: 0.18em;
+  color: rgba(180, 220, 255, 0.55);
+}
+.ct-pod-status {
+  font: 600 13px/1 monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--hud-blue);
+  white-space: nowrap;
+}
+.ct-pod-status.is-ok    { color: #9be7ff; }
+.ct-pod-status.is-warn  { color: #ffd070; }
+.ct-pod-status.is-fault { color: var(--warn-red); }
+.ct-pod-status.is-open  { color: #6cffae; }
+
+.ct-footer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+.ct-action {
+  font: 600 14px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.3em;
+  padding: 14px 30px;
+  color: var(--hud-blue);
+  background: linear-gradient(180deg, rgba(20, 60, 90, 0.55) 0%, rgba(8, 22, 38, 0.75) 100%);
+  border: 1px solid var(--frame-stroke);
+  cursor: pointer;
+  transition: color 150ms ease, box-shadow 200ms ease, border-color 150ms ease;
+}
+.ct-action:hover {
+  color: #fff;
+  box-shadow: 0 0 22px rgba(108, 208, 255, 0.3);
+}
+.ct-action:disabled,
+.ct-action.is-disabled {
+  color: rgba(180, 220, 255, 0.45);
+  border-color: rgba(108, 208, 255, 0.25);
+  background: rgba(8, 22, 38, 0.5);
+  cursor: not-allowed;
+  text-shadow: none;
+  box-shadow: none;
+}
+.ct-action.is-fault {
+  color: var(--warn-red);
+  border-color: rgba(255, 80, 80, 0.5);
+  text-shadow: 0 0 8px rgba(255, 80, 80, 0.4);
+}
 
 /* ---------- Placeholder wall (used for unfinished walls) ---------- */
 .placeholder-plate {

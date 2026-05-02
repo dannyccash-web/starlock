@@ -19,7 +19,8 @@
                 authored to match where the prop appears on the
                 composite, so clicking the *visual* item works.
      close-ups: a separate full-stage image per zoomable detail,
-                with its own sub-hot-spots.
+                with its own sub-hot-spots OR a fully custom HTML
+                interface (see CLOSEUPS.cryo_terminal).
 
    Coordinates are in a virtual 1920x1080 stage. Engine scales.
 
@@ -31,19 +32,31 @@
        placeholderLabel - shown if plate is null
        atmosphere     - CSS atmosphere class
        sprites[]      - { id, image, x, y, w, h, showIf?, hideIf? }
-                        Full-size overlay sprites use x:0,y:0,
-                        w:1920,h:1080. Smaller sprites (e.g. an
-                        item lying on the floor) can use a tighter
-                        rect.
        hotspots[]     - { id, shape: rect|poly, geom, label,
                           showIf?, hideIf?, requires?, action }
-   closeups[id]       - { image, hotspots[] }
+   closeups[id]       - { image, hotspots[] }            (image-only)
+                     OR { image, kind:"html", controller } (HTML UI)
    items[id]          - { name, icon, description }
 
    STATE FLAGS:
-     keycard_taken         - keycard sprite hidden, in inventory
-     viewed_pod_log        - pod 4 quarantine log read at least once
-     terminal_examined     - terminal panel has been read
+     pod4_wiring_repaired - the sabotaged wiring next to pod 4 has
+                            been reconnected. Required before the
+                            terminal will release pod 4.
+                            TODO: gated by a wiring-panel puzzle
+                            that hasn't been built yet. For dev
+                            testing, run `Engine.setFlag('pod4_wiring_repaired')`
+                            in the browser console.
+     pod4_opened          - the science officer's pod has been
+                            unsealed via the terminal. The corpse
+                            is visible and the keycard is now
+                            retrievable.
+     keycard_taken        - keycard sprite hidden, in inventory
+     bridge_door_unlocked - the door from the science lab into
+                            the bridge has been opened. Triggers
+                            the silent emptying of pod 4 (the
+                            corpse vanishes; the infected science
+                            officer becomes a roaming threat).
+                            (Set later, in a future room.)
    ============================================================ */
 
 const ITEMS = {
@@ -51,7 +64,7 @@ const ITEMS = {
     name: "Crew Keycard",
     icon:   "Images/items/keycard.png",
     cursor: "Images/items/keycard_cursor.png",
-    description: "Magnetic ID card. Unlocks low-level crew systems.",
+    description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
   },
 };
 
@@ -89,15 +102,16 @@ const ROOMS = {
           },
         ],
         hotspots: [
-          // Click the terminal screen → open the pod-status close-up.
-          // The hotspot bbox matches the visible terminal in the PNG
-          // (alpha bbox: x=728..1184, y=338..581).
+          // Click the terminal screen → open the interactive
+          // terminal close-up (HTML-driven). The hotspot bbox
+          // matches the visible terminal in the PNG (alpha bbox:
+          // x=728..1184, y=338..581).
           {
             id: "terminal",
             shape: "rect",
             geom: [728, 338, 456, 243],
             label: "Cryo control terminal",
-            action: { type: "openCloseup", target: "cryo_panel_g4" },
+            action: { type: "openCloseup", target: "cryo_terminal" },
           },
         ],
       },
@@ -148,19 +162,21 @@ const ROOMS = {
             image: "Images/Cryo%20Room%203%20Pods.png?v=2",
             x: 0, y: 0, w: 1920, h: 1080,
           },
-          // Crew keycard, dropped beside Pod 04 (the deceased crew
-          // member's pod). Hidden once the player picks it up.
+          // Crew keycard, retrievable from the science officer's suit
+          // ONLY after the pod has been unsealed via the terminal.
+          // Hidden once the player picks it up.
           {
-            id: "keycard_on_floor",
+            id: "keycard_in_pod",
             image: "Images/items/keycard.png",
             x: 1500, y: 880, w: 90, h: 56,
+            showIf: { all: ["pod4_opened"] },
             hideIf: { all: ["keycard_taken"] },
           },
         ],
         hotspots: [
-          // Four pod hotspots, sized to each pod's visible frame in
-          // the Pods.png overlay. Pods 2 and 3 are empty (others
-          // escaped); Pod 1 is the player's; Pod 4 is the corpse.
+          // Four pod hotspots. All flavour/lore lives in the
+          // terminal close-up; the pod hotspots themselves give
+          // only the bare physical observation.
           {
             id: "pod1",
             shape: "rect",
@@ -168,7 +184,7 @@ const ROOMS = {
             label: "Pod 01 — your pod",
             action: {
               type: "message",
-              message: "POD 01 — your own pod. Wake protocol triggered automatically. The frost is still on the inside of the glass.",
+              message: "Your pod. The lid is up and the inside is still cold.",
             },
           },
           {
@@ -178,7 +194,7 @@ const ROOMS = {
             label: "Pod 02",
             action: {
               type: "message",
-              message: "POD 02 — empty. Pod log shows a clean, authorized open. Suspicious, in retrospect.",
+              message: "The pod is empty.",
             },
           },
           {
@@ -188,33 +204,48 @@ const ROOMS = {
             label: "Pod 03",
             action: {
               type: "message",
-              message: "POD 03 — empty. Pod log shows a hurried open with override warnings.",
+              message: "The pod is empty.",
             },
           },
+          // Pod 04 — appearance changes after it's been opened, but
+          // the message at this hotspot stays deliberately bare.
+          // Identifying who's inside is the terminal's job.
           {
             id: "pod4",
             shape: "rect",
             geom: [1335, 80, 385, 800],
-            label: "Pod 04 — quarantine",
+            label: "Pod 04",
+            hideIf: { all: ["pod4_opened"] },
             action: {
-              type: "setState",
-              flags: ["viewed_pod_log"],
-              message: "POD 04 — occupant DECEASED. Cause: organism exposure. Quarantine protocol failed. The crewmember's hand still rests near the inner glass.",
+              type: "message",
+              message: "Someone is inside, sealed in an EVA suit. Looks dead — but you're not sure.",
             },
           },
-          // Pick up the keycard. Visible only while the keycard
-          // sprite is still on the floor.
+          {
+            id: "pod4_open",
+            shape: "rect",
+            geom: [1335, 80, 385, 800],
+            label: "Pod 04 — open",
+            showIf: { all: ["pod4_opened"] },
+            action: {
+              type: "message",
+              message: "The pod is open. The suited body inside hasn't moved.",
+            },
+          },
+          // Pick up the keycard. Visible only after pod 4 has been
+          // opened, hidden once the player picks it up.
           {
             id: "pickup_keycard",
             shape: "rect",
             geom: [1490, 870, 110, 80],
-            label: "Pick up keycard",
+            label: "Take keycard from suit",
+            showIf: { all: ["pod4_opened"] },
             hideIf: { all: ["keycard_taken"] },
             action: {
               type: "pickup",
               item: "keycard",
               flags: ["keycard_taken"],
-              message: "Crew keycard added to inventory.",
+              message: "You take the science officer's keycard from a clip on the suit.",
             },
           },
         ],
@@ -247,44 +278,15 @@ const ROOMS = {
 };
 
 const CLOSEUPS = {
-  // Pod-status terminal close-up (reached by clicking the terminal
-  // on Wall 1). Uses the existing cryo_panel_g4.png art.
-  cryo_panel_g4: {
-    image: "Images/closeups/cryo_panel_g4.png",
-    hotspots: [
-      {
-        id: "pod1",
-        shape: "rect",
-        geom: [180, 300, 380, 520],
-        label: "Pod 01 (your pod)",
-        action: { type: "message", message: "POD 01 — your own. Wake protocol triggered automatically." },
-      },
-      {
-        id: "pod2",
-        shape: "rect",
-        geom: [580, 300, 380, 520],
-        label: "Pod 02",
-        action: { type: "message", message: "POD 02 — empty. Pod log shows a clean, authorized open. (Suspicious in retrospect.)" },
-      },
-      {
-        id: "pod3",
-        shape: "rect",
-        geom: [980, 300, 380, 520],
-        label: "Pod 03",
-        action: { type: "message", message: "POD 03 — empty. Pod log shows a hurried open with override warnings." },
-      },
-      {
-        id: "pod4",
-        shape: "rect",
-        geom: [1380, 300, 380, 520],
-        label: "Pod 04 (quarantine)",
-        action: {
-          type: "setState",
-          flags: ["viewed_pod_log"],
-          message: "POD 04 — occupant DECEASED in quarantine. Cause: organism exposure. This is bad.",
-        },
-      },
-    ],
+  // Interactive terminal close-up: a full-screen background image of
+  // the terminal panel, with a custom HTML interface mounted on top
+  // of it (no overlay tinting — the PNG carries the visual frame).
+  // The engine recognises kind: "html" and dispatches to the
+  // controller registered under this id.
+  cryo_terminal: {
+    image: "Images/closeups/Cryo%20Room%201%20Terminal%20Closeup.png",
+    kind: "html",
+    controller: "cryo_terminal",
   },
 };
 

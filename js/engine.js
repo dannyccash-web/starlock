@@ -17,7 +17,9 @@ const Engine = (() => {
   const closeupEl   = document.getElementById("closeup");
   const closeupImg  = document.getElementById("closeup-image");
   const closeupHs   = document.getElementById("closeup-hotspots");
+  const closeupHtml = document.getElementById("closeup-html");
   const closeupBack = document.getElementById("closeup-back");
+  const closeupDown = document.getElementById("closeup-down");
   const arrowLeft   = document.getElementById("arrow-left");
   const arrowRight  = document.getElementById("arrow-right");
   const debugBadge  = document.getElementById("debug-badge");
@@ -200,22 +202,55 @@ const Engine = (() => {
     }
   }
 
-  /* ----- Close-ups ----- */
+  /* ----- Close-ups -----
+     Two flavours:
+       - Standard image close-up: rectangular hotspots authored in
+         stage coords are mounted on #closeup-hotspots.
+       - HTML close-up (kind: "html"): a registered controller mounts
+         a custom interactive UI into #closeup-html. The bottom-center
+         down-arrow becomes the player's exit; the top-left "Back"
+         button is hidden via the .html-mode class. */
+  const closeupControllers = {}; // id -> { mount(layer, ctx) }
+  function registerCloseupController(id, controller) {
+    closeupControllers[id] = controller;
+  }
   function openCloseup(id) {
     const c = STARLOCK_DATA.CLOSEUPS[id];
     if (!c) { console.warn("Unknown closeup", id); return; }
     state.activeCloseup = id;
     closeupImg.src = c.image;
     closeupHs.innerHTML = "";
+    closeupHtml.innerHTML = "";
 
-    // The close-up image is letterboxed inside the stage. Its hot spots
-    // are authored in stage coords (1920x1080), so we just place buttons
-    // on the closeupHs layer which fills the stage.
-    (c.hotspots || []).forEach((hs) => {
-      if (!visibleByFlags(hs)) return;
-      const btn = makeHotspot(hs, () => handleAction(hs));
-      closeupHs.appendChild(btn);
-    });
+    if (c.kind === "html") {
+      // HTML close-up: hand off rendering to the controller.
+      closeupEl.classList.add("html-mode");
+      closeupDown.classList.remove("hidden");
+      closeupHtml.classList.add("active");
+      const ctrl = closeupControllers[c.controller];
+      if (ctrl && typeof ctrl.mount === "function") {
+        ctrl.mount(closeupHtml, {
+          hasFlag,
+          setFlag,
+          showMessage,
+          renderActive,
+          closeCloseup,
+        });
+      } else {
+        console.warn("No controller registered for HTML closeup:", c.controller);
+      }
+    } else {
+      // Image close-up with hotspots.
+      closeupEl.classList.remove("html-mode");
+      closeupDown.classList.add("hidden");
+      closeupHtml.classList.remove("active");
+      (c.hotspots || []).forEach((hs) => {
+        if (!visibleByFlags(hs)) return;
+        const btn = makeHotspot(hs, () => handleAction(hs));
+        closeupHs.appendChild(btn);
+      });
+    }
+
     closeupEl.classList.remove("hidden");
     if (state.debug) hotspotEl.classList.add("debug"), closeupHs.classList.add("debug");
 
@@ -229,8 +264,13 @@ const Engine = (() => {
   function closeCloseup() {
     state.activeCloseup = null;
     closeupEl.classList.add("hidden");
+    closeupEl.classList.remove("html-mode");
+    closeupDown.classList.add("hidden");
+    closeupHtml.classList.remove("active");
+    closeupHtml.innerHTML = "";
   }
   closeupBack.addEventListener("click", closeCloseup);
+  closeupDown.addEventListener("click", closeCloseup);
 
   /* ----- Re-render whatever is currently on screen (after state change) ----- */
   function renderActive() {
@@ -278,6 +318,7 @@ const Engine = (() => {
     showMessage,
     setFlag,
     hasFlag,
+    registerCloseupController,
     _state: state, // for debugging in console
   };
 })();

@@ -43,11 +43,21 @@
       <!-- Lighting / atmosphere overlay (CSS-tintable, free of new images) -->
       <div id="atmosphere-layer" class="atmosphere-layer"></div>
 
-      <!-- Close-up / zoom-in viewer (hidden by default) -->
+      <!-- Close-up / zoom-in viewer (hidden by default).
+           Two flavours:
+             1. Image close-up: hotspots layer holds invisible click rects.
+             2. HTML close-up (cryo_terminal): a controller mounts a full
+                interactive UI into #closeup-html. The image still serves
+                as the visual frame; no overlay tint is added.
+           The bottom-center down-arrow is shown for HTML close-ups so the
+           player has a turn-arrow-styled exit (the top-left "Back" button
+           stays for image close-ups). -->
       <div id="closeup" class="closeup hidden">
         <img id="closeup-image" class="closeup-image" alt="" />
         <div id="closeup-hotspots" class="closeup-hotspots"></div>
+        <div id="closeup-html" class="closeup-html"></div>
         <button id="closeup-back" class="closeup-back" type="button" data-tw-text="&larr; Back">&larr; Back</button>
+        <button id="closeup-down" class="turn-arrow turn-down hidden" type="button" aria-label="Back out of close-up">&#10095;</button>
       </div>
 
       <!-- Turn arrows -->
@@ -120,6 +130,7 @@
   <script src="js/typewriter.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/engine.js"></script>
+  <script src="js/cryo_terminal.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
 </body>
