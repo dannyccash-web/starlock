@@ -402,16 +402,17 @@ html, body {
    Text uses the terminal's blue HUD palette and a monospace face. */
 .cryo-terminal {
   position: absolute;
-  /* Estimated screen area within the closeup image. Adjust these
-     four values once the actual PNG is in place to align with the
-     bezel. They're authored in 1920x1080 stage coords. */
-  left: 380px;
-  top:  200px;
-  width:  1160px;
-  height: 680px;
+  /* Tuned to the screen interior of "Cryo Room 1 Terminal Closeup.png":
+     the dark glass area runs roughly x:250..1700, y:160..940 in the
+     1920x1080 stage. We seat the interface a few px inside that so
+     text and dividers don't kiss the bezel. */
+  left: 280px;
+  top:  190px;
+  width:  1390px;
+  height: 720px;
   display: flex;
   flex-direction: column;
-  padding: 28px 36px;
+  padding: 32px 44px;
   pointer-events: auto;
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
