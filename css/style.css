@@ -616,8 +616,26 @@ html, body {
 .ct-detail-actions {
   margin-top: auto;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
   padding-top: 8px;
+}
+
+/* In-terminal error / status message (shown below the action button
+   so it feels like a machine response, not a scene overlay). */
+.ct-terminal-error {
+  font: 600 12px/1.5 monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warn-red, #ff6b6b);
+  border: 1px solid rgba(255, 77, 77, 0.3);
+  background: rgba(255, 77, 77, 0.06);
+  padding: 8px 14px;
+  border-radius: 2px;
+  white-space: pre-line;
+  text-align: right;
+  max-width: 400px;
 }
 
 /* Action button (used by the OPEN POD action on pod 4 detail). */
@@ -1115,3 +1133,9 @@ html, body {
 
 /* ---------- Utility ---------- */
 .hidden { display: none !important; }
+
+/* Equipped-item indicator chip removed from HUD —
+   equipping is done through the menu only; the cursor
+   signals what's equipped. Keep the element in the DOM
+   but never show it regardless of JS state. */
+#equipped-indicator { display: none !important; }

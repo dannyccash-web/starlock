@@ -99,6 +99,7 @@
   // open of the terminal starts on the pod list.
   let currentView = "list";       // "list" | "detail"
   let selectedPodNum = null;
+  let terminalError = null;       // In-terminal error string (null = no error)
 
   /* ---------- DOM helper ---------- */
   function el(tag, attrs, children) {
@@ -200,6 +201,7 @@
           onclick: () => {
             currentView = "list";
             selectedPodNum = null;
+            terminalError = null;
             ctx.renderActive();
           },
         }, ["❮ POD LIST"]),
@@ -221,9 +223,16 @@
           el("span", { class: "ct-detail-notes-label" }, ["NOTES"]),
           el("p",    { class: "ct-detail-notes-body"  }, [crew.notes]),
         ]),
-        // Action button only on pod 4.
+        // Action button only on pod 4. Inline error message shown here
+        // (not in the game-wide message bar) so it feels like a terminal
+        // response rather than a scene event.
         podNum === 4
-          ? el("div", { class: "ct-detail-actions" }, [buildOpenButton(ctx)])
+          ? el("div", { class: "ct-detail-actions" }, [
+              buildOpenButton(ctx),
+              terminalError
+                ? el("div", { class: "ct-terminal-error" }, [terminalError])
+                : null,
+            ])
           : null,
       ]),
     ]);
@@ -247,12 +256,14 @@
       class: "ct-action",
       onclick: () => {
         if (!hasFlag("pod4_wiring_repaired")) {
-          showMessage(
-            "Pod 04: external interlock has no power. Repair the " +
-            "sabotaged wiring panel beside the pod first."
-          );
+          // Show error inside the terminal, not in the scene message bar.
+          terminalError =
+            "FAULT: EXTERNAL INTERLOCK — NO POWER\n" +
+            "Wiring panel beside pod 04 must be repaired before release.";
+          renderActive();
           return;
         }
+        terminalError = null;
         setFlag("pod4_opened");
         showMessage("Pod 04 unsealed. Frost vents off the inner glass.");
         renderActive();
@@ -273,6 +284,7 @@
   function unmount() {
     currentView = "list";
     selectedPodNum = null;
+    terminalError = null;
   }
 
   // Register with the engine on load. Engine.js is loaded before

@@ -143,10 +143,10 @@ const ROOMS = {
       // ============================================================
       // WALL 2 — SCIENCE LAB DOOR (turn right from terminal)
       // ============================================================
-      // Cryo Room 2.png updated May 2026 (v3): foil jacket added.
+      // Cryo Room 2.png updated May 2026 (v4): keycard reader panel added.
       {
         id: "cryo_wall_2_lab_door",
-        plate: "Images/Cryo%20Room%202.png?v=3",
+        plate: "Images/Cryo%20Room%202.png?v=4",
         atmosphere: "cryo-emergency",
         sprites: [
           // Chest 001 — bottom-left. Closed by default; swaps to open.
@@ -177,21 +177,51 @@ const ROOMS = {
           },
         ],
         hotspots: [
-          // The central pressure door. Locked; reader accepts the
-          // crew keycard but the lab circuit has no power yet.
+          // ---- Science Lab door (locked state) ----
+          // Hidden once the keycard has been used on the reader panel.
           {
-            id: "lab_door",
+            id: "lab_door_locked",
             shape: "rect",
             geom: [670, 80, 580, 840],
             label: "Door — 02: Science Lab",
+            hideIf: { all: ["lab_door_unlocked"] },
+            action: {
+              type: "message",
+              message: "The door is sealed. A card reader is mounted on the panel to the right.",
+            },
+          },
+          // ---- Science Lab door (open state) ----
+          // Visible once the door has been unlocked with the keycard.
+          // NOTE: Replace with gotoRoom action when the lab is built.
+          {
+            id: "lab_door_open",
+            shape: "rect",
+            geom: [670, 80, 580, 840],
+            label: "Door — 02: Science Lab (open)",
+            showIf: { all: ["lab_door_unlocked"] },
+            action: {
+              type: "message",
+              message: "The Science Lab door is open. [Room coming soon]",
+            },
+          },
+          // ---- Keycard reader panel (right of the door) ----
+          // Hidden once the door is already unlocked.
+          // NOTE: Adjust geom once art position is confirmed (press D for debug overlay).
+          {
+            id: "lab_keycard_reader",
+            shape: "rect",
+            geom: [1270, 300, 160, 350],
+            label: "Keycard reader — Science Lab",
+            hideIf: { all: ["lab_door_unlocked"] },
             action: {
               type: "useItem",
               accepts: ["keycard"],
               onAccept: {
-                message: "The keycard reader blinks green, but the door's actuators have no power. You'll need to restore the lab circuit first.",
+                flags: ["lab_door_unlocked"],
+                message: "The reader blinks green. A deep clunk echoes through the door frame as the actuators release. Science Lab is open.",
               },
               onReject: {
-                message: "The door is locked. There's a card reader beside it. Label: 02 — SCIENCE LAB.",
+                message: "A keycard reader. Label: 02 — SCIENCE LAB.",
               },
             },
           },
@@ -243,11 +273,10 @@ const ROOMS = {
               onAccept: {
                 addItem: "foil_strips",
                 flags: ["foil_jacket_used"],
-                consume: true,
-                message: "You cut several strips of conductive foil from the jacket. The shears are spent. You pocket the foil strips.",
+                message: "You cut several strips from the jacket lining and pocket them.",
               },
               onReject: {
-                message: "A metallic foil jacket, the kind worn during EVA prep. The material looks like it could conduct electricity — if you had something to cut strips from it.",
+                message: "A heavy EVA jacket made of a layered, conductive material.",
               },
             },
           },
@@ -295,16 +324,8 @@ const ROOMS = {
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["bridge_door_unlocked"] },
           },
-          // Crew keycard, retrievable from the science officer's suit
-          // ONLY after the pod has been unsealed via the terminal.
-          // Hidden once the player picks it up.
-          {
-            id: "keycard_in_pod",
-            image: "Images/items/keycard.png",
-            x: 1500, y: 880, w: 90, h: 56,
-            showIf: { all: ["pod4_opened"] },
-            hideIf: { all: ["keycard_taken"] },
-          },
+          // (Keycard is retrieved by clicking the suited body after
+          // the pod opens — no floating sprite needed.)
         ],
         hotspots: [
           // ---- Wiring access panel (bottom-right of the pod wall) ----
@@ -315,7 +336,7 @@ const ROOMS = {
           {
             id: "wiring_box",
             shape: "rect",
-            geom: [1720, 840, 165, 160],
+            geom: [1720, 670, 165, 250],
             label: "Wiring access panel",
             hideIf: { all: ["pod4_wiring_repaired"] },
             action: {
@@ -379,31 +400,32 @@ const ROOMS = {
               message: "Someone is inside, sealed in an EVA suit. Looks dead — but you're not sure.",
             },
           },
+          // Pod 04 open — clicking the body searches the suit.
+          // Before the keycard has been taken, the action picks it up.
+          // After, the hotspot gives a bare observation.
           {
-            id: "pod4_open",
+            id: "pod4_open_search",
             shape: "rect",
             geom: [1335, 80, 385, 800],
-            label: "Pod 04 — open",
-            showIf: { all: ["pod4_opened"] },
-            action: {
-              type: "message",
-              message: "The pod is open. The suited body inside hasn't moved.",
-            },
-          },
-          // Pick up the keycard. Visible only after pod 4 has been
-          // opened, hidden once the player picks it up.
-          {
-            id: "pickup_keycard",
-            shape: "rect",
-            geom: [1490, 870, 110, 80],
-            label: "Take keycard from suit",
+            label: "Pod 04 — search the body",
             showIf: { all: ["pod4_opened"] },
             hideIf: { all: ["keycard_taken"] },
             action: {
               type: "pickup",
               item: "keycard",
               flags: ["keycard_taken"],
-              message: "You take the science officer's keycard from a clip on the suit.",
+              message: "You search the EVA suit. Tucked inside the collar, clipped to the lining, you find a crew keycard.",
+            },
+          },
+          {
+            id: "pod4_open_searched",
+            shape: "rect",
+            geom: [1335, 80, 385, 800],
+            label: "Pod 04 — open",
+            showIf: { all: ["pod4_opened", "keycard_taken"] },
+            action: {
+              type: "message",
+              message: "The pod is open. The suited body is still inside.",
             },
           },
         ],

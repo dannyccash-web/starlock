@@ -162,35 +162,12 @@
   }
 
   /* ---------- Equipped indicator ----------
-     The chip is hidden when nothing is equipped. On the FIRST time
-     it becomes visible we typewriter the static "Equipped" label
-     plus the item's name; subsequent renders just swap the name
-     directly so swapping equipped items doesn't re-type the label. */
-  const equipLabelEl = equipIndicator.querySelector(".eq-label");
-  let equipNameTyped = null;
-  function renderEquippedIndicator(equipped) {
-    if (!equipped) {
-      equipIndicator.classList.add("hidden");
-      equipIcon.style.backgroundImage = "";
-      equipName.textContent = "";
-      equipNameTyped = null;
-      return;
-    }
-    const def = STARLOCK_DATA.ITEMS[equipped];
-    if (!def) {
-      equipIndicator.classList.add("hidden");
-      return;
-    }
-    equipIcon.style.backgroundImage = `url('${def.icon}')`;
-    equipIndicator.classList.remove("hidden");
-    // First-reveal typewriter for the "Equipped" label.
-    if (equipLabelEl && equipLabelEl.dataset.twText) {
-      Typewriter.typeOnce(equipLabelEl, equipLabelEl.dataset.twText, { speed: 30 });
-    }
-    if (equipNameTyped !== equipped) {
-      equipNameTyped = equipped;
-      Typewriter.type(equipName, def.name, { speed: 22 });
-    }
+     The indicator chip has been removed from the HUD — equipping is
+     done via the inventory menu only, and the cursor change (handled
+     by inventory.js) signals the equipped item visually. The element
+     stays in the DOM but is always hidden. */
+  function renderEquippedIndicator(_equipped) {
+    equipIndicator.classList.add("hidden");
   }
 
   /* ---------- Sync on inventory changes ---------- */
