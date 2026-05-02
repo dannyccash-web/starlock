@@ -2,6 +2,8 @@
    STARLOCK - BOOT
    - Scales the 1920x1080 stage to fit the viewport
    - Wires the START button to fade into the cryo room
+   - Typewriter-animates the START label and opening message
+   - Boots the looping background soundtrack on first user click
    ============================================================ */
 
 (function () {
@@ -20,8 +22,23 @@
   window.addEventListener("resize", fitStage);
   fitStage();
 
+  // Typewriter the START button label on initial load. main.js is
+  // loaded at the end of <body>, so the DOM is already parsed by the
+  // time we get here — schedule the typewriter on a short timeout so
+  // the start screen has a beat to fade in before the letters appear.
+  // (We keep the existing "START" textContent in HTML so that if JS
+  // ever fails to load, the player still sees a real button label.)
+  setTimeout(() => {
+    const txt = startBtn.dataset.twText || startBtn.textContent;
+    Typewriter.typeOnce(startBtn, txt, { speed: 80 });
+  }, 250);
+
   // START -> game
   startBtn.addEventListener("click", () => {
+    // The START click is also the player's first user gesture, which
+    // satisfies browser autoplay policies. Kick off the soundtrack now.
+    GameAudio.startSoundtrack();
+
     // Cross-fade the start section out and the game section in.
     startSec.style.transition = "opacity 600ms ease";
     startSec.style.opacity = "0";
@@ -34,7 +51,13 @@
       void gameSec.offsetWidth;
       gameSec.style.opacity = "1";
       Engine.startRoom("cryo");
+      // The other data-tw-text elements inside the game screen
+      // (game-menu labels, closeup "Back" button, equipped-indicator
+      // label) all typewriter themselves the first time they become
+      // visible. So we don't pre-animate anything here — the opening
+      // showMessage call below is enough on initial reveal.
       // Show an opening line so first-time players know what to do.
+      // showMessage() now typewrites the text and plays the SFX.
       setTimeout(() => {
         Engine.showMessage("You wake up. Emergency lighting only. Look around.", 5000);
       }, 700);

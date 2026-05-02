@@ -624,5 +624,111 @@ html, body {
 }
 .debug-badge.hidden { display: none; }
 
+/* ---------- Typewriter ----------
+   The Typewriter module wraps an element's text in two spans:
+   .tw-text (the visible text that grows char-by-char) and
+   .tw-caret (a blinking block cursor that hides itself when
+   typing finishes). The .typewriting class is applied while the
+   animation is in flight; we use it to keep the caret blinking
+   only during typing. */
+.tw-text { white-space: pre-wrap; }
+.tw-caret {
+  display: inline-block;
+  margin-left: 2px;
+  font-weight: 700;
+  color: var(--hud-blue);
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.6);
+  animation: tw-caret-blink 0.7s steps(2, end) infinite;
+}
+@keyframes tw-caret-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0; }
+}
+/* Some elements (small button labels, inline tags) look better
+   with a thinner caret. We could add modifiers later if needed. */
+
+/* ---------- Settings panel ---------- */
+.settings-section-title {
+  margin: 0 0 14px;
+  font: 600 14px/1 "Eurostile", "Bahnschrift", system-ui, sans-serif;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--hud-blue);
+  border-bottom: 1px solid rgba(108, 208, 255, 0.25);
+  padding-bottom: 10px;
+}
+.settings-row {
+  display: grid;
+  grid-template-columns: 110px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.settings-label {
+  font: 500 14px/1 "Eurostile", "Bahnschrift", system-ui, sans-serif;
+  letter-spacing: 0.18em;
+  color: #cfe7ff;
+  text-transform: uppercase;
+}
+.settings-value {
+  font: 500 13px/1 monospace;
+  color: var(--hud-blue);
+  text-align: right;
+  letter-spacing: 0.05em;
+  min-width: 38px;
+}
+
+/* Slider styling. We re-skin the native range input so it matches
+   the rest of the HUD chrome. The track is a thin glowing line and
+   the thumb is a small bright square. */
+.settings-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 22px;
+  background: transparent;
+  cursor: pointer;
+}
+.settings-slider:focus { outline: none; }
+
+/* Track */
+.settings-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  background: linear-gradient(90deg, rgba(108, 208, 255, 0.55) 0%, rgba(108, 208, 255, 0.15) 100%);
+  border: 1px solid rgba(108, 208, 255, 0.35);
+  box-shadow: 0 0 10px rgba(108, 208, 255, 0.2);
+}
+.settings-slider::-moz-range-track {
+  height: 4px;
+  background: linear-gradient(90deg, rgba(108, 208, 255, 0.55) 0%, rgba(108, 208, 255, 0.15) 100%);
+  border: 1px solid rgba(108, 208, 255, 0.35);
+  box-shadow: 0 0 10px rgba(108, 208, 255, 0.2);
+}
+
+/* Thumb */
+.settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 22px;
+  margin-top: -10px;
+  background: var(--hud-blue);
+  border: 1px solid #cfe7ff;
+  border-radius: 1px;
+  box-shadow: 0 0 12px rgba(108, 208, 255, 0.7);
+  cursor: pointer;
+  transition: transform 100ms ease;
+}
+.settings-slider::-webkit-slider-thumb:hover { transform: scaleY(1.05); }
+.settings-slider::-moz-range-thumb {
+  width: 14px;
+  height: 22px;
+  background: var(--hud-blue);
+  border: 1px solid #cfe7ff;
+  border-radius: 1px;
+  box-shadow: 0 0 12px rgba(108, 208, 255, 0.7);
+  cursor: pointer;
+}
+
 /* ---------- Utility ---------- */
 .hidden { display: none !important; }

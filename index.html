@@ -24,7 +24,8 @@
       <!-- Layer 3: foreground content. -->
       <div class="start-content">
         <img class="start-logo" src="Images/starlock_logo.png" alt="Starlock" />
-        <button id="start-button" class="start-btn" type="button">START</button>
+        <button id="start-button" class="start-btn" type="button"
+                data-tw-text="START">START</button>
       </div>
     </section>
 
@@ -46,7 +47,7 @@
       <div id="closeup" class="closeup hidden">
         <img id="closeup-image" class="closeup-image" alt="" />
         <div id="closeup-hotspots" class="closeup-hotspots"></div>
-        <button id="closeup-back" class="closeup-back" type="button">&larr; Back</button>
+        <button id="closeup-back" class="closeup-back" type="button" data-tw-text="&larr; Back">&larr; Back</button>
       </div>
 
       <!-- Turn arrows -->
@@ -62,7 +63,7 @@
 
       <!-- Equipped-item indicator (only visible when an item is equipped) -->
       <div id="equipped-indicator" class="equipped-indicator hidden" aria-live="polite">
-        <span class="eq-label">Equipped</span>
+        <span class="eq-label" data-tw-text="Equipped">Equipped</span>
         <span class="eq-icon" aria-hidden="true"></span>
         <span class="eq-name"></span>
       </div>
@@ -70,24 +71,38 @@
       <!-- Slide-in game menu (Inventory / Settings / Return to Start) -->
       <aside id="game-menu" class="game-menu" aria-label="Game menu" aria-hidden="true">
         <header class="game-menu-header">
-          <h2>Menu</h2>
+          <h2 data-tw-text="Menu">Menu</h2>
           <button id="menu-close" class="menu-close" type="button" aria-label="Close menu">&times;</button>
         </header>
         <nav class="game-menu-nav" role="tablist">
-          <button class="game-menu-tab active" data-tab="inventory" type="button" role="tab" aria-selected="true">Inventory</button>
-          <button class="game-menu-tab" data-tab="settings" type="button" role="tab" aria-selected="false">Settings</button>
+          <button class="game-menu-tab active" data-tab="inventory" type="button" role="tab" aria-selected="true" data-tw-text="Inventory">Inventory</button>
+          <button class="game-menu-tab" data-tab="settings" type="button" role="tab" aria-selected="false" data-tw-text="Settings">Settings</button>
         </nav>
         <div class="game-menu-body">
           <section data-panel="inventory" class="game-menu-panel active" role="tabpanel">
             <div id="menu-inventory-grid" class="menu-inventory-grid"></div>
-            <p id="menu-inventory-empty" class="menu-empty-msg">No items collected yet. Look around the ship.</p>
+            <p id="menu-inventory-empty" class="menu-empty-msg" data-tw-text="No items collected yet. Look around the ship.">No items collected yet. Look around the ship.</p>
           </section>
           <section data-panel="settings" class="game-menu-panel" role="tabpanel">
-            <p class="menu-placeholder">Settings coming soon.</p>
+            <h3 class="settings-section-title" data-tw-text="Audio">Audio</h3>
+            <div class="settings-row">
+              <label class="settings-label" for="vol-soundtrack" data-tw-text="Soundtrack">Soundtrack</label>
+              <input id="vol-soundtrack" class="settings-slider" type="range"
+                     min="0" max="1" step="0.01" value="0.45"
+                     aria-label="Soundtrack volume" />
+              <span id="vol-soundtrack-value" class="settings-value">45</span>
+            </div>
+            <div class="settings-row">
+              <label class="settings-label" for="vol-effects" data-tw-text="Effects">Effects</label>
+              <input id="vol-effects" class="settings-slider" type="range"
+                     min="0" max="1" step="0.01" value="0.7"
+                     aria-label="Effects volume" />
+              <span id="vol-effects-value" class="settings-value">70</span>
+            </div>
           </section>
         </div>
         <footer class="game-menu-footer">
-          <button id="menu-return-start" class="menu-action-btn danger" type="button">Return to Start Screen</button>
+          <button id="menu-return-start" class="menu-action-btn danger" type="button" data-tw-text="Return to Start Screen">Return to Start Screen</button>
         </footer>
       </aside>
 
@@ -97,8 +112,12 @@
 
   </div>
 
-  <!-- Engine + data. Order matters: data first, then systems, then boot. -->
+  <!-- Engine + data. Order matters: data first, then systems, then boot.
+       audio.js must precede typewriter.js (typewriter pulls SFX from it),
+       and both must precede engine/ui (which call into Typewriter). -->
   <script src="js/scenes.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/typewriter.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/ui.js"></script>

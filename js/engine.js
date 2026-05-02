@@ -42,14 +42,25 @@ const Engine = (() => {
     return true;
   }
 
-  /* ----- Message bar ----- */
+  /* ----- Message bar -----
+     Messages typewrite in via the Typewriter module (which also
+     plays the looping typewriter SFX while it's animating). The
+     auto-hide timer starts AFTER the typing finishes so the player
+     always gets to read the full message. The duration arg here
+     refers to how long to keep the message on screen *after* it
+     finishes typing. */
   let msgTimer = null;
   function showMessage(text, duration = 3500) {
     if (!text) return;
-    messageEl.textContent = text;
     messageEl.classList.add("show");
     clearTimeout(msgTimer);
-    msgTimer = setTimeout(() => messageEl.classList.remove("show"), duration);
+    Typewriter.type(messageEl, text).then(() => {
+      clearTimeout(msgTimer);
+      msgTimer = setTimeout(
+        () => messageEl.classList.remove("show"),
+        duration
+      );
+    });
   }
 
   /* ----- Render the current wall ----- */
@@ -207,6 +218,13 @@ const Engine = (() => {
     });
     closeupEl.classList.remove("hidden");
     if (state.debug) hotspotEl.classList.add("debug"), closeupHs.classList.add("debug");
+
+    // Typewriter the "Back" label the first time the closeup is opened,
+    // so its text feels like it's coming through the same terminal as
+    // every other in-game string.
+    if (closeupBack && closeupBack.dataset.twText) {
+      Typewriter.typeOnce(closeupBack, closeupBack.dataset.twText, { speed: 28 });
+    }
   }
   function closeCloseup() {
     state.activeCloseup = null;

@@ -71,16 +71,20 @@ const ROOMS = {
       // ============================================================
       // WALL 1 — TERMINAL (the wall the player faces on wake-up)
       // ============================================================
+      // NOTE: ?v=2 is a cache-buster appended to all cryo room art
+      // after the May 2026 image refresh. Bump the integer the next
+      // time we replace any of these PNGs so browsers reliably load
+      // the new file instead of the cached old one.
       {
         id: "cryo_wall_1_terminal",
-        plate: "Images/Cryo%20Room%201.png",
+        plate: "Images/Cryo%20Room%201.png?v=2",
         atmosphere: "cryo-emergency",
         sprites: [
           // Terminal mounted on the wall. Full-size transparent
           // overlay PNG — props are pre-positioned in the file.
           {
             id: "wall_terminal",
-            image: "Images/Cryo%20Room%201%20Terminal.png",
+            image: "Images/Cryo%20Room%201%20Terminal.png?v=2",
             x: 0, y: 0, w: 1920, h: 1080,
           },
         ],
@@ -103,7 +107,7 @@ const ROOMS = {
       // ============================================================
       {
         id: "cryo_wall_2_lab_door",
-        plate: "Images/Cryo%20Room%202.png",
+        plate: "Images/Cryo%20Room%202.png?v=2",
         atmosphere: "cryo-emergency",
         sprites: [],
         hotspots: [
@@ -133,7 +137,7 @@ const ROOMS = {
       // ============================================================
       {
         id: "cryo_wall_3_pods",
-        plate: "Images/Cryo%20Room%203.png",
+        plate: "Images/Cryo%20Room%203.png?v=2",
         atmosphere: "cryo-emergency",
         sprites: [
           // The whole row of 4 cryo pods is one transparent overlay.
@@ -141,7 +145,7 @@ const ROOMS = {
           //  flipping showIf/hideIf flags.)
           {
             id: "wall_pods",
-            image: "Images/Cryo%20Room%203%20Pods.png",
+            image: "Images/Cryo%20Room%203%20Pods.png?v=2",
             x: 0, y: 0, w: 1920, h: 1080,
           },
           // Crew keycard, dropped beside Pod 04 (the deceased crew
@@ -221,7 +225,7 @@ const ROOMS = {
       // ============================================================
       {
         id: "cryo_wall_4_shuttle_door",
-        plate: "Images/Cryo%20Room%204.png",
+        plate: "Images/Cryo%20Room%204.png?v=2",
         atmosphere: "cryo-emergency",
         sprites: [],
         hotspots: [
