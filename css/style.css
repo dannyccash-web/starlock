@@ -1029,5 +1029,89 @@ html, body {
   cursor: pointer;
 }
 
+/* ---------- Combination lock close-up (chest 003, Wall 4) ----------
+   Mounts inside .closeup-html. A centred dark panel sits over the
+   chest closeup image and holds the three digit-wheel buttons. */
+.combo-lock-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Nudge upward slightly so the panel sits over the lock area of
+     the chest image rather than dead-centre of the screen. */
+  padding-bottom: 80px;
+}
+.combo-lock-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  background: #000;
+  border: 2px solid rgba(108, 208, 255, 0.45);
+  border-radius: 8px;
+  padding: 36px 52px 32px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.85), 0 0 20px rgba(108, 208, 255, 0.12);
+}
+.combo-lock-label {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  letter-spacing: 0.22em;
+  color: rgba(108, 208, 255, 0.6);
+  text-transform: uppercase;
+}
+.combo-lock-digits {
+  display: flex;
+  gap: 20px;
+}
+.combo-digit {
+  width: 100px;
+  height: 130px;
+  background: #111;
+  border: 2px solid rgba(108, 208, 255, 0.5);
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 72px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 80ms ease, border-color 80ms ease, transform 60ms ease;
+  user-select: none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.6), 0 0 10px rgba(0,0,0,0.4);
+}
+.combo-digit:hover {
+  background: #1a1a1a;
+  border-color: var(--hud-blue);
+  transform: translateY(-2px);
+}
+.combo-digit:active {
+  transform: translateY(0);
+  background: #0d0d0d;
+}
+.combo-lock-hint {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: rgba(108, 208, 255, 0.35);
+  text-transform: uppercase;
+}
+/* Solved flash state */
+.combo-lock-solved {
+  min-width: 320px;
+  min-height: 120px;
+  justify-content: center;
+}
+.combo-lock-solved-text {
+  font-family: var(--font-mono);
+  font-size: 42px;
+  letter-spacing: 0.3em;
+  color: #6cffae;
+  text-shadow: 0 0 24px rgba(108, 255, 174, 0.7);
+  text-transform: uppercase;
+}
+
 /* ---------- Utility ---------- */
 .hidden { display: none !important; }

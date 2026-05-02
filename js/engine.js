@@ -184,6 +184,7 @@ const Engine = (() => {
         const eq = Inventory.getEquipped();
         if (eq && (a.accepts || []).includes(eq)) {
           (a.onAccept?.flags || []).forEach(setFlag);
+          if (a.onAccept?.addItem) Inventory.addItem(a.onAccept.addItem);
           if (a.onAccept?.message) showMessage(a.onAccept.message);
           if (a.onAccept?.consume) Inventory.removeItem(eq);
         } else {

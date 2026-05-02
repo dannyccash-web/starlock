@@ -73,12 +73,21 @@ const ITEMS = {
     description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
   },
 
-  // TODO: add icon + cursor images when art is ready.
-  // Foil strips are found elsewhere in the ship and used to patch the
-  // severed wiring panel beside cryo pod 4.
+  // Found in chest 003 on Wall 4 (combo lock, code: 003).
+  // Equip and use on the metallic foil jacket in Wall 2 to
+  // obtain foil strips.
+  metal_shears: {
+    name: "Metal Shears",
+    icon:   "Images/items/metal%20shears.png",
+    description: "Heavy-duty cutting shears. Could slice through thin metal or foil.",
+  },
+
+  // Obtained by using the metal shears on the foil jacket in
+  // Wall 2. Used to repair the severed wiring panel beside
+  // cryo pod 4 in Wall 3.
   foil_strips: {
     name: "Foil Strips",
-    icon:   "Images/items/foil_strips.png",
+    icon:   "Images/items/foil%20strips.png",
     description: "A few lengths of conductive foil tape. Thin enough to bridge a broken circuit.",
   },
 };
@@ -134,11 +143,39 @@ const ROOMS = {
       // ============================================================
       // WALL 2 — SCIENCE LAB DOOR (turn right from terminal)
       // ============================================================
+      // Cryo Room 2.png updated May 2026 (v3): foil jacket added.
       {
         id: "cryo_wall_2_lab_door",
-        plate: "Images/Cryo%20Room%202.png?v=2",
+        plate: "Images/Cryo%20Room%202.png?v=3",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          // Chest 001 — bottom-left. Closed by default; swaps to open.
+          {
+            id: "chest2_001_closed",
+            image: "Images/Cryo%20Room%202%20001%20closed.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["chest2_001_opened"] },
+          },
+          {
+            id: "chest2_001_open",
+            image: "Images/Cryo%20Room%202%20001%20open.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["chest2_001_opened"] },
+          },
+          // Chest 002 — bottom-right. Same open/close swap.
+          {
+            id: "chest2_002_closed",
+            image: "Images/Cryo%20Room%202%20002%20closed.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["chest2_002_opened"] },
+          },
+          {
+            id: "chest2_002_open",
+            image: "Images/Cryo%20Room%202%20002%20open.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["chest2_002_opened"] },
+          },
+        ],
         hotspots: [
           // The central pressure door. Locked; reader accepts the
           // crew keycard but the lab circuit has no power yet.
@@ -155,6 +192,62 @@ const ROOMS = {
               },
               onReject: {
                 message: "The door is locked. There's a card reader beside it. Label: 02 — SCIENCE LAB.",
+              },
+            },
+          },
+
+          // ---- Chest 001 (bottom-left) ----
+          // Bbox of closed chest sprite: x=181–544, y=803–1011
+          {
+            id: "chest2_001",
+            shape: "rect",
+            geom: [181, 803, 363, 208],
+            label: "Storage chest",
+            hideIf: { all: ["chest2_001_opened"] },
+            action: {
+              type: "setState",
+              flags: ["chest2_001_opened"],
+              message: "The chest is empty.",
+            },
+          },
+
+          // ---- Chest 002 (bottom-right) ----
+          // Bbox of closed chest sprite: x=1390–1756, y=800–1009
+          {
+            id: "chest2_002",
+            shape: "rect",
+            geom: [1390, 800, 366, 209],
+            label: "Storage chest",
+            hideIf: { all: ["chest2_002_opened"] },
+            action: {
+              type: "setState",
+              flags: ["chest2_002_opened"],
+              message: "The chest is empty.",
+            },
+          },
+
+          // ---- Foil jacket (left wall, above chest 001) ----
+          // Equip the metal shears and use them here to obtain foil strips.
+          // Hotspot covers the visible jacket area; hidden once stripped.
+          // NOTE: Adjust geom in debug mode (D key) once final art position
+          // is confirmed.
+          {
+            id: "foil_jacket",
+            shape: "rect",
+            geom: [200, 300, 450, 480],
+            label: "Metallic foil jacket",
+            hideIf: { all: ["foil_jacket_used"] },
+            action: {
+              type: "useItem",
+              accepts: ["metal_shears"],
+              onAccept: {
+                addItem: "foil_strips",
+                flags: ["foil_jacket_used"],
+                consume: true,
+                message: "You cut several strips of conductive foil from the jacket. The shears are spent. You pocket the foil strips.",
+              },
+              onReject: {
+                message: "A metallic foil jacket, the kind worn during EVA prep. The material looks like it could conduct electricity — if you had something to cut strips from it.",
               },
             },
           },
@@ -319,11 +412,39 @@ const ROOMS = {
       // ============================================================
       // WALL 4 — SHUTTLE BAY DOOR (turn right again, or left from W1)
       // ============================================================
+      // Cryo Room 4.png updated May 2026 (v3): chests visible in scene.
       {
         id: "cryo_wall_4_shuttle_door",
-        plate: "Images/Cryo%20Room%204.png?v=2",
+        plate: "Images/Cryo%20Room%204.png?v=3",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          // Chest 003 — bottom-left. Opens via combination lock (code: 003).
+          {
+            id: "chest4_003_closed",
+            image: "Images/Cryo%20Room%204%20003%20closed.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["chest4_003_opened"] },
+          },
+          {
+            id: "chest4_003_open",
+            image: "Images/Cryo%20Room%204%20003%20open.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["chest4_003_opened"] },
+          },
+          // Chest 004 — bottom-right. Empty.
+          {
+            id: "chest4_004_closed",
+            image: "Images/Cryo%20Room%204%20004%20closed.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["chest4_004_opened"] },
+          },
+          {
+            id: "chest4_004_open",
+            image: "Images/Cryo%20Room%204%20004%20open.png?v=1",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["chest4_004_opened"] },
+          },
+        ],
         hotspots: [
           // Sealed door — the shuttle bay beyond is exposed to vacuum.
           {
@@ -334,6 +455,36 @@ const ROOMS = {
             action: {
               type: "message",
               message: "SEALED. Label: 04 — SHUTTLE BAY. The bay beyond is exposed to vacuum. Opening this would kill you.",
+            },
+          },
+
+          // ---- Chest 003 (bottom-left) — combination lock ----
+          // Bbox of closed chest sprite: x=159–556, y=784–1010
+          // Clicking opens the combo-lock close-up (3-digit, code: 003).
+          {
+            id: "chest4_003",
+            shape: "rect",
+            geom: [159, 784, 397, 226],
+            label: "Locked chest",
+            hideIf: { all: ["chest4_003_opened"] },
+            action: {
+              type: "openCloseup",
+              target: "cryo_chest_combo",
+            },
+          },
+
+          // ---- Chest 004 (bottom-right) — empty ----
+          // Bbox of closed chest sprite: x=1367–1764, y=784–1011
+          {
+            id: "chest4_004",
+            shape: "rect",
+            geom: [1367, 784, 397, 227],
+            label: "Storage chest",
+            hideIf: { all: ["chest4_004_opened"] },
+            action: {
+              type: "setState",
+              flags: ["chest4_004_opened"],
+              message: "The chest is empty.",
             },
           },
         ],
@@ -352,6 +503,15 @@ const CLOSEUPS = {
     image: "Images/closeups/Cryo%20Room%201%20Terminal%20Closeup.png",
     kind: "html",
     controller: "cryo_terminal",
+  },
+
+  // Combination-lock close-up for chest 003 on Wall 4.
+  // 3-digit wheel lock starting at 9-7-2. Solution: 0-0-3.
+  // Solving sets chest4_003_opened and adds metal_shears to inventory.
+  cryo_chest_combo: {
+    image: "Images/closeups/Cryo%20Room%204%20Chest%20Closeup.png",
+    kind: "html",
+    controller: "cryo_chest_combo",
   },
 };
 
