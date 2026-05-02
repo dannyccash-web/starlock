@@ -262,6 +262,16 @@ const Engine = (() => {
     }
   }
   function closeCloseup() {
+    // Give the active HTML controller a chance to reset its
+    // internal view state (e.g., terminal back-to-list) before
+    // we tear down the DOM.
+    if (state.activeCloseup) {
+      const c = STARLOCK_DATA.CLOSEUPS[state.activeCloseup];
+      if (c && c.kind === "html") {
+        const ctrl = closeupControllers[c.controller];
+        if (ctrl && typeof ctrl.unmount === "function") ctrl.unmount();
+      }
+    }
     state.activeCloseup = null;
     closeupEl.classList.add("hidden");
     closeupEl.classList.remove("html-mode");

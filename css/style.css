@@ -337,6 +337,11 @@ html, body {
   opacity: 0;
   transition: opacity 220ms ease;
   pointer-events: none;
+  /* Sit above the close-up (z-index:5) so messages triggered from
+     inside an HTML close-up — e.g. the cryo terminal's "missing
+     power" notification — remain visible. Kept below the menu
+     toggle (z-index:8). */
+  z-index: 6;
 }
 .message-bar.show { opacity: 1; }
 
@@ -394,12 +399,13 @@ html, body {
 
 /* ---------- Cryo terminal close-up (HTML interface) ----------
    Mounts inside .closeup-html. Positioned over the screen area of
-   "Cryo Room 1 Terminal Closeup.png" — coords are best-guess based
-   on a centered terminal screen and may need tuning once the final
-   art is in place.
+   "Cryo Room 1 Terminal Closeup.png" — coords match the dark glass
+   interior of the bezel.
 
    No background fill: the closeup PNG carries the bezel/glass.
-   Text uses the terminal's blue HUD palette and a monospace face. */
+   Text uses the terminal's blue HUD palette. The interface has two
+   views switched by the controller: pod list (default) and pod
+   detail. */
 .cryo-terminal {
   position: absolute;
   /* Tuned to the screen interior of "Cryo Room 1 Terminal Closeup.png":
@@ -412,20 +418,22 @@ html, body {
   height: 720px;
   display: flex;
   flex-direction: column;
-  padding: 32px 44px;
+  padding: 28px 40px;
   pointer-events: auto;
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
   text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
 }
 
+/* ----- Header (shared by list and detail views) ----- */
 .ct-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(108, 208, 255, 0.45);
   padding-bottom: 10px;
   margin-bottom: 18px;
+  min-height: 32px;
 }
 .ct-title {
   font: 600 22px/1 "Eurostile", "Bahnschrift", system-ui;
@@ -437,64 +445,182 @@ html, body {
   letter-spacing: 0.25em;
   color: rgba(180, 220, 255, 0.7);
 }
+.ct-back-btn {
+  font: 600 16px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.22em;
+  color: var(--hud-blue);
+  background: transparent;
+  border: 0;
+  padding: 4px 6px 4px 0;
+  cursor: pointer;
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.5);
+  transition: color 150ms ease;
+}
+.ct-back-btn:hover { color: #fff; }
 
+/* ============================================================
+   VIEW 1 — POD LIST
+   ============================================================ */
 .ct-pod-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   flex: 1;
 }
+
+/* Each row is a clickable button that drills into pod detail.
+   The coloured vertical line is a fat left border:
+     .is-open      → green
+     .is-deceased  → red                                            */
 .ct-pod-row {
   display: grid;
-  grid-template-columns: 110px 1fr auto;
+  grid-template-columns: 130px 1fr 28px;
   align-items: center;
-  gap: 18px;
-  padding: 12px 16px;
+  gap: 22px;
+  padding: 14px 18px 14px 22px;
   background: rgba(8, 22, 38, 0.55);
-  border: 1px solid rgba(108, 208, 255, 0.25);
-  border-left: 3px solid rgba(108, 208, 255, 0.55);
+  border: 1px solid rgba(108, 208, 255, 0.22);
+  border-left: 7px solid rgba(108, 208, 255, 0.55);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
 }
-.ct-pod-row.is-fault {
+.ct-pod-row:hover {
+  background: rgba(20, 50, 80, 0.65);
+  border-color: rgba(108, 208, 255, 0.55);
+}
+.ct-pod-row.is-open {
+  border-left-color: #6cffae;
+  box-shadow: -2px 0 14px rgba(108, 255, 174, 0.15);
+}
+.ct-pod-row.is-open:hover {
+  box-shadow: -2px 0 22px rgba(108, 255, 174, 0.30);
+}
+.ct-pod-row.is-deceased {
   border-left-color: var(--warn-red);
-  box-shadow: inset 0 0 24px rgba(255, 80, 80, 0.08);
+  box-shadow: -2px 0 14px rgba(255, 80, 80, 0.18);
 }
-.ct-pod-row.is-self {
-  border-left-color: #9be7ff;
+.ct-pod-row.is-deceased:hover {
+  box-shadow: -2px 0 22px rgba(255, 80, 80, 0.32);
 }
+
 .ct-pod-num {
-  font: 700 16px/1 monospace;
+  font: 700 18px/1 monospace;
   letter-spacing: 0.18em;
   color: var(--hud-blue);
 }
+.ct-pod-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
 .ct-pod-name {
-  font: 500 16px/1.2 "Eurostile", "Bahnschrift", system-ui;
+  font: 600 22px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.12em;
+  color: #e8f6ff;
+}
+.ct-pod-role {
+  font: 500 12px/1 monospace;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.65);
+}
+.ct-pod-chevron {
+  font: 700 22px/1 system-ui;
+  color: rgba(108, 208, 255, 0.55);
+  text-align: right;
+}
+.ct-pod-row:hover .ct-pod-chevron { color: #fff; }
+
+/* ============================================================
+   VIEW 2 — POD DETAIL
+   ============================================================ */
+.ct-detail-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 4px 6px;
+  /* A subtle accent strip on the left mirrors the row's coloured
+     bar. The colour is set via the parent's variant class.       */
+  border-left: 7px solid rgba(108, 208, 255, 0.45);
+  padding-left: 22px;
+}
+.ct-screen-detail.is-open      .ct-detail-body { border-left-color: #6cffae; }
+.ct-screen-detail.is-deceased  .ct-detail-body { border-left-color: var(--warn-red); }
+
+.ct-detail-name {
+  font: 600 30px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.14em;
+  color: #ffffff;
+  text-shadow: 0 0 12px rgba(108, 208, 255, 0.5);
+}
+.ct-detail-role {
+  font: 500 14px/1 monospace;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.75);
+  margin-bottom: 4px;
+}
+
+.ct-detail-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 28px;
+  padding: 14px 0 4px;
+  border-top: 1px solid rgba(108, 208, 255, 0.25);
+  border-bottom: 1px solid rgba(108, 208, 255, 0.25);
+}
+.ct-detail-field {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 6px 0;
+}
+.ct-detail-field-label {
+  font: 600 11px/1 monospace;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.6);
+  min-width: 130px;
+}
+.ct-detail-field-value {
+  font: 500 14px/1.2 "Eurostile", "Bahnschrift", system-ui;
   letter-spacing: 0.1em;
   color: #cfe7ff;
 }
-.ct-pod-name .ct-pod-name-sub {
-  display: block;
-  margin-top: 4px;
-  font: 400 12px/1.2 monospace;
-  letter-spacing: 0.18em;
-  color: rgba(180, 220, 255, 0.55);
-}
-.ct-pod-status {
-  font: 600 13px/1 monospace;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--hud-blue);
-  white-space: nowrap;
-}
-.ct-pod-status.is-ok    { color: #9be7ff; }
-.ct-pod-status.is-warn  { color: #ffd070; }
-.ct-pod-status.is-fault { color: var(--warn-red); }
-.ct-pod-status.is-open  { color: #6cffae; }
+.ct-screen-detail.is-deceased .ct-detail-field-value { color: #ffb3b3; }
+.ct-screen-detail.is-open     .ct-detail-field-value { color: #cfe7ff; }
 
-.ct-footer {
-  margin-top: 20px;
+.ct-detail-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ct-detail-notes-label {
+  font: 600 11px/1 monospace;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.6);
+}
+.ct-detail-notes-body {
+  margin: 0;
+  font: 400 14px/1.5 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.04em;
+  color: rgba(207, 231, 255, 0.85);
+}
+
+.ct-detail-actions {
+  margin-top: auto;
   display: flex;
   justify-content: flex-end;
+  padding-top: 8px;
 }
+
+/* Action button (used by the OPEN POD action on pod 4 detail). */
 .ct-action {
   font: 600 14px/1 "Eurostile", "Bahnschrift", system-ui;
   letter-spacing: 0.3em;
@@ -517,11 +643,6 @@ html, body {
   cursor: not-allowed;
   text-shadow: none;
   box-shadow: none;
-}
-.ct-action.is-fault {
-  color: var(--warn-red);
-  border-color: rgba(255, 80, 80, 0.5);
-  text-shadow: 0 0 8px rgba(255, 80, 80, 0.4);
 }
 
 /* ---------- Placeholder wall (used for unfinished walls) ---------- */
