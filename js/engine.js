@@ -177,6 +177,7 @@ const Engine = (() => {
         Inventory.addItem(a.item);
         (a.flags || []).forEach(setFlag);
         if (a.message) showMessage(a.message);
+        showPickupNotification(a.item);
         renderActive();
         break;
 
@@ -184,7 +185,10 @@ const Engine = (() => {
         const eq = Inventory.getEquipped();
         if (eq && (a.accepts || []).includes(eq)) {
           (a.onAccept?.flags || []).forEach(setFlag);
-          if (a.onAccept?.addItem) Inventory.addItem(a.onAccept.addItem);
+          if (a.onAccept?.addItem) {
+            Inventory.addItem(a.onAccept.addItem);
+            showPickupNotification(a.onAccept.addItem);
+          }
           if (a.onAccept?.message) showMessage(a.onAccept.message);
           if (a.onAccept?.consume) Inventory.removeItem(eq);
         } else {
@@ -283,6 +287,41 @@ const Engine = (() => {
   closeupBack.addEventListener("click", closeCloseup);
   closeupDown.addEventListener("click", closeCloseup);
 
+  /* ----- Item pickup notification -----
+     Briefly shows the picked-up item's icon + name on screen so the
+     player gets immediate visual confirmation of what's now in their
+     inventory. Fades in, holds for ~2.5 s, then fades out. */
+  const stageEl = document.getElementById("stage");
+  function showPickupNotification(itemId) {
+    const def = STARLOCK_DATA.ITEMS[itemId];
+    if (!def) return;
+
+    // Remove any toast that's still visible from a previous pickup.
+    const old = document.getElementById("item-pickup-toast");
+    if (old) old.remove();
+
+    const toast = document.createElement("div");
+    toast.id = "item-pickup-toast";
+    toast.className = "item-pickup-toast";
+    toast.innerHTML = `
+      <div class="ipt-icon" style="background-image:url('${def.icon}')"></div>
+      <div class="ipt-label">Item found</div>
+      <div class="ipt-name">${def.name}</div>
+    `;
+    stageEl.appendChild(toast);
+
+    // Trigger CSS transition on next frame.
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => toast.classList.add("show"));
+    });
+
+    setTimeout(() => {
+      toast.classList.remove("show");
+      toast.classList.add("fade-out");
+      setTimeout(() => toast.remove(), 600);
+    }, 2800);
+  }
+
   /* ----- Re-render whatever is currently on screen (after state change) ----- */
   function renderActive() {
     if (state.activeCloseup) {
@@ -327,6 +366,7 @@ const Engine = (() => {
   return {
     startRoom,
     showMessage,
+    showPickupNotification,
     setFlag,
     hasFlag,
     registerCloseupController,

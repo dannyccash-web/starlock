@@ -4,20 +4,24 @@
    Backs the "cryo_chest_combo" HTML close-up.
    Close-up image: Images/closeups/Cryo Room 4 Chest Closeup.png
 
-   UI: A 3-digit wheel combination lock overlaid on the chest
-   image. Each digit is a clickable button that cycles 0→9→0.
+   UI: Three digit buttons positioned directly over the lock
+   dials visible in the background image. No panel, no border —
+   the digits feel like part of the lock itself.
+
    Starting combination: 9 - 7 - 2
    Solution:            0 - 0 - 3
 
-   On solve:
-     1. Sets the chest4_003_opened flag (chest sprite swaps
-        to open on the wall view).
-     2. Adds metal_shears to the player's inventory.
-     3. Closes the close-up (returns to Wall 4).
-     4. Shows a notification message.
+   DIGIT POSITIONING
+   Coordinates are in the 1920×1080 stage space, tuned to match
+   the three lock digits visible in the background art. Press D
+   in-game to enable the debug overlay, then adjust DIGIT_LEFT
+   and DIGIT_TOP here to align with the image.
 
-   View state (current digits) resets each time the close-up
-   is unmounted so repeat visits always start at 9-7-2.
+   On solve:
+     1. Sets chest4_003_opened (chest sprite swaps to open).
+     2. Adds metal_shears to inventory.
+     3. Returns to Wall 4.
+     4. Shows a pickup notification + scene message.
    ============================================================ */
 
 (function () {
@@ -29,16 +33,21 @@
     "The lock clicks open. Inside, wedged under a folded emergency kit, " +
     "you find a pair of heavy metal shears.";
 
-  // Module-scope digit state — reset on unmount.
+  // Digit layout — adjust these to match the art.
+  // Each entry is the left edge of the digit button in stage px.
+  const DIGIT_LEFT = [835, 905, 975];
+  const DIGIT_TOP  = 390;   // top edge, same for all three
+  const DIGIT_W    = 65;    // width of each clickable digit area
+  const DIGIT_H    = 95;    // height of each clickable digit area
+
   let digits = [...START];
 
-  /* ---- DOM helper (same pattern as cryo_terminal.js) ---- */
+  /* ---- DOM helper ---- */
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
     if (attrs) {
       for (const k in attrs) {
         if (k === "class") node.className = attrs[k];
-        else if (k === "html") node.innerHTML = attrs[k];
         else if (k === "style" && typeof attrs[k] === "object") {
           Object.assign(node.style, attrs[k]);
         } else if (k.startsWith("on") && typeof attrs[k] === "function") {
@@ -54,82 +63,70 @@
     return node;
   }
 
-  /* ---- Check whether the current digits match the solution ---- */
   function isSolved() {
     return digits.every((d, i) => d === SOLUTION[i]);
   }
 
-  /* ---- Build the combination lock UI ---- */
+  /* ---- Build the three digit buttons ---- */
   function buildLock(layer, ctx) {
     layer.innerHTML = "";
 
-    // Outer wrapper — covers the image and centres the lock panel.
-    const wrapper = el("div", {
-      class: "combo-lock-wrapper",
-    }, [
-      el("div", { class: "combo-lock-panel" }, [
-        el("div", { class: "combo-lock-label" }, ["COMBINATION LOCK"]),
-        el("div", { class: "combo-lock-digits" },
-          digits.map((d, i) => buildDigitBtn(d, i, layer, ctx))
-        ),
-        el("div", { class: "combo-lock-hint" }, ["Click a digit to advance it"]),
-      ]),
-    ]);
-
-    layer.appendChild(wrapper);
-  }
-
-  function buildDigitBtn(digit, index, layer, ctx) {
-    return el("button", {
-      type: "button",
-      class: "combo-digit",
-      "aria-label": `Digit ${index + 1}, currently ${digit}`,
-      onclick: () => {
-        digits[index] = (digits[index] + 1) % 10;
-        // Re-render the lock after each click.
-        buildLock(layer, ctx);
-        // Check for solution after the DOM settles.
-        if (isSolved()) {
-          setTimeout(() => handleSolve(layer, ctx), 120);
-        }
-      },
-    }, [String(digit)]);
+    digits.forEach((d, i) => {
+      const btn = el("button", {
+        type: "button",
+        class: "combo-digit",
+        style: {
+          position: "absolute",
+          left:   DIGIT_LEFT[i] + "px",
+          top:    DIGIT_TOP + "px",
+          width:  DIGIT_W + "px",
+          height: DIGIT_H + "px",
+        },
+        "aria-label": `Digit ${i + 1}, currently ${d}. Click to advance.`,
+        onclick: () => {
+          digits[i] = (digits[i] + 1) % 10;
+          buildLock(layer, ctx);
+          if (isSolved()) setTimeout(() => handleSolve(layer, ctx), 120);
+        },
+      }, [String(d)]);
+      layer.appendChild(btn);
+    });
   }
 
   function handleSolve(layer, ctx) {
-    // Show a brief "UNLOCKED" state before closing.
+    // Flash UNLOCKED at the lock position, then return to the wall.
     layer.innerHTML = "";
-    const flash = el("div", { class: "combo-lock-wrapper" }, [
-      el("div", { class: "combo-lock-panel combo-lock-solved" }, [
-        el("div", { class: "combo-lock-solved-text" }, ["UNLOCKED"]),
-      ]),
+    const flash = el("div", {
+      class: "combo-solved-flash",
+      style: {
+        position: "absolute",
+        left:   DIGIT_LEFT[0] + "px",
+        top:    (DIGIT_TOP - 8) + "px",
+        width:  (DIGIT_LEFT[2] + DIGIT_W - DIGIT_LEFT[0]) + "px",
+        height: (DIGIT_H + 16) + "px",
+      },
+    }, [
+      el("span", { class: "combo-solved-text" }, ["OPEN"]),
     ]);
     layer.appendChild(flash);
 
     setTimeout(() => {
-      // Grant item and set state.
       ctx.setFlag(FLAG);
       Inventory.addItem(ITEM_ID);
-      // Return to the wall view with the chest now open.
       ctx.closeCloseup();
       ctx.renderActive();
+      Engine.showPickupNotification(ITEM_ID);
       ctx.showMessage(SOLVED_MSG);
     }, 700);
   }
 
   /* ---- Mount / unmount ---- */
   function mount(layer, ctx) {
-    if (ctx.hasFlag(FLAG)) {
-      // Already solved — close immediately (shouldn't normally be
-      // reachable since the hotspot hides when the flag is set).
-      ctx.closeCloseup();
-      return;
-    }
+    if (ctx.hasFlag(FLAG)) { ctx.closeCloseup(); return; }
     buildLock(layer, ctx);
   }
 
   function unmount() {
-    // Reset digits so every fresh visit starts at 9-7-2.
     digits = [...START];
   }
 

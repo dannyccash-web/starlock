@@ -79,6 +79,7 @@ const ITEMS = {
   metal_shears: {
     name: "Metal Shears",
     icon:   "Images/items/metal%20shears.png",
+    cursor: "Images/items/metal%20shears%20cursor.png",
     description: "Heavy-duty cutting shears. Could slice through thin metal or foil.",
   },
 
@@ -88,6 +89,7 @@ const ITEMS = {
   foil_strips: {
     name: "Foil Strips",
     icon:   "Images/items/foil%20strips.png",
+    cursor: "Images/items/foil%20strips%20cursor.png",
     description: "A few lengths of conductive foil tape. Thin enough to bridge a broken circuit.",
   },
 };
@@ -114,7 +116,7 @@ const ROOMS = {
       // the new file instead of the cached old one.
       {
         id: "cryo_wall_1_terminal",
-        plate: "Images/Cryo%20Room%201.png?v=2",
+        plate: "Images/Cryo%20Room%201.png?v=3",
         atmosphere: "cryo-emergency",
         sprites: [
           // Terminal mounted on the wall. Full-size transparent
@@ -210,7 +212,7 @@ const ROOMS = {
           {
             id: "lab_keycard_reader",
             shape: "rect",
-            geom: [1270, 300, 160, 350],
+            geom: [1060, 290, 160, 380],
             label: "Keycard reader — Science Lab",
             hideIf: { all: ["lab_door_unlocked"] },
             action: {
