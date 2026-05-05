@@ -59,7 +59,7 @@
       // Show an opening line so first-time players know what to do.
       // showMessage() now typewrites the text and plays the SFX.
       setTimeout(() => {
-        Engine.showMessage("You wake up. Emergency lighting only. Look around.", 5000);
+        Engine.showMessage("You awaken. The ship is on auxiliary power and locked down. What happened while you were in cryo sleep?", 6000);
       }, 700);
     }, 600);
   });

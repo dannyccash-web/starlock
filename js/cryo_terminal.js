@@ -122,12 +122,13 @@
   }
 
   /* ---------- Status descriptors ----------
-     A pod is "deceased" (red bar) if it's pod 4 — regardless of
-     whether the seal has been broken. Everyone else is "open"
-     (green bar). The label we show changes when pod 4 is unsealed,
-     but the colour stays red because the occupant is dead. */
+     Pod 4 shows red ("is-deceased") while it is still sealed —
+     the interlock fault indicates something is wrong. Once the pod
+     is opened (pod4_opened), it switches to green ("is-open") to
+     show it is no longer locked down, even though the occupant
+     is deceased. All other pods are always green. */
   function barClass(podNum, hasFlag) {
-    if (podNum === 4) return "is-deceased";
+    if (podNum === 4) return hasFlag("pod4_opened") ? "is-open" : "is-deceased";
     return "is-open";
   }
   function statusLabel(podNum, hasFlag) {

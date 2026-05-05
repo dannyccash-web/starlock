@@ -1142,6 +1142,36 @@ html, body {
   text-shadow: 0 0 12px rgba(108, 208, 255, 0.4);
 }
 
+/* ---------- Keycard / door reader indicator dot ----------
+   A small LED-style circle rendered as a wall overlay.
+   Red blinking = reader armed, waiting for a card.
+   Green solid  = access granted, door unlocked.
+   Coordinates are in the 1920x1080 stage space (set inline by engine). */
+.reader-dot {
+  position: absolute;
+  width:  14px;
+  height: 14px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px 2px currentColor;
+}
+.reader-dot--blink-red {
+  background: #ff3a3a;
+  color: rgba(255, 58, 58, 0.8);
+  animation: reader-blink 1.1s steps(2, end) infinite;
+}
+.reader-dot--solid-green {
+  background: #6cffae;
+  color: rgba(108, 255, 174, 0.8);
+}
+@keyframes reader-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.08; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reader-dot--blink-red { animation: none; }
+}
+
 /* ---------- Utility ---------- */
 .hidden { display: none !important; }
 

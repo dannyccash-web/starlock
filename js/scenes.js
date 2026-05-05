@@ -68,8 +68,8 @@
 const ITEMS = {
   keycard: {
     name: "Crew Keycard",
-    icon:   "Images/items/keycard.png",
-    cursor: "Images/items/keycard_cursor.png",
+    icon:   "Images/items/keycard.png?v=2",
+    cursor: "Images/items/keycard_cursor.png?v=2",
     description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
   },
 
@@ -81,6 +81,14 @@ const ITEMS = {
     icon:   "Images/items/metal%20shears.png",
     cursor: "Images/items/metal%20shears%20cursor.png",
     description: "Heavy-duty cutting shears. Could slice through thin metal or foil.",
+  },
+
+  // Found in Reyes' locker (chest 002, Wall 2). A clue item —
+  // the player cannot decipher it yet.
+  coded_message: {
+    name: "Coded Note",
+    icon:   "Images/items/coded_message.png",
+    description: "A folded piece of paper covered in rows of dense symbols. The pattern looks deliberate, but you can't make sense of it.",
   },
 
   // Obtained by using the metal shears on the foil jacket in
@@ -139,6 +147,18 @@ const ROOMS = {
             label: "Cryo control terminal",
             action: { type: "openCloseup", target: "cryo_terminal" },
           },
+          // EVA suit hanging on the right side of the terminal wall.
+          // NOTE: Tune geom with debug mode (D key) once art position confirmed.
+          {
+            id: "eva_suit",
+            shape: "rect",
+            geom: [1350, 120, 290, 780],
+            label: "EVA suit",
+            action: {
+              type: "message",
+              message: "Your EVA suit. The others that should be hanging here are gone — either in use, or missing.",
+            },
+          },
         ],
       },
 
@@ -176,6 +196,23 @@ const ROOMS = {
             image: "Images/Cryo%20Room%202%20002%20open.png?v=1",
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["chest2_002_opened"] },
+          },
+        ],
+        // Overlay dots for the keycard reader indicator light.
+        // Red blinking = door locked; green solid = door open.
+        // Tune x/y with debug mode (D key) once final art is confirmed.
+        overlays: [
+          {
+            id: "reader_light_red",
+            x: 1200, y: 415,
+            dotClass: "reader-dot reader-dot--blink-red",
+            hideIf: { all: ["lab_door_unlocked"] },
+          },
+          {
+            id: "reader_light_green",
+            x: 1200, y: 415,
+            dotClass: "reader-dot reader-dot--solid-green",
+            showIf: { all: ["lab_door_unlocked"] },
           },
         ],
         hotspots: [
@@ -228,33 +265,35 @@ const ROOMS = {
             },
           },
 
-          // ---- Chest 001 (bottom-left) ----
+          // ---- Chest 001 (bottom-left) — your locker ----
           // Bbox of closed chest sprite: x=181–544, y=803–1011
           {
             id: "chest2_001",
             shape: "rect",
             geom: [181, 803, 363, 208],
-            label: "Storage chest",
+            label: "Locker 001 — your locker",
             hideIf: { all: ["chest2_001_opened"] },
             action: {
               type: "setState",
               flags: ["chest2_001_opened"],
-              message: "The chest is empty.",
+              message: "Your locker. Empty.",
             },
           },
 
-          // ---- Chest 002 (bottom-right) ----
+          // ---- Chest 002 (bottom-right) — Reyes' locker ----
           // Bbox of closed chest sprite: x=1390–1756, y=800–1009
+          // Contains a coded note the player cannot yet decipher.
           {
             id: "chest2_002",
             shape: "rect",
             geom: [1390, 800, 366, 209],
-            label: "Storage chest",
+            label: "Locker 002 — Reyes",
             hideIf: { all: ["chest2_002_opened"] },
             action: {
-              type: "setState",
+              type: "pickup",
+              item: "coded_message",
               flags: ["chest2_002_opened"],
-              message: "The chest is empty.",
+              message: "Reyes' locker. Inside, a folded piece of paper covered in symbols you don't recognise.",
             },
           },
 
@@ -278,7 +317,7 @@ const ROOMS = {
                 message: "You cut several strips from the jacket lining and pocket them.",
               },
               onReject: {
-                message: "A heavy EVA jacket made of a layered, conductive material.",
+                message: "A metallic thermal jacket — standard issue for warming the body after cryo sleep. The layered foil lining holds heat quickly.",
               },
             },
           },
@@ -482,33 +521,34 @@ const ROOMS = {
             },
           },
 
-          // ---- Chest 003 (bottom-left) — combination lock ----
+          // ---- Chest 003 (bottom-left) — Tarn's locker, combination lock ----
           // Bbox of closed chest sprite: x=159–556, y=784–1010
-          // Clicking opens the combo-lock close-up (3-digit, code: 003).
+          // Clicking shows owner info then opens the combo-lock close-up (3-digit, code: 003).
           {
             id: "chest4_003",
             shape: "rect",
             geom: [159, 784, 397, 226],
-            label: "Locked chest",
+            label: "Locker 003 — Tarn",
             hideIf: { all: ["chest4_003_opened"] },
             action: {
               type: "openCloseup",
               target: "cryo_chest_combo",
+              message: "Tarn's locker. A combination lock holds it shut.",
             },
           },
 
-          // ---- Chest 004 (bottom-right) — empty ----
+          // ---- Chest 004 (bottom-right) — Vance's locker, empty ----
           // Bbox of closed chest sprite: x=1367–1764, y=784–1011
           {
             id: "chest4_004",
             shape: "rect",
             geom: [1367, 784, 397, 227],
-            label: "Storage chest",
+            label: "Locker 004 — Vance",
             hideIf: { all: ["chest4_004_opened"] },
             action: {
               type: "setState",
               flags: ["chest4_004_opened"],
-              message: "The chest is empty.",
+              message: "Vance's locker. Empty.",
             },
           },
         ],
@@ -533,7 +573,7 @@ const CLOSEUPS = {
   // 3-digit wheel lock starting at 9-7-2. Solution: 0-0-3.
   // Solving sets chest4_003_opened and adds metal_shears to inventory.
   cryo_chest_combo: {
-    image: "Images/closeups/Cryo%20Room%204%20Chest%20Closeup.png",
+    image: "Images/closeups/Cryo%20Room%204%20Chest%20Closeup.png?v=2",
     kind: "html",
     controller: "cryo_chest_combo",
   },

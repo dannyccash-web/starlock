@@ -110,6 +110,18 @@ const Engine = (() => {
       hotspotEl.appendChild(btn);
     });
 
+    // Overlays — small non-interactive visual indicators (e.g. LED dots).
+    // Defined as wall.overlays[]. Each has { id, x, y, dotClass, showIf?, hideIf? }.
+    (wall.overlays || []).forEach((ov) => {
+      if (!visibleByFlags(ov)) return;
+      const dot = document.createElement("div");
+      dot.className = ov.dotClass || "reader-dot";
+      dot.style.left = ov.x + "px";
+      dot.style.top  = ov.y + "px";
+      dot.style.pointerEvents = "none";
+      hotspotEl.appendChild(dot);
+    });
+
     // Arrows (always enabled in this build, since each room is a 4-wall ring)
     arrowLeft.disabled  = room.walls.length <= 1;
     arrowRight.disabled = room.walls.length <= 1;
@@ -199,6 +211,7 @@ const Engine = (() => {
       }
 
       case "openCloseup":
+        if (a.message) showMessage(a.message);
         openCloseup(a.target);
         break;
 
