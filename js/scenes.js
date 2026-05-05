@@ -57,6 +57,15 @@
                             corpse vanishes; the infected science
                             officer becomes a roaming threat).
                             (Set later, in a future room.)
+     coded_note_scanned   - Reyes' coded note has been fed into the
+                            science lab scanner terminal. The decoded
+                            specimen report has been read and an
+                            authorization profile has been loaded into
+                            the card R/W machine's buffer.
+     card_upgraded        - the crew keycard has been inserted into the
+                            card R/W machine and upgraded to senior crew
+                            clearance. keycard_upgraded is now in
+                            inventory; the original keycard was consumed.
 
    CRYO PODS IMAGE STATES (Cryo Room 3 Pods *.png):
      [default]              Pods.png   — wiring sabotaged, pod 4 sealed
@@ -71,6 +80,17 @@ const ITEMS = {
     icon:   "Images/items/keycard.png?v=2",
     cursor: "Images/items/keycard_cursor.png?v=2",
     description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
+  },
+
+  // Produced by inserting the keycard into the card read/write
+  // machine in the science lab (after Reyes' coded note has been
+  // scanned, loading an authorization profile into the buffer).
+  // Required to open the bridge door.
+  keycard_upgraded: {
+    name: "Upgraded Keycard",
+    icon:   "Images/items/keycard.png?v=2",
+    cursor: "Images/items/keycard_cursor.png?v=2",
+    description: "Your crew keycard, rewritten to senior clearance. The stripe now carries bridge-level authorization.",
   },
 
   // Found in chest 003 on Wall 4 (combo lock, code: 003).
@@ -618,7 +638,10 @@ const ROOMS = {
               message: "The bridge is ahead. [Room coming soon]",
             },
           },
-          // Card reader panel (right of door). Same geometry as cryo lab reader.
+          // Card reader panel (right of door). Requires the upgraded
+          // keycard (senior clearance) — the base crew keycard is
+          // insufficient. The player must scan Reyes' coded note in
+          // the lab and use the card R/W machine first.
           {
             id: "bridge_keycard_reader",
             shape: "rect",
@@ -627,13 +650,13 @@ const ROOMS = {
             hideIf: { all: ["bridge_door_unlocked"] },
             action: {
               type: "useItem",
-              accepts: ["keycard"],
+              accepts: ["keycard_upgraded"],
               onAccept: {
                 flags: ["bridge_door_unlocked"],
                 message: "The reader blinks green. A heavy clunk echoes through the door frame — bridge access granted.",
               },
               onReject: {
-                message: "A keycard reader. Label: 01 — BRIDGE.",
+                message: "Keycard reader — 01: BRIDGE. CLEARANCE INSUFFICIENT. Senior crew authorization required. Your card may need to be upgraded.",
               },
             },
           },
@@ -641,15 +664,76 @@ const ROOMS = {
       },
 
       // ============================================================
-      // WALL 1 — PLAIN WALL (right turn from bridge door)
+      // WALL 1 — CARD READ/WRITE MACHINE (right turn from bridge door)
+      // Science Lab 1.png
+      //
+      // The card R/W machine upgrades the crew keycard to senior
+      // clearance. It only becomes active once Reyes' coded note has
+      // been scanned (flag: coded_note_scanned), which loads an
+      // authorization profile into the lab's access buffer.
+      //
+      // Three hotspot states:
+      //   1. Inactive — note not yet scanned (no profile loaded)
+      //   2. Active   — note scanned, awaiting keycard insertion
+      //   3. Done     — card already upgraded
+      //
+      // NOTE: geom is a rough estimate — press D in-game to enter
+      // debug mode and refine the coordinates once art is confirmed.
       // ============================================================
       {
-        id: "scilab_wall_1_plain",
+        id: "scilab_wall_1_card_rw",
         plate: "Images/Science%20Lab%201.png",
         atmosphere: "cryo-emergency",
         sprites: [],
         overlays: [],
-        hotspots: [],
+        hotspots: [
+          // State 1 — machine inactive, no authorization profile loaded.
+          {
+            id: "scilab_card_rw_inactive",
+            shape: "rect",
+            geom: [680, 180, 500, 620],
+            label: "Card read/write machine",
+            hideIf: { all: ["coded_note_scanned"] },
+            action: {
+              type: "message",
+              message: "A card read/write machine, connected to the lab's access terminal. The authorization buffer is empty — no profile loaded. The scanner terminal might be able to source one.",
+            },
+          },
+          // State 2 — profile loaded, ready to accept keycard.
+          {
+            id: "scilab_card_rw_ready",
+            shape: "rect",
+            geom: [680, 180, 500, 620],
+            label: "Card read/write machine — READY",
+            showIf: { all: ["coded_note_scanned"] },
+            hideIf: { all: ["card_upgraded"] },
+            action: {
+              type: "useItem",
+              accepts: ["keycard"],
+              onAccept: {
+                consume: true,
+                addItem: "keycard_upgraded",
+                flags: ["card_upgraded"],
+                message: "You slot the keycard into the machine. A soft chime. The display reads: PROFILE LOADED — REYES, R. — CLEARANCE UPGRADED: SENIOR CREW. The card ejects, its stripe rewritten.",
+              },
+              onReject: {
+                message: "The authorization buffer is armed with Reyes' profile. Insert your crew keycard to upgrade its clearance level.",
+              },
+            },
+          },
+          // State 3 — upgrade already done.
+          {
+            id: "scilab_card_rw_done",
+            shape: "rect",
+            geom: [680, 180, 500, 620],
+            label: "Card read/write machine",
+            showIf: { all: ["card_upgraded"] },
+            action: {
+              type: "message",
+              message: "The machine's buffer is cleared. Upgrade complete.",
+            },
+          },
+        ],
       },
 
       // ============================================================
@@ -685,15 +769,58 @@ const ROOMS = {
       },
 
       // ============================================================
-      // WALL 3 — PLAIN WALL (left turn from bridge door)
+      // WALL 3 — DOCUMENT SCANNER TERMINAL (left turn from bridge door)
+      // Science Lab 3.png
+      //
+      // Scanning Reyes' coded note decodes it into a partially
+      // redacted specimen analysis report (story reveal) and loads
+      // Reyes' authorization profile into the card R/W buffer
+      // (flag: coded_note_scanned), enabling the card upgrade on Wall 1.
+      //
+      // The coded note is NOT consumed — it stays in inventory.
+      //
+      // NOTE: geom is a rough estimate — press D in-game to refine.
       // ============================================================
       {
-        id: "scilab_wall_3_plain",
+        id: "scilab_wall_3_scanner",
         plate: "Images/Science%20Lab%203.png",
         atmosphere: "cryo-emergency",
         sprites: [],
         overlays: [],
-        hotspots: [],
+        hotspots: [
+          // Scanner terminal — available state (note not yet scanned).
+          {
+            id: "scilab_scanner_available",
+            shape: "rect",
+            geom: [580, 180, 560, 620],
+            label: "Research scanner terminal",
+            hideIf: { all: ["coded_note_scanned"] },
+            action: {
+              type: "useItem",
+              accepts: ["coded_message"],
+              onAccept: {
+                flags: ["coded_note_scanned"],
+                // Note is NOT consumed — the player keeps it.
+                message: "You feed the note into the scanner. The terminal hums and processes for a moment.\n\n— SPECIMEN ANALYSIS REPORT —\nFiled by: R. [REDACTED]  |  Date: [REDACTED]\n\nOrg. classification: [REDACTED]\nRetrieval site: [REDACTED]\n\nBEHAVIORAL NOTES: The specimen exhibits [REDACTED] responses to thermal stimulus. Exposure to [REDACTED] results in rapid cellular restructuring. Standard containment protocols are [REDACTED] inadequate.\n\nINFECTION VECTOR: Direct contact with [REDACTED] is sufficient for transfer. Incubation period estimated [REDACTED]. Subject displays [REDACTED] neurological changes followed by [REDACTED].\n\nCAPTAIN'S ADDENDUM — RESTRICTED: This report is classified under [REDACTED] protocol. Distribution of specimen data to unauthorized parties is [REDACTED]. The existence of this organism must not [REDACTED].\n\nThe terminal chimes: AUTHORIZATION PROFILE LOADED — REYES, R. The card read/write machine on the far wall flickers on.",
+              },
+              onReject: {
+                message: "A document scanner terminal, connected to the lab's secure research database. The feed slot is open. There might be something in your inventory that belongs here.",
+              },
+            },
+          },
+          // Scanner terminal — already scanned state.
+          {
+            id: "scilab_scanner_done",
+            shape: "rect",
+            geom: [580, 180, 560, 620],
+            label: "Research scanner terminal",
+            showIf: { all: ["coded_note_scanned"] },
+            action: {
+              type: "message",
+              message: "The terminal displays the last decoded entry: REYES, R. — AUTHORIZATION PROFILE LOADED. The card read/write machine on the far wall should be active.",
+            },
+          },
+        ],
       },
     ],
   },

@@ -52,19 +52,21 @@ MAIN GAME FLOW
 5. Recover the science officer's keycard from the suited body
 6. Unlock the Science Lab
 7. Discover evidence of the organism, the testing accident, and the science officer's exposure
-8. Unlock the Bridge - this is the trigger point
-9. Restore communications and contact command center
-10. Receive command center's directive: repair the engines and return home
-11. Use bridge controls to close and repressurize the shuttle bay
-12. On the way back through the cryo room, discover that the science officer's pod is now empty - the body is gone
-13. Realize the science officer is alive and infected, somewhere on the ship
-14. Cross the shuttle bay safely
-15. Reach Engineering and discover the extent of the sabotage
-16. Backtrack through the ship to gather components for the engine repair tool
-17. Backtrack through the ship to gather components for an improvised weapon
-18. Confront and eliminate the infected science officer
-19. Restart the engines
-20. Return to the Bridge and plot a course home
+8. Scan Reyes' coded note at the lab scanner terminal to access the suppressed specimen report
+9. Use the card read/write machine to upgrade the keycard to senior crew clearance
+10. Unlock the Bridge with the upgraded card - this is the trigger point
+11. Restore communications and contact command center
+12. Receive command center's directive: repair the engines and return home
+13. Use bridge controls to close and repressurize the shuttle bay
+14. On the way back through the cryo room, discover that the science officer's pod is now empty - the body is gone
+15. Realize the science officer is alive and infected, somewhere on the ship
+16. Cross the shuttle bay safely
+17. Reach Engineering and discover the extent of the sabotage
+18. Backtrack through the ship to gather components for the engine repair tool
+19. Backtrack through the ship to gather components for an improvised weapon
+20. Confront and eliminate the infected science officer
+21. Restart the engines
+22. Return to the Bridge and plot a course home
 
 THE FOUR CRYO PODS
 
@@ -145,7 +147,7 @@ The player understands that the ship was not damaged by an accident. Someone amo
 ROOM 2: SCIENCE LAB
 
 Purpose:
-The science lab reveals the existence of the organism and reframes the mystery. The crew were not just damaged by an accident; they were fighting over something extraordinarily dangerous and extraordinarily valuable.
+The science lab reveals the existence of the organism and reframes the mystery. The crew were not just damaged by an accident; they were fighting over something extraordinarily dangerous and extraordinarily valuable. It is also where the player must complete two key tasks before reaching the bridge: decoding Reyes' suppressed research note and upgrading the security card to bridge-access level.
 
 Initial State:
 - Lab is locked down
@@ -154,12 +156,15 @@ Initial State:
 - Research terminal is damaged
 - Biological warning symbols appear throughout the room
 - Evidence suggests a rushed cleanup and possibly a cover-up
+- A document scanner terminal is present for analyzing physical media
+- A card read/write machine is connected to the lab's access control terminal
 
 Primary Goals:
 - Restore access to the lab terminal
 - Learn about the alien organism and its discovery
 - Find evidence of the science officer's exposure
-- Recover a bridge access component
+- Scan Reyes' coded note to access the suppressed specimen report
+- Use the card read/write machine to upgrade the keycard's clearance level
 - Begin gathering items that will later become weapon components
 
 Puzzle Ideas:
@@ -167,27 +172,43 @@ Puzzle Ideas:
 1. Research Log Reconstruction
 Corrupted audio or text logs must be arranged in chronological order. This reveals the discovery of the organism, the decision to bring it aboard, the testing accident, and the science officer's apparent death.
 
-2. Sample Scanner Puzzle
+2. Coded Note Scanner Puzzle
+The player retrieved a coded note from Reyes' cryo locker earlier in the game. The note, folded and covered in dense symbol rows, means nothing on its own. However, the lab's document scanner terminal can decode it. Inserting the note into the scanner causes the terminal to reconstruct a redacted specimen analysis report authored by Reyes before the incident.
+
+The decoded report reveals: the organism's acquisition date, initial behavioral test results, its infectious vector, and Reyes' conclusion that standard containment was inadequate. Critical fields — the specimen's classification, retrieval site, and the captain's suppression order — are blacked out, either pre-redacted by the captain or lost to file corruption.
+
+A final addendum reads, partially intact: "This report is restricted under [REDACTED] protocol. Distribution of specimen data to unauthorized parties is [REDACTED]. The existence of this organism must not [REDACTED]."
+
+The coded note was how Reyes hid this research from the captain's file sweep. Scanning it also loads Reyes' authorization profile into the lab's access control buffer — a necessary step for upgrading the keycard in the next puzzle.
+
+3. Card Read/Write Machine
+Once Reyes' report has been scanned and the authorization profile is loaded into the access buffer, the card read/write machine becomes active. The player inserts the crew keycard recovered from the science officer's pod and the machine writes elevated clearance data to the card, upgrading it from CREW level to SENIOR CREW level. The upgraded card can now open the bridge door.
+
+The thematic logic: the science officer's original keycard carried standard crew clearance. Reaching the bridge requires senior authorization, which the captain had locked down. Reyes' decoded research — containing the specimen data the captain tried to suppress — inadvertently provides the authentication code needed to push past that restriction.
+
+4. Sample Scanner Puzzle
 A scanner can analyze residue from the science officer's pod. The player must prepare the scanner using a calibration slide, wavelength setting, or sample tray. The micro-focusing lens of this scanner is later removed as a component for the engine repair tool.
 
-3. Containment Cabinet Puzzle
-A locked cabinet contains a bridge access chip. The unlock code is hidden in lab notes about specimen growth stages, hazard levels, or quarantine timestamps.
+5. Containment Cabinet Puzzle
+A locked cabinet contains additional research materials and a component needed for a later puzzle. The unlock code is hidden in lab notes about specimen growth stages, hazard levels, or quarantine timestamps.
 
-4. Chemical Reveal Puzzle
+6. Chemical Reveal Puzzle
 A reagent can reveal hidden writing or residue trails on a lab surface. This may indicate that the security officer removed a specimen container shortly before the launch.
 
-5. Improvised Weapon Component
+7. Improvised Weapon Component
 A volatile reagent or pressurized chemical canister is identified as something potentially harmful to the organism. Recovering it safely will be one component of the weapon assembled later.
 
 Important Clues:
 - The organism was found during the mission and brought aboard for testing.
-- The science officer was exposed first and showed alarming symptoms.
-- The crew sealed the science officer in their suit and froze them in cryo pod 4.
+- The science officer (Reyes) was exposed first and showed alarming symptoms.
+- The crew sealed Reyes in their suit and froze them in cryo pod 4.
+- The captain actively suppressed Reyes' research notes — the coded note was how Reyes hid their findings.
 - The security officer's badge was logged in the lab around the time a specimen container was removed.
 - The organism may have extreme commercial or military value.
+- The captain did not want the organism's existence or infectious nature to become known outside the ship.
 
 Story Beat:
-The player understands the source of the conflict and the scale of what was lost in this room. The dead crew member's transformation is hinted at but not yet confirmed.
+The player understands the source of the conflict and the scale of what was lost in this room. The dead crew member's transformation is hinted at but not yet confirmed. The redacted report plants a quiet dread: Reyes knew how dangerous the organism was, tried to document it properly, and was silenced for it.
 
 ROOM 3: BRIDGE
 
@@ -440,7 +461,7 @@ Reveal 1 - Cryo Room:
 Three crew members are unaccounted for, one is sealed in a sabotaged pod, and the cryo records show a deliberate, targeted attack on pod 4.
 
 Reveal 2 - Science Lab:
-The crew discovered and tested an alien organism. The science officer was exposed and apparently killed. The remaining crew sealed them in their suit and froze them.
+The crew discovered and tested an alien organism. The science officer (Reyes) was exposed and apparently killed. The remaining crew sealed them in their suit and froze them. Reyes coded their research findings into a hidden note before the incident — the captain had been suppressing official reports. The decoded note confirms the organism is infectious and potentially lethal at scale, and that the captain ordered the information buried.
 
 Reveal 3 - Science Lab / Bridge:
 The organism was extraordinarily dangerous and extraordinarily valuable. The crew disagreed about what to do with it. The security officer's badge appears repeatedly near critical events.
@@ -566,7 +587,10 @@ Cryo Room (initial):
 Science Lab:
 - Analyze pod residue
 - Learn about the organism
-- Unlock bridge access chip
+- Scan Reyes' coded note at the document scanner terminal
+- Read the decoded (partially redacted) specimen analysis report
+- Insert keycard into the now-active card read/write machine
+- Receive upgraded keycard (SENIOR CREW clearance)
 - Recover a volatile reagent (weapon component)
 
 Bridge:
