@@ -16,19 +16,19 @@ THE CREW
 
 THE ENGINEER - PLAYER
 
-The engineer is the only crew member still aboard and the only one capable of undoing the security officer's sabotage. They are not the captain and do not begin with full ship authorization. They understand power routing, mechanical repair, tools, and ship systems, but they need codes, keycards, and evidence from the rest of the crew to regain full control of the vessel.
+The engineer is the only crew member still aboard and the only one capable of restoring the ship's systems. They are not the captain and do not begin with full ship authorization. They understand power routing, mechanical repair, tools, and ship systems, but they need codes, keycards, and evidence from the rest of the crew to regain control of the vessel.
 
-THE CAPTAIN - INTERCEPTOR
+REYES - CAPTAIN (DEAD)
 
-Mission commander. Realized too late that the security officer was attempting to escape with the organism. Pursued the security officer into the shuttle bay during the launch sequence. Was killed when the bay decompressed; pulled into space as the shuttle launched.
+Mission commander. Cryo pod 2. Reyes believed the mission had to be completed: the specimens had to be brought home, documented, and properly handled through official channels. When Tarn moved to take the shuttle and destroy the ship, Reyes tried to stop them. Pursued Tarn into the shuttle bay during the launch sequence and was killed when the bay decompressed as the shuttle launched. Reyes' locker in the cryo room contains a coded note — a deliberately obscured record of the dispute with Tarn, hidden so Tarn could not destroy it before leaving. A corresponding locked log on the science lab terminal can only be accessed by scanning this note. In the cryo room pod data, Reyes' pod was opened in a hurry, with warning errors still in the system log.
 
-THE SECURITY OFFICER - SABOTEUR
+TARN - SECURITY OFFICER (ESCAPED)
 
-Recognized the alien organism as a weapon of enormous value and decided to take a specimen and flee. Disabled critical ship systems before launching the shuttle so the ship could not pursue. Their pod was opened cleanly with proper authorization, indicating premeditation. They are the only crew member who is still alive and free, and they are no longer aboard.
+Cryo pod 3. After watching the glitch infect and inhabit Vance, Tarn concluded that bringing the organism back to civilization would risk a catastrophic outbreak. As security officer, Tarn saw destroying the ship — specimens, evidence, and all — as the only responsible course of action. Tarn did not see this as betrayal; they saw it as the only decision that protected other people. Took the shuttle alone, sabotaged critical ship systems first to prevent the ship from following, and left. Tarn's pod was opened cleanly with proper authorization, indicating the decision was made deliberately and in advance. Tarn is the only crew member still alive and uninfected. Whether they were right is something the player must decide for themselves.
 
-THE SCIENCE OFFICER - INFECTED
+VANCE - SCIENCE OFFICER (INHABITED)
 
-Lead researcher on the mission. Was the first crew member exposed to the organism during testing in the science lab. Appeared to die from the infection. The remaining crew sealed them in their EVA suit and froze them in cryo pod 4 to preserve the body for analysis. In reality the organism is keeping the science officer alive in a transformed, predatory state. Once the player opens the pod, the science officer eventually breaks free and becomes a roaming threat aboard the ship.
+Cryo pod 4. Lead researcher on the mission. Vance was the first to attempt direct study of a live glitch specimen in the science lab, experimenting with light and audio stimuli. During one of these sessions the organism responded by entering and inhabiting Vance's body. Vance appeared to die. The remaining crew sealed Vance in their EVA suit and froze them in cryo pod 4. In reality, the glitch is sustaining and animating Vance's body in a transformed, predatory state. Once the player opens the pod and retrieves the keycard, Vance eventually breaks free and becomes a roaming threat aboard the ship. Vance's incomplete specimen scanner remains on the workbench in the science lab.
 
 SHIP LAYOUT
 
@@ -51,22 +51,24 @@ MAIN GAME FLOW
 4. Use the terminal to open the science officer's pod
 5. Recover the science officer's keycard from the suited body
 6. Unlock the Science Lab
-7. Discover evidence of the organism, the testing accident, and the science officer's exposure
-8. Scan Reyes' coded note at the lab scanner terminal to access the suppressed specimen report
-9. Use the card read/write machine to upgrade the keycard to senior crew clearance
-10. Unlock the Bridge with the upgraded card - this is the trigger point
-11. Restore communications and contact command center
-12. Receive command center's directive: repair the engines and return home
-13. Use bridge controls to close and repressurize the shuttle bay
-14. On the way back through the cryo room, discover that the science officer's pod is now empty - the body is gone
-15. Realize the science officer is alive and infected, somewhere on the ship
-16. Cross the shuttle bay safely
-17. Reach Engineering and discover the extent of the sabotage
-18. Backtrack through the ship to gather components for the engine repair tool
-19. Backtrack through the ship to gather components for an improvised weapon
-20. Confront and eliminate the infected science officer
-21. Restart the engines
-22. Return to the Bridge and plot a course home
+7. Read Reyes' expedition and experiment logs — learn about the glitch and Vance's infection
+8. Scan Reyes' coded note at the log terminal to unlock the dispute log — learn about Tarn's decision and Reyes' death
+9. Read Vance's workbench notes — find the specimen storage code
+10. Unlock specimen storage — examine all three containers, retrieve the frequency emitter
+11. Enter the authorization code at the upgrade terminal — insert keycard and receive upgraded keycard
+12. Unlock the Bridge with the upgraded card — this is the trigger point
+13. Restore communications and contact command center
+14. Receive command center's directive: repair the engines and return home
+15. Use bridge controls to close and repressurize the shuttle bay
+16. On the way back through the cryo room, discover that Vance's pod is now empty — the body is gone
+17. Realize Vance is alive and inhabited, somewhere on the ship
+18. Cross the shuttle bay safely
+19. Reach Engineering and discover the extent of the sabotage
+20. Backtrack through the ship to gather remaining scanner components and engine repair tool components
+21. Assemble Vance's scanner — use it to track the infected entity
+22. Confront and eliminate the inhabited Vance
+23. Restart the engines
+24. Return to the Bridge and plot a course home
 
 THE FOUR CRYO PODS
 
@@ -76,17 +78,17 @@ POD 1 - ENGINEER (PLAYER)
 
 The player wakes from this pod due to the ship's emergency wake protocol. The ship awakened them because they are the only remaining person aboard with the technical ability to repair the vessel.
 
-POD 2 - CAPTAIN (EMPTY)
+POD 2 - REYES / CAPTAIN (EMPTY)
 
-This pod belonged to the captain. It was opened in a hurry, with warning errors still in the system log. The captain woke when the security officer attempted to flee, pursued them to the shuttle bay, and never returned.
+Reyes' pod was opened in a hurry, with warning errors still in the system log. Reyes woke when Tarn moved toward the shuttle bay and ran to stop them. Never returned. Before the incident, Reyes left a coded note in their locker — a hidden record of the dispute that Tarn could not read or destroy.
 
-POD 3 - SECURITY OFFICER (EMPTY)
+POD 3 - TARN / SECURITY OFFICER (EMPTY)
 
-This pod belonged to the security officer. It was opened cleanly with proper authorization. The clean opening, viewed in context, is one of the strongest indicators that the escape was premeditated rather than reactive.
+Tarn's pod was opened cleanly, with proper authorization. The lack of errors or warnings is the strongest indicator that Tarn's decision to leave was premeditated. Tarn woke up, made a choice, and executed it deliberately.
 
-POD 4 - SCIENCE OFFICER (SEALED)
+POD 4 - VANCE / SCIENCE OFFICER (SEALED)
 
-This pod contains the science officer, sealed inside their EVA suit and frozen in cryo. They were placed here after the organism appeared to kill them in the lab. The pod's wiring was deliberately sabotaged by the security officer so it could not be opened by anyone who survived the cryo cycle. The pod's medical and quarantine logs reveal that the organism was dangerous, invasive, and possibly still viable.
+This pod contains Vance, sealed inside their EVA suit and frozen in cryo. Vance was placed here after the glitch appeared to kill them in the science lab. The pod's wiring was deliberately sabotaged by Tarn to prevent anyone who survived the cryo cycle from opening it. The pod's medical and quarantine logs confirm the organism was dangerous and invasive.
 
 This pod is the most important object in the cryo room. Repairing the sabotaged wiring is the first major puzzle of the game; opening the pod and recovering the keycard is the path out of the room. When the pod first opens, it reveals exactly what the player expects: a frozen, suited body. No twist, no movement, no horror beat. The body remains in place during all backtracking through the science lab. Only after the player opens the door to the bridge does the body silently disappear from the pod, setting up the first real horror beat the next time the player passes back through the cryo room.
 
@@ -147,68 +149,101 @@ The player understands that the ship was not damaged by an accident. Someone amo
 ROOM 2: SCIENCE LAB
 
 Purpose:
-The science lab reveals the existence of the organism and reframes the mystery. The crew were not just damaged by an accident; they were fighting over something extraordinarily dangerous and extraordinarily valuable. It is also where the player must complete two key tasks before reaching the bridge: decoding Reyes' suppressed research note and upgrading the security card to bridge-access level.
+The science lab is the heart of the mystery. It is where Vance studied the glitch, where the infection happened, and where the argument between Reyes and Tarn became irreversible. It is also where the player must solve four wall-scale puzzles before they can reach the bridge: read Reyes' logs, solve the card upgrade terminal, investigate the specimen storage, and begin assembling Vance's unfinished scanner. The room answers most of the game's first-half questions — and raises the second half's central one.
+
+THE ORGANISM: THE GLITCH
+
+The organism encountered by the crew during the mission exists as a cluster of small, translucent squares. Their movement and behavior resembles a visual artifact — a digital glitch made physical. They do not appear biological in any conventional sense. They are semi-transparent, float slightly, and shift arrangement in response to stimuli. Up close, each square appears hollow or crystalline. The crew had no existing framework for classifying them. Vance cataloged them as glitches because that was the closest analogy available.
+
+What the glitch does: it can enter a living host through sustained proximity and sensory stimulus. Once inside, it does not kill the host — it inhabits them. The host's body is restructured to serve the organism. Vance is the only confirmed case. The full mechanism is not understood.
 
 Initial State:
-- Lab is locked down
-- Some storage cabinets are sealed
-- Containment chamber is cracked or empty
-- Research terminal is damaged
-- Biological warning symbols appear throughout the room
-- Evidence suggests a rushed cleanup and possibly a cover-up
-- A document scanner terminal is present for analyzing physical media
-- A card read/write machine is connected to the lab's access control terminal
+- Lab is locked down; biological hazard warnings are lit
+- Evidence of Vance's workbench experiments is visible but frozen mid-process
+- Specimen storage unit on the back wall is sealed; one container is visibly cracked
+- Vance's unfinished scanner sits on the workbench, incomplete and inert
+- The log terminal has power; two logs are accessible and one is locked behind a document scanner slot
 
-Primary Goals:
-- Restore access to the lab terminal
-- Learn about the alien organism and its discovery
-- Find evidence of the science officer's exposure
-- Scan Reyes' coded note to access the suppressed specimen report
-- Use the card read/write machine to upgrade the keycard's clearance level
-- Begin gathering items that will later become weapon components
+WALL LAYOUT
 
-Puzzle Ideas:
+The four walls of the science lab each have a primary function. The player enters facing the bridge door. Turning clockwise: logs, specimens, workbench.
 
-1. Research Log Reconstruction
-Corrupted audio or text logs must be arranged in chronological order. This reveals the discovery of the organism, the decision to bring it aboard, the testing accident, and the science officer's apparent death.
+WALL A — BRIDGE DOOR + CARD UPGRADE TERMINAL
 
-2. Coded Note Scanner Puzzle
-The player retrieved a coded note from Reyes' cryo locker earlier in the game. The note, folded and covered in dense symbol rows, means nothing on its own. However, the lab's document scanner terminal can decode it. Inserting the note into the scanner causes the terminal to reconstruct a redacted specimen analysis report authored by Reyes before the incident.
+The bridge door is on this wall. To the side of the door is the lab's access control terminal, which includes a card read/write machine. This is where the player upgrades their keycard to senior crew clearance in order to open the bridge door.
 
-The decoded report reveals: the organism's acquisition date, initial behavioral test results, its infectious vector, and Reyes' conclusion that standard containment was inadequate. Critical fields — the specimen's classification, retrieval site, and the captain's suppression order — are blacked out, either pre-redacted by the captain or lost to file corruption.
+The terminal requires the player to solve an authorization puzzle before it will accept a card for upgrading. The puzzle is a 4-digit code entry. The code — mission authorization number 0743 — is embedded in Reyes' Log 1 on the adjacent wall. This creates a soft dependency: the player needs to read the logs before they can upgrade the card.
 
-A final addendum reads, partially intact: "This report is restricted under [REDACTED] protocol. Distribution of specimen data to unauthorized parties is [REDACTED]. The existence of this organism must not [REDACTED]."
+Once the correct code is entered, the terminal prompts the player to insert their crew keycard. The card is ejected a moment later with upgraded clearance: SENIOR CREW. The bridge door reader now accepts it.
 
-The coded note was how Reyes hid this research from the captain's file sweep. Scanning it also loads Reyes' authorization profile into the lab's access control buffer — a necessary step for upgrading the keycard in the next puzzle.
+WALL B — REYES' LOG TERMINAL (turn right from bridge door)
 
-3. Card Read/Write Machine
-Once Reyes' report has been scanned and the authorization profile is loaded into the access buffer, the card read/write machine becomes active. The player inserts the crew keycard recovered from the science officer's pod and the machine writes elevated clearance data to the card, upgrading it from CREW level to SENIOR CREW level. The upgraded card can now open the bridge door.
+A research terminal with a built-in document scanner slot. Three log entries are stored here, authored by Reyes in the captain's capacity as mission commander.
 
-The thematic logic: the science officer's original keycard carried standard crew clearance. Reaching the bridge requires senior authorization, which the captain had locked down. Reyes' decoded research — containing the specimen data the captain tried to suppress — inadvertently provides the authentication code needed to push past that restriction.
+Log 1 — Expedition Record (unlocked):
+Reyes describes the survey mission to the planet surface. The crew located what appeared to be debris or crystalline mineral deposits in a low-lying cave system. Closer examination revealed the deposits were not inert — they responded to light, shifted position, and appeared to reorganize in response to audio frequency. Vance identified them as a likely novel organism. The crew collected three specimens in sealed containers and returned to the ship. Reyes notes the mission authorization code (0743) as the filing reference for the collection record. Reyes describes the glitch as beautiful and deeply strange — unlike anything in any scientific record.
 
-4. Sample Scanner Puzzle
-A scanner can analyze residue from the science officer's pod. The player must prepare the scanner using a calibration slide, wavelength setting, or sample tray. The micro-focusing lens of this scanner is later removed as a component for the engine repair tool.
+Log 2 — Experiment Record (unlocked):
+Reyes describes Vance's initial experiments on one of the live specimens. Vance used controlled light and audio stimuli to test the organism's responses. The glitch reacted with increased activity and apparent agitation when exposed to certain audio frequencies. During one session, the organism suddenly moved out of containment and toward Vance directly. What followed was rapid and difficult to document: the glitch appeared to enter Vance's body through sustained proximity, possibly through the respiratory system or skin contact. Vance collapsed. Vital signs became erratic then stabilized at unnatural levels. By all indicators Vance died; by all indicators something was still running the body. Reyes and Tarn sealed Vance in the EVA suit and placed them in cryo pod 4 under quarantine. Reyes notes that the wiring on pod 4 was sabotaged shortly after — by whom, the log does not say.
 
-5. Containment Cabinet Puzzle
-A locked cabinet contains additional research materials and a component needed for a later puzzle. The unlock code is hidden in lab notes about specimen growth stages, hazard levels, or quarantine timestamps.
+Log 3 — Dispute Record (LOCKED — requires coded note):
+This log is protected by a physical key: Reyes encoded a paper copy of the log's decryption key and hid it in their cryo locker as a backup, knowing Tarn might wipe or lock the digital version before leaving. The player must retrieve the coded note from Reyes' locker in the cryo room and feed it into the scanner slot on this terminal to unlock Log 3.
 
-6. Chemical Reveal Puzzle
-A reagent can reveal hidden writing or residue trails on a lab surface. This may indicate that the security officer removed a specimen container shortly before the launch.
+Contents of Log 3: Reyes describes the argument with Tarn after Vance's infection. Tarn argued that the only safe course was to take the shuttle, destroy the main ship and all specimens, and return alone — no evidence, no organism, no risk to civilization. Reyes refused: abandoning the ship meant abandoning the engineer, who was still in cryo sleep, and destroying all specimens would remove any chance of developing a treatment or understanding the organism. Reyes also believed the proper course was to return to base and report through official channels. Neither Reyes nor Tarn persuaded the other. The log ends with Reyes stating that Tarn has moved toward the shuttle bay and that Reyes is going after them. There is no further entry.
 
-7. Improvised Weapon Component
-A volatile reagent or pressurized chemical canister is identified as something potentially harmful to the organism. Recovering it safely will be one component of the weapon assembled later.
+WALL C — SPECIMEN STORAGE (back wall, cryo door side)
+
+Three specimen containers are housed in a sealed storage unit on the back wall. The door to the cryo room is on this wall as well. The storage unit has a control panel that requires an access code before any container can be released for examination.
+
+The access code (3-7-1) is written in Vance's workbench notes on the opposite wall. The player must go to the workbench, read the notes, find the code, and return here to unlock the storage.
+
+Container A — Empty:
+The container is clean and sealed, but empty. There is no residue or trace of a specimen. Either this container was never filled, or something was removed deliberately. Tarn's badge was last logged in the lab just before the shuttle launched.
+
+Container B — Cracked:
+The containment seal on this container is broken from the inside. This is where the glitch escaped during Vance's experiment. The interior has faint residue — traces of the organism's passage. Examining this container with the completed scanner (later in the game) will confirm residue patterns consistent with the infected entity now loose on the ship.
+
+Container C — Live Specimen:
+One glitch specimen remains, contained and active. Through the glass the player can observe it: a shifting cluster of translucent squares, reorganizing slowly, apparently aware of being watched. This container is intact and sealed. It is the only surviving physical specimen on the ship. What the player does with it — or is instructed to do with it by command center — becomes relevant at the end of the game.
+
+WALL D — VANCE'S WORKBENCH (left wall)
+
+Vance's workspace. A partially assembled scanner device sits at the center of the bench surrounded by tools, reference notes, and disassembled components. The scanner was Vance's project for analyzing glitch specimens at a distance — using a combination of focused light and frequency detection to map the organism's position and behavior without direct contact. It was never finished.
+
+Vance's notes on the workbench are readable and include several key details: the specimen storage access code (3-7-1), observations about the glitch's behavior during experiments, and a rough schematic for the scanner's assembly. The schematic shows that the scanner requires four components to function:
+
+Scanner Components:
+1. Calibration Lens — a precision optical element. One is partially installed on the workbench already (found in place during the lab visit).
+2. Frequency Emitter — a small audio transducer tuned to the organism's reactive range. One is in Container A of the specimen storage (the empty container), placed there by Vance for safekeeping before the incident.
+3. Power Cell — a high-density cell compatible with the scanner chassis. One is accessible in the cryo room emergency kit after power is partially restored.
+4. Signal Amplifier — a signal-boosting board. Found in the bridge command station during the second visit to the bridge.
+
+Once all four components are gathered and installed, the scanner becomes functional. Its initial use is as a detection tool: it can illuminate biological residue left by the infected Vance, acting as a tracker and revealing where the entity has moved through the ship. This is the player's primary tool for anticipating the threat in the second half of the game.
+
+The scanner's secondary potential — as a weapon — is left open. If the glitch responds with agitation to the audio frequencies Vance used in the experiments, a modified version of the scanner broadcasting at full power might be capable of driving it out of a host or disrupting it directly. This is the subject of a later design decision.
+
+Primary Goals (Science Lab):
+- Read Reyes' Log 1 (expedition record) and Log 2 (experiment record)
+- Note the mission authorization code from Log 1 (0743)
+- Scan Reyes' coded note at the terminal slot to unlock Log 3 (dispute record)
+- Enter the authorization code at the upgrade terminal on Wall A
+- Insert the crew keycard — receive the upgraded keycard
+- Go to the workbench and read Vance's notes — find the storage code (3-7-1)
+- Enter the code at the specimen storage panel — examine all three containers
+- Retrieve the frequency emitter from Container A (scanner component)
+- Note the live specimen in Container C
+- Begin scanner assembly at the workbench (calibration lens is already in place)
 
 Important Clues:
-- The organism was found during the mission and brought aboard for testing.
-- The science officer (Reyes) was exposed first and showed alarming symptoms.
-- The crew sealed Reyes in their suit and froze them in cryo pod 4.
-- The captain actively suppressed Reyes' research notes — the coded note was how Reyes hid their findings.
-- The security officer's badge was logged in the lab around the time a specimen container was removed.
-- The organism may have extreme commercial or military value.
-- The captain did not want the organism's existence or infectious nature to become known outside the ship.
+- The glitch is not a weapon and not a resource — it is a living thing that inhabits other living things.
+- Vance's infection happened during routine experimentation, not through carelessness.
+- Container A is empty; Tarn's badge was last logged in the lab just before the shuttle launched.
+- Tarn's stated reason for leaving was to protect humanity. The player has no way to confirm or refute this yet.
+- Reyes tried to stop Tarn and died for it.
+- The only remaining glitch specimen is still alive in Container C.
 
 Story Beat:
-The player understands the source of the conflict and the scale of what was lost in this room. The dead crew member's transformation is hinted at but not yet confirmed. The redacted report plants a quiet dread: Reyes knew how dangerous the organism was, tried to document it properly, and was silenced for it.
+The player enters the lab knowing Vance is in pod 4 and something went wrong. They leave knowing exactly what went wrong, who chose to run, who tried to stop them, and why. The argument between Reyes and Tarn is not a story about a villain — it is a story about two people who both believed they were making the right call. The player is left with the residue of that argument and no easy answer. The empty specimen container is a quiet reminder that Tarn may have taken something with them.
 
 ROOM 3: BRIDGE
 
@@ -298,14 +333,14 @@ A maintenance locker contains the magnetic torque head needed for engineering. T
 A faint trail of frost or biological residue suggests something thawed inside the ship and moved through this room. The trail leads toward engineering, the ducts, or back into the cryo corridor.
 
 Important Clues:
-- The security officer launched the shuttle.
-- The organism was taken aboard the shuttle in a sample container.
-- The captain tried to stop the launch and was killed when the doors opened.
+- Tarn launched the shuttle.
+- Container A in specimen storage was empty — Tarn may have taken a glitch specimen with them.
+- Reyes tried to stop the launch and was killed when the doors opened.
 - Engineering was disabled before the launch to prevent pursuit.
-- Something thawed inside pod 4 and is now moving.
+- Something thawed inside pod 4 and is now moving through the ship.
 
 Story Beat:
-The central conflict is fully understood. The captain died trying to stop a betrayal, the security officer escaped with a weapon, and the science officer is no longer dead.
+The central conflict is fully understood — not as betrayal, but as a disagreement that became catastrophic. Reyes died trying to stop what Tarn genuinely believed was the right thing to do. Vance is no longer in their pod.
 
 ROOM 5: ENGINEERING
 
@@ -399,11 +434,10 @@ Cryo Sleep Revisited:
 - Confirm the chronological order of pod openings using bridge authorization
 
 Science Lab Revisited:
-- Use restored power to run the scanner properly
-- Analyze residue from the empty pod 4 and the shuttle bay trail
-- Remove the micro-focusing lens for the engine repair tool
-- Recover a volatile reagent for the weapon
-- Unlock deeper research logs after bridge access is gained
+- Use the assembled scanner to detect glitch residue from the empty pod 4 and the trail through the lab
+- Analyze Container B residue with the scanner (confirms the infected entity is Vance)
+- Observe the live specimen in Container C with the scanner — this may reveal the glitch's weakness
+- Recover any remaining weapon or tool components from the workbench or storage area
 
 Bridge Revisited:
 - Receive clearer command center transmissions
@@ -420,21 +454,21 @@ Engineering Revisited:
 - First visit reveals the engine sabotage and weapon-relevant components
 - Later visit allows tool-assisted repair, the confrontation with the science officer, and the final restart
 
-THE INFECTED SCIENCE OFFICER
+THE INHABITED VANCE
 
 Behavior:
-The infected science officer should remain mysterious and intermittent. The game does not need to show them in detail right away. Their presence is established first through environmental signs - the empty pod, frost trails, biological residue, distant sounds - and only later through direct encounters.
+The inhabited Vance should remain mysterious and intermittent. The game does not need to show them in detail right away. Their presence is established first through environmental signs — the empty pod, frost trails, glitch residue, distant sounds — and only later through direct encounters. The player's assembled scanner becomes their primary tool for tracking and anticipating Vance's movements.
 
 Encounter Pacing:
-- Pre-bridge: pod 4 still contains the corpse; backtracking to the cryo room is uneventful
+- Pre-bridge: pod 4 still contains the suited body; backtracking to the cryo room is uneventful
 - Trigger: opening the door to the bridge silently empties pod 4
-- First return through cryo: empty pod, dragged-out frost, faint trail
+- First return through cryo: empty pod, seals broken outward, faint trail
 - Mid-game: ambient signs, brief glimpses, distant sounds, scrabbling in vents
-- Late mid-game: environmental hazards traced back to the science officer (banged-shut doors, vents pried open, biological residue)
+- Late mid-game: environmental hazards traced back to Vance (banged-shut doors, vents pried open, glitch residue that the scanner can read)
 - Final act: the climactic confrontation in engineering
 
 Resolution:
-The science officer must be eliminated using the assembled weapon. The game treats this as a tragic necessity rather than a victory. The science officer is also a victim of the organism.
+Vance must be stopped using the assembled scanner or a weapon derived from it. The game treats this as a tragic necessity — Vance was a victim of the glitch, not an antagonist. Whether the player learns anything from this encounter about how to stop the organism depends on what they discovered in the science lab.
 
 COMMAND CENTER ROLE
 
@@ -458,28 +492,31 @@ Command center may care more about recovering the organism than saving the playe
 KEY STORY REVEAL ORDER
 
 Reveal 1 - Cryo Room:
-Three crew members are unaccounted for, one is sealed in a sabotaged pod, and the cryo records show a deliberate, targeted attack on pod 4.
+Three crew members are unaccounted for. Vance is sealed in a sabotaged pod. The cryo records show a deliberate attack on pod 4's wiring. Reyes' locker contains a coded note that makes no sense yet.
 
-Reveal 2 - Science Lab:
-The crew discovered and tested an alien organism. The science officer (Reyes) was exposed and apparently killed. The remaining crew sealed them in their suit and froze them. Reyes coded their research findings into a hidden note before the incident — the captain had been suppressing official reports. The decoded note confirms the organism is infectious and potentially lethal at scale, and that the captain ordered the information buried.
+Reveal 2 - Science Lab (Logs 1 and 2):
+The crew found the glitch on the planet surface and brought specimens aboard. Vance experimented on a live specimen; the glitch entered Vance's body during a session using light and audio stimuli. Vance appeared to die. Reyes and Tarn sealed Vance in the EVA suit and placed them in cryo pod 4.
 
-Reveal 3 - Science Lab / Bridge:
-The organism was extraordinarily dangerous and extraordinarily valuable. The crew disagreed about what to do with it. The security officer's badge appears repeatedly near critical events.
+Reveal 3 - Science Lab (Log 3 — requires coded note):
+Tarn believed destroying the ship was the only way to protect other people from the glitch. Reyes refused and tried to stop Tarn. Reyes died in the shuttle bay. Tarn left. Container A is empty — Tarn may have taken a specimen.
 
-Reveal 4 - Bridge:
-The shuttle launched in an unauthorized emergency sequence. The shuttle bay was left open to space. The captain's last activity is in the shuttle bay corridor. (Unbeknownst to the player, opening the bridge door is the trigger that empties pod 4 offscreen.)
+Reveal 4 - Science Lab (specimens):
+The live glitch in Container C is still active. The cracked Container B is where the infection started. Container A is empty — the specimen that was here is gone.
 
-Reveal 5 - Cryo Room (returning from the bridge):
-Pod 4 is empty. The science officer's body is gone. Something is moving on the ship.
+Reveal 5 - Bridge:
+Tarn launched the shuttle manually from the bay. The bay was left open to space. Tarn sabotaged the engines to prevent pursuit. (Opening the bridge door is the silent trigger that empties pod 4 offscreen.)
 
-Reveal 6 - Shuttle Bay:
-The security officer escaped with a specimen. The captain was sucked into space trying to stop them. Engineering was disabled to prevent pursuit. A trail leads further into the ship.
+Reveal 6 - Cryo Room (returning from bridge):
+Vance's pod is empty. The seal is broken outward. Something is moving on the ship.
 
-Reveal 7 - Engineering:
-The engines were sabotaged by the security officer. The infected science officer attacks the player. The weapon ends the threat.
+Reveal 7 - Shuttle Bay:
+Evidence confirms Reyes was pulled into space at the bay doors. A trail of biological residue leads toward engineering. Using the scanner here confirms it matches Vance's biological signature.
 
-Reveal 8 - Final Bridge Return:
-The organism is no longer aboard. The escaped shuttle, and the security officer with it, is the real threat that remains.
+Reveal 8 - Engineering:
+Tarn's sabotage is fully visible. The inhabited Vance attacks. The scanner-based weapon ends the confrontation.
+
+Reveal 9 - Final Bridge Return:
+The glitch is no longer aboard the main ship — except possibly in the player's memory of what the live specimen in Container C represents. Tarn is somewhere out there, possibly with a specimen. The player must decide what to do.
 
 FINAL ACT
 
@@ -487,13 +524,13 @@ After restoring the engines and eliminating the science officer, the player retu
 
 The player has enough information to understand what happened:
 
-- The science officer was exposed to the organism and presumed dead.
-- The remaining crew sealed them in their suit and froze them.
-- The security officer recognized the organism's value as a weapon and decided to flee with a specimen.
-- The security officer sabotaged ship systems to prevent pursuit.
-- The captain caught on too late and was killed when the bay decompressed during launch.
-- The science officer reanimated, infected, after the player opened pod 4.
-- The player eliminated the science officer and restored the engines.
+- Vance was inhabited by the glitch during an experiment and presumed dead.
+- Reyes and Tarn sealed Vance in their EVA suit and froze them in cryo pod 4.
+- Tarn decided the only safe course was to take the shuttle and destroy the ship.
+- Tarn sabotaged ship systems to prevent pursuit and left.
+- Reyes tried to stop Tarn and was killed when the shuttle bay decompressed.
+- Vance reanimated after the player opened pod 4 and has been dealt with.
+- The engines are repaired. Tarn is somewhere out there — possibly with a specimen.
 
 Final Goals:
 - Restore navigation
@@ -505,19 +542,19 @@ Final Goals:
 ENDING OPTIONS
 
 Ending 1 - Return Home
-The player returns home with the main ship. The most straightforward survival ending, but the security officer is still out there with the organism.
+The player returns home with the main ship. The most straightforward survival ending, but Tarn is still out there — possibly with a live specimen.
 
 Ending 2 - Pursue the Shuttle
-The player uses the restored engines to follow the escaped shuttle's trajectory, choosing to stop the organism from reaching civilization.
+The player uses the restored engines to follow Tarn's trajectory. Whether to stop Tarn, help them, or learn from them is unresolved. Tarn may not be wrong.
 
 Ending 3 - Divert to Quarantine Station
-The player follows command protocol and brings the ship to a quarantine station, preserving evidence and avoiding contamination risk.
+The player follows command protocol and brings the ship to a quarantine station, including the live specimen in Container C. Evidence is preserved.
 
 Ending 4 - Broadcast the Truth
-The player transmits all logs and evidence widely, preventing command center, corporations, or military interests from covering up the incident.
+The player transmits all logs — Reyes' logs, the dispute record, the specimen data — widely. No one can bury this.
 
 Ending 5 - Dark Ending
-The player learns command center already knew the organism was valuable and wants it recovered. The security officer may have been acting on someone's orders.
+The player discovers command center already knew about the mission's findings. Tarn may have been acting on someone's orders, or may be heading somewhere they were told to go. The glitch was never just a scientific curiosity.
 
 RECOMMENDED CANON ENDING
 
@@ -584,14 +621,16 @@ Cryo Room (initial):
 - Open pod 4
 - Take science officer's keycard
 
-Science Lab:
-- Analyze pod residue
-- Learn about the organism
-- Scan Reyes' coded note at the document scanner terminal
-- Read the decoded (partially redacted) specimen analysis report
-- Insert keycard into the now-active card read/write machine
-- Receive upgraded keycard (SENIOR CREW clearance)
-- Recover a volatile reagent (weapon component)
+Science Lab (first visit):
+- Read Reyes' Log 1 (expedition — includes mission auth code 0743)
+- Read Reyes' Log 2 (Vance's infection)
+- Scan coded note from Reyes' locker → unlock Log 3 (the Reyes/Tarn dispute)
+- Go to Vance's workbench → read notes → find specimen storage code (3-7-1)
+- Unlock specimen storage → examine all three containers
+- Retrieve frequency emitter from Container A (scanner component 2 of 4)
+- Note calibration lens already on workbench (scanner component 1 of 4)
+- Enter code 0743 at the upgrade terminal → insert keycard → receive upgraded keycard
+- Use upgraded keycard at bridge door → bridge unlocked
 
 Bridge:
 - Restore communications

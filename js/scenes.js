@@ -39,33 +39,48 @@
    items[id]          - { name, icon, description }
 
    STATE FLAGS:
-     pod4_wiring_repaired - the sabotaged wiring panel next to pod 4
-                            has been reconnected using foil strips.
-                            Required before the cryo terminal will
-                            allow pod 4 to be released.
-                            For dev testing, run:
-                              Engine.setFlag('pod4_wiring_repaired')
-                            in the browser console.
-     pod4_opened          - the science officer's pod has been
-                            unsealed via the terminal. The corpse
-                            is visible and the keycard is now
-                            retrievable.
-     keycard_taken        - keycard sprite hidden, in inventory
-     bridge_door_unlocked - the door from the science lab into
-                            the bridge has been opened. Triggers
-                            the silent emptying of pod 4 (the
-                            corpse vanishes; the infected science
-                            officer becomes a roaming threat).
-                            (Set later, in a future room.)
-     coded_note_scanned   - Reyes' coded note has been fed into the
-                            science lab scanner terminal. The decoded
-                            specimen report has been read and an
-                            authorization profile has been loaded into
-                            the card R/W machine's buffer.
-     card_upgraded        - the crew keycard has been inserted into the
-                            card R/W machine and upgraded to senior crew
-                            clearance. keycard_upgraded is now in
-                            inventory; the original keycard was consumed.
+     pod4_wiring_repaired    - the sabotaged wiring panel next to pod 4
+                               has been reconnected using foil strips.
+                               Required before the cryo terminal will
+                               allow pod 4 to be released.
+                               For dev testing, run:
+                                 Engine.setFlag('pod4_wiring_repaired')
+                               in the browser console.
+     pod4_opened             - Vance's pod has been unsealed via the
+                               terminal. The suited body is visible and
+                               the keycard is now retrievable.
+     keycard_taken           - keycard sprite hidden, in inventory
+     bridge_door_unlocked    - the door from the science lab into
+                               the bridge has been opened. Triggers
+                               the silent emptying of pod 4 (Vance has
+                               left; the inhabited science officer
+                               becomes a roaming threat).
+                               (Set later, in a future room.)
+
+     SCIENCE LAB FLAGS:
+     log1_read               - player has read Reyes' Log 1
+                               (expedition record; contains auth code 0743)
+     log2_read               - player has read Reyes' Log 2
+                               (Vance's infection and cryo-sealing)
+     coded_note_scanned      - Reyes' coded note has been scanned at the
+                               log terminal; Log 3 is now unlocked.
+     log3_read               - player has read Reyes' Log 3
+                               (the Reyes/Tarn dispute record)
+     workbench_notes_read    - player has read Vance's workbench notes;
+                               storage access code 3-7-1 is now known.
+     specimen_storage_unlocked - the specimen storage unit has been
+                               opened with code 3-7-1; all three
+                               containers are accessible.
+     container_a_examined    - empty container examined
+     container_b_examined    - cracked container examined (infection site)
+     container_c_examined    - live specimen container examined
+     freq_emitter_taken      - frequency emitter retrieved from
+                               Container A; scanner component 2/4.
+     upgrade_puzzle_solved   - player entered the correct authorization
+                               code (0743) at the card upgrade terminal.
+     card_upgraded           - player inserted keycard after solving the
+                               upgrade puzzle; keycard_upgraded is now in
+                               inventory; original keycard consumed.
 
    CRYO PODS IMAGE STATES (Cryo Room 3 Pods *.png):
      [default]              Pods.png   — wiring sabotaged, pod 4 sealed
@@ -82,10 +97,18 @@ const ITEMS = {
     description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
   },
 
-  // Produced by inserting the keycard into the card read/write
-  // machine in the science lab (after Reyes' coded note has been
-  // scanned, loading an authorization profile into the buffer).
-  // Required to open the bridge door.
+  // Found in Container A of the specimen storage in the science lab.
+  // Vance stored it there before the incident. Scanner component 2/4.
+  // Required for assembling Vance's glitch scanner on the workbench.
+  freq_emitter: {
+    name: "Frequency Emitter",
+    icon:   "Images/items/keycard.png?v=2",   // placeholder icon — replace when art exists
+    description: "A small audio transducer, tuned to a narrow frequency range. Vance's handwriting on the case reads: 'reactive band — do not exceed 80%'. One of four components needed to complete the scanner.",
+  },
+
+  // Produced by entering the authorization code at the card upgrade
+  // terminal in the science lab (code: 0743, found in Reyes' Log 1)
+  // and then inserting the keycard. Required to open the bridge door.
   keycard_upgraded: {
     name: "Upgraded Keycard",
     icon:   "Images/items/keycard.png?v=2",
@@ -579,23 +602,45 @@ const ROOMS = {
   // ============================================================
   // SCIENCE LAB
   // Four walls in a clockwise ring. Player enters facing the
-  // bridge door (wall 0). Two right turns reaches the cryo
-  // return door (wall 2).
-  //   0: Bridge door  (01: BRIDGE)   — Science Lab 2.png
-  //   1: Plain wall                  — Science Lab 1.png
-  //   2: Cryo Room door (03: CRYO)   — Science Lab 4.png
-  //   3: Plain wall                  — Science Lab 3.png
+  // bridge door (wall 0). Turning clockwise:
+  //   0: Wall A — Bridge door + card upgrade terminal  (Science Lab 2.png)
+  //   1: Wall B — Reyes' log terminal                  (Science Lab 1.png)
+  //   2: Wall C — Specimen storage + cryo return door  (Science Lab 4.png)
+  //   3: Wall D — Vance's workbench + scanner assembly (Science Lab 3.png)
+  //
+  // WALL A (0): The player enters here facing the bridge door.
+  //   To the side of the door is the card upgrade terminal. The
+  //   terminal has a code-entry puzzle (code: 0743, found in Log 1
+  //   on Wall B). Solving the puzzle allows the player to insert the
+  //   crew keycard and receive keycard_upgraded (SENIOR CREW level).
+  //
+  // WALL B (1): Reyes' log terminal. Three logs. Log 1 and Log 2 are
+  //   freely accessible. Log 3 (the dispute record) is locked behind
+  //   a physical document scanner slot — the player must scan Reyes'
+  //   coded note from the cryo room to unlock it.
+  //
+  // WALL C (2): Specimen storage unit with three containers (empty,
+  //   cracked, live specimen). Shared wall with the cryo return door.
+  //   Storage panel requires a 3-digit batch code (3-7-1) found in
+  //   Vance's workbench notes on Wall D.
+  //
+  // WALL D (3): Vance's workbench. Vance's incomplete glitch scanner
+  //   chassis is here along with the calibration lens (component 1/4)
+  //   and Vance's handwritten notes. Reading the notes reveals the
+  //   specimen storage code and the scanner schematic.
   // ============================================================
   science_lab: {
     title: "Science Lab",
     startWall: 0,
 
     walls: [
+
       // ============================================================
-      // WALL 0 — BRIDGE DOOR (player enters facing this)
+      // WALL A (0) — BRIDGE DOOR + CARD UPGRADE TERMINAL
+      // Science Lab 2.png
       // ============================================================
       {
-        id: "scilab_wall_0_bridge_door",
+        id: "scilab_wall_a_bridge",
         plate: "Images/Science%20Lab%202.png",
         atmosphere: "cryo-emergency",
         sprites: [],
@@ -614,7 +659,7 @@ const ROOMS = {
           },
         ],
         hotspots: [
-          // Locked state — card reader active.
+          // ---- Bridge door (locked) ----
           {
             id: "bridge_door_locked",
             shape: "rect",
@@ -623,10 +668,10 @@ const ROOMS = {
             hideIf: { all: ["bridge_door_unlocked"] },
             action: {
               type: "message",
-              message: "The door is sealed. A card reader is mounted on the panel to the right.",
+              message: "The door is sealed. A card reader is mounted to the right. You'll need a senior crew keycard.",
             },
           },
-          // Open state — navigate to bridge (placeholder until bridge is built).
+          // ---- Bridge door (open) ----
           {
             id: "bridge_door_open",
             shape: "rect",
@@ -638,10 +683,9 @@ const ROOMS = {
               message: "The bridge is ahead. [Room coming soon]",
             },
           },
-          // Card reader panel (right of door). Requires the upgraded
-          // keycard (senior clearance) — the base crew keycard is
-          // insufficient. The player must scan Reyes' coded note in
-          // the lab and use the card R/W machine first.
+          // ---- Bridge card reader — requires upgraded keycard ----
+          // The base keycard is insufficient; the upgrade terminal
+          // on this same wall must be solved first.
           {
             id: "bridge_keycard_reader",
             shape: "rect",
@@ -656,56 +700,33 @@ const ROOMS = {
                 message: "The reader blinks green. A heavy clunk echoes through the door frame — bridge access granted.",
               },
               onReject: {
-                message: "Keycard reader — 01: BRIDGE. CLEARANCE INSUFFICIENT. Senior crew authorization required. Your card may need to be upgraded.",
+                message: "Keycard reader — 01: BRIDGE. CLEARANCE INSUFFICIENT. Senior crew authorization required. The upgrade terminal nearby might be able to help.",
               },
             },
           },
-        ],
-      },
-
-      // ============================================================
-      // WALL 1 — CARD READ/WRITE MACHINE (right turn from bridge door)
-      // Science Lab 1.png
-      //
-      // The card R/W machine upgrades the crew keycard to senior
-      // clearance. It only becomes active once Reyes' coded note has
-      // been scanned (flag: coded_note_scanned), which loads an
-      // authorization profile into the lab's access buffer.
-      //
-      // Three hotspot states:
-      //   1. Inactive — note not yet scanned (no profile loaded)
-      //   2. Active   — note scanned, awaiting keycard insertion
-      //   3. Done     — card already upgraded
-      //
-      // NOTE: geom is a rough estimate — press D in-game to enter
-      // debug mode and refine the coordinates once art is confirmed.
-      // ============================================================
-      {
-        id: "scilab_wall_1_card_rw",
-        plate: "Images/Science%20Lab%201.png",
-        atmosphere: "cryo-emergency",
-        sprites: [],
-        overlays: [],
-        hotspots: [
-          // State 1 — machine inactive, no authorization profile loaded.
+          // ---- Card upgrade terminal — puzzle state (unsolved) ----
+          // Opens the upgrade terminal closeup where the player enters
+          // the 4-digit authorization code (0743, found in Log 1).
+          // NOTE: geom is a rough estimate — tune with debug mode (D).
           {
-            id: "scilab_card_rw_inactive",
+            id: "scilab_upgrade_terminal",
             shape: "rect",
-            geom: [680, 180, 500, 620],
-            label: "Card read/write machine",
-            hideIf: { all: ["coded_note_scanned"] },
+            geom: [250, 220, 380, 560],
+            label: "Card upgrade terminal",
+            hideIf: { all: ["upgrade_puzzle_solved"] },
             action: {
-              type: "message",
-              message: "A card read/write machine, connected to the lab's access terminal. The authorization buffer is empty — no profile loaded. The scanner terminal might be able to source one.",
+              type: "openCloseup",
+              target: "scilab_upgrade_terminal",
+              message: "An access control terminal with a card read/write slot. A keypad prompts for an authorization code.",
             },
           },
-          // State 2 — profile loaded, ready to accept keycard.
+          // ---- Card upgrade terminal — code solved, awaiting keycard ----
           {
-            id: "scilab_card_rw_ready",
+            id: "scilab_upgrade_terminal_ready",
             shape: "rect",
-            geom: [680, 180, 500, 620],
-            label: "Card read/write machine — READY",
-            showIf: { all: ["coded_note_scanned"] },
+            geom: [250, 220, 380, 560],
+            label: "Card upgrade terminal — ARMED",
+            showIf: { all: ["upgrade_puzzle_solved"] },
             hideIf: { all: ["card_upgraded"] },
             action: {
               type: "useItem",
@@ -714,34 +735,138 @@ const ROOMS = {
                 consume: true,
                 addItem: "keycard_upgraded",
                 flags: ["card_upgraded"],
-                message: "You slot the keycard into the machine. A soft chime. The display reads: PROFILE LOADED — REYES, R. — CLEARANCE UPGRADED: SENIOR CREW. The card ejects, its stripe rewritten.",
+                message: "You slot the card into the terminal. A soft chime. Display: AUTHORIZATION ACCEPTED — CLEARANCE UPGRADED: SENIOR CREW. The card ejects, its stripe rewritten.",
               },
               onReject: {
-                message: "The authorization buffer is armed with Reyes' profile. Insert your crew keycard to upgrade its clearance level.",
+                message: "Code accepted. The terminal is waiting for a crew keycard to be inserted.",
               },
             },
           },
-          // State 3 — upgrade already done.
+          // ---- Card upgrade terminal — done ----
           {
-            id: "scilab_card_rw_done",
+            id: "scilab_upgrade_terminal_done",
             shape: "rect",
-            geom: [680, 180, 500, 620],
-            label: "Card read/write machine",
+            geom: [250, 220, 380, 560],
+            label: "Card upgrade terminal",
             showIf: { all: ["card_upgraded"] },
             action: {
               type: "message",
-              message: "The machine's buffer is cleared. Upgrade complete.",
+              message: "Upgrade complete. The terminal is idle.",
             },
           },
         ],
       },
 
       // ============================================================
-      // WALL 2 — CRYO ROOM DOOR (two turns from bridge door)
-      // Green light — the lab was already unlocked from the cryo side.
+      // WALL B (1) — REYES' LOG TERMINAL
+      // Science Lab 1.png
+      //
+      // Three log entries. Log 1 and Log 2 are accessible on first
+      // visit. Log 3 is locked behind a document scanner slot —
+      // the player must scan Reyes' coded note to unlock it.
+      // The coded note is NOT consumed.
+      //
+      // Log 1 contains mission auth code 0743. Reading it is the
+      // soft prerequisite for solving the upgrade terminal puzzle.
+      //
+      // NOTE: All geom values are estimates — tune with debug mode.
       // ============================================================
       {
-        id: "scilab_wall_2_cryo_door",
+        id: "scilab_wall_b_logs",
+        plate: "Images/Science%20Lab%201.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        overlays: [],
+        hotspots: [
+          // ---- Log terminal — general examine ----
+          {
+            id: "scilab_log_terminal_look",
+            shape: "rect",
+            geom: [580, 160, 620, 700],
+            label: "Reyes' log terminal",
+            hideIf: { all: ["log1_read"] },
+            action: {
+              type: "message",
+              message: "A research terminal. Three log entries are stored here, authored by Reyes in the captain's capacity as mission commander. Two are accessible directly. The third has a physical scanner slot below the screen — something needs to be fed into it.",
+            },
+          },
+          // ---- Log 1 — Expedition Record ----
+          {
+            id: "scilab_log_1",
+            shape: "rect",
+            geom: [640, 220, 500, 160],
+            label: "Log 1 — Expedition Record",
+            action: {
+              type: "setState",
+              flags: ["log1_read"],
+              message: "LOG 1 — EXPEDITION RECORD\nFiled by: Reyes, Mission Auth: 0743\n\nWe located what appeared to be mineral deposits in a low-lying cave system approximately 3.4 km from the landing site. On closer inspection the deposits were not inert. They responded to light, shifted position when approached, and reorganized when Vance played a tone through the portable speaker. Vance described them as unlike anything in any biological or mineralogical record. We collected three specimens in sealed field containers and returned to the ship.\n\nI've been staring at the footage. Each one is a small cluster of translucent squares. They look like a visual artifact. Vance keeps calling them glitches. I think the name is going to stick.",
+            },
+          },
+          // ---- Log 2 — Experiment Record ----
+          {
+            id: "scilab_log_2",
+            shape: "rect",
+            geom: [640, 420, 500, 160],
+            label: "Log 2 — Experiment Record",
+            action: {
+              type: "setState",
+              flags: ["log2_read"],
+              message: "LOG 2 — EXPERIMENT RECORD\nFiled by: Reyes\n\nVance has been running controlled stimulus tests on one of the live specimens — light intensity, audio frequency, thermal variation. The glitch responds to audio most strongly. During today's session using a mid-range frequency sweep, the specimen became agitated. It moved out of containment before Vance could react.\n\nWhat followed happened quickly. The specimen approached Vance directly and appeared to enter their body through sustained proximity. Vance collapsed. Vitals became erratic, then stabilised at levels that don't correspond to normal human baseline. Vance appears dead. Something is still running.\n\nTarn and I suited Vance in the EVA gear and placed them in pod 4 under full quarantine seal. I documented what I could. The wiring on pod 4 has since been tampered with. I don't know when or by whom.",
+            },
+          },
+          // ---- Log 3 — Dispute Record (locked until coded note scanned) ----
+          // Two states: locked (scanner prompt) and unlocked (full log).
+          {
+            id: "scilab_log_3_locked",
+            shape: "rect",
+            geom: [640, 620, 500, 160],
+            label: "Log 3 — [LOCKED]",
+            hideIf: { all: ["coded_note_scanned"] },
+            action: {
+              type: "useItem",
+              accepts: ["coded_message"],
+              onAccept: {
+                flags: ["coded_note_scanned"],
+                // coded_message NOT consumed.
+                message: "You feed Reyes' coded note into the scanner slot. The terminal hums as it decodes the physical key.\n\nLOG 3 — DISPUTE RECORD\nFiled by: Reyes\n\nTarn wants to take the shuttle, destroy the ship and all specimens, and return alone. No evidence. No organism. No risk. Tarn says bringing the glitch anywhere near other people — even in a sealed lab at base — is a risk we have no right to take. I understand the argument. I don't accept it.\n\nIf we destroy the ship we abandon the engineer, who is still in cryo. We lose any chance of developing a treatment or understanding what the glitch is. We give up on doing this properly. Tarn says that's acceptable. I don't agree.\n\nTarn also sabotaged pod 4's wiring at some point. I only found out today.\n\nWe're not going to agree on this. I can hear Tarn moving toward the shuttle bay. I'm going after them.",
+              },
+              onReject: {
+                message: "Log 3 is locked. The scanner slot below the screen is waiting for a physical key. Something in your inventory might fit.",
+              },
+            },
+          },
+          {
+            id: "scilab_log_3_unlocked",
+            shape: "rect",
+            geom: [640, 620, 500, 160],
+            label: "Log 3 — Dispute Record",
+            showIf: { all: ["coded_note_scanned"] },
+            action: {
+              type: "setState",
+              flags: ["log3_read"],
+              message: "LOG 3 — DISPUTE RECORD\nFiled by: Reyes\n\nTarn wants to take the shuttle, destroy the ship and all specimens, and return alone. No evidence. No organism. No risk. Tarn says bringing the glitch anywhere near other people — even in a sealed lab at base — is a risk we have no right to take. I understand the argument. I don't accept it.\n\nIf we destroy the ship we abandon the engineer, who is still in cryo. We lose any chance of developing a treatment or understanding what the glitch is. We give up on doing this properly. Tarn says that's acceptable. I don't agree.\n\nTarn also sabotaged pod 4's wiring at some point. I only found out today.\n\nWe're not going to agree on this. I can hear Tarn moving toward the shuttle bay. I'm going after them.",
+            },
+          },
+        ],
+      },
+
+      // ============================================================
+      // WALL C (2) — SPECIMEN STORAGE + CRYO RETURN DOOR
+      // Science Lab 4.png
+      //
+      // Three specimen containers in a sealed storage unit.
+      // The storage access panel requires batch code 3-7-1, which
+      // is found in Vance's workbench notes on Wall D.
+      //
+      // Containers:
+      //   A — empty (freq_emitter item stored here by Vance)
+      //   B — cracked (where the glitch escaped during experiment)
+      //   C — live specimen (glitch still active inside)
+      //
+      // NOTE: All geom values are estimates — tune with debug mode.
+      // ============================================================
+      {
+        id: "scilab_wall_c_storage",
         plate: "Images/Science%20Lab%204.png",
         atmosphere: "cryo-emergency",
         sprites: [],
@@ -754,6 +879,7 @@ const ROOMS = {
           },
         ],
         hotspots: [
+          // ---- Cryo return door ----
           {
             id: "cryo_return_door",
             shape: "rect",
@@ -762,66 +888,142 @@ const ROOMS = {
             action: {
               type: "gotoRoom",
               room: "cryo",
-              startWall: 1,   // cryo wall index 1 = the lab door wall
+              startWall: 1,
+            },
+          },
+          // ---- Specimen storage unit — locked state ----
+          // Opens the batch-code closeup. Code: 3-7-1 (from workbench).
+          {
+            id: "scilab_storage_locked",
+            shape: "rect",
+            geom: [150, 180, 500, 640],
+            label: "Specimen storage unit",
+            hideIf: { all: ["specimen_storage_unlocked"] },
+            action: {
+              type: "openCloseup",
+              target: "scilab_storage_panel",
+              message: "A sealed specimen storage unit. The access panel has a 3-digit code entry. The batch reference number should be in Vance's notes.",
+            },
+          },
+          // ---- Container A — empty (unlocked) ----
+          // Contains the frequency emitter (scanner component 2/4).
+          {
+            id: "scilab_container_a",
+            shape: "rect",
+            geom: [180, 220, 140, 300],
+            label: "Container A",
+            showIf: { all: ["specimen_storage_unlocked"] },
+            hideIf: { all: ["freq_emitter_taken"] },
+            action: {
+              type: "pickup",
+              item: "freq_emitter",
+              flags: ["container_a_examined", "freq_emitter_taken"],
+              message: "Container A is empty — no specimen. But Vance stored something here for safekeeping: a small audio transducer in a padded case. Handwritten label: 'Freq. emitter — reactive band.' A component for the scanner.",
+            },
+          },
+          {
+            id: "scilab_container_a_empty",
+            shape: "rect",
+            geom: [180, 220, 140, 300],
+            label: "Container A — empty",
+            showIf: { all: ["specimen_storage_unlocked", "freq_emitter_taken"] },
+            action: {
+              type: "message",
+              message: "Container A is empty. The frequency emitter has been retrieved. The container itself is clean — whatever specimen was catalogued here is gone. Tarn's badge was last logged in this lab before the shuttle launched.",
+            },
+          },
+          // ---- Container B — cracked ----
+          {
+            id: "scilab_container_b",
+            shape: "rect",
+            geom: [360, 220, 140, 300],
+            label: "Container B — cracked",
+            showIf: { all: ["specimen_storage_unlocked"] },
+            action: {
+              type: "setState",
+              flags: ["container_b_examined"],
+              message: "Container B's seal is broken from the inside. The glass is cracked in an outward pattern. Inside, there are faint traces of residue — a kind of crystalline film left behind when the specimen moved through. This is where the glitch escaped during Vance's experiment.",
+            },
+          },
+          // ---- Container C — live specimen ----
+          {
+            id: "scilab_container_c",
+            shape: "rect",
+            geom: [540, 220, 140, 300],
+            label: "Container C — live specimen",
+            showIf: { all: ["specimen_storage_unlocked"] },
+            action: {
+              type: "setState",
+              flags: ["container_c_examined"],
+              message: "Container C is intact and sealed. Inside, a cluster of small translucent squares shifts and reorganises slowly. It seems aware of you — the cluster orients toward the glass as you lean in. The squares are hollow, crystalline, and beautiful in a way that makes the back of your neck tighten. This is the only surviving glitch specimen on the ship.",
             },
           },
         ],
       },
 
       // ============================================================
-      // WALL 3 — DOCUMENT SCANNER TERMINAL (left turn from bridge door)
+      // WALL D (3) — VANCE'S WORKBENCH + SCANNER ASSEMBLY
       // Science Lab 3.png
       //
-      // Scanning Reyes' coded note decodes it into a partially
-      // redacted specimen analysis report (story reveal) and loads
-      // Reyes' authorization profile into the card R/W buffer
-      // (flag: coded_note_scanned), enabling the card upgrade on Wall 1.
+      // Vance's workspace. The incomplete scanner chassis sits here
+      // with the calibration lens already partially installed
+      // (scanner component 1/4). Vance's handwritten notes are
+      // readable on the bench — they contain the storage batch code
+      // (3-7-1) and a schematic for assembling the full scanner.
       //
-      // The coded note is NOT consumed — it stays in inventory.
+      // The scanner requires all 4 components before it works.
+      // Currently the only one present is component 1 (cal. lens).
+      // The others are collected over the course of the game.
       //
-      // NOTE: geom is a rough estimate — press D in-game to refine.
+      // NOTE: All geom values are estimates — tune with debug mode.
       // ============================================================
       {
-        id: "scilab_wall_3_scanner",
+        id: "scilab_wall_d_workbench",
         plate: "Images/Science%20Lab%203.png",
         atmosphere: "cryo-emergency",
         sprites: [],
         overlays: [],
         hotspots: [
-          // Scanner terminal — available state (note not yet scanned).
+          // ---- Workbench notes ----
+          // Reading reveals storage code 3-7-1 and scanner schematic.
           {
-            id: "scilab_scanner_available",
+            id: "scilab_workbench_notes",
             shape: "rect",
-            geom: [580, 180, 560, 620],
-            label: "Research scanner terminal",
-            hideIf: { all: ["coded_note_scanned"] },
+            geom: [900, 560, 500, 300],
+            label: "Vance's workbench notes",
+            hideIf: { all: ["workbench_notes_read"] },
             action: {
-              type: "useItem",
-              accepts: ["coded_message"],
-              onAccept: {
-                flags: ["coded_note_scanned"],
-                // Note is NOT consumed — the player keeps it.
-                message: "You feed the note into the scanner. The terminal hums and processes for a moment.\n\n— SPECIMEN ANALYSIS REPORT —\nFiled by: R. [REDACTED]  |  Date: [REDACTED]\n\nOrg. classification: [REDACTED]\nRetrieval site: [REDACTED]\n\nBEHAVIORAL NOTES: The specimen exhibits [REDACTED] responses to thermal stimulus. Exposure to [REDACTED] results in rapid cellular restructuring. Standard containment protocols are [REDACTED] inadequate.\n\nINFECTION VECTOR: Direct contact with [REDACTED] is sufficient for transfer. Incubation period estimated [REDACTED]. Subject displays [REDACTED] neurological changes followed by [REDACTED].\n\nCAPTAIN'S ADDENDUM — RESTRICTED: This report is classified under [REDACTED] protocol. Distribution of specimen data to unauthorized parties is [REDACTED]. The existence of this organism must not [REDACTED].\n\nThe terminal chimes: AUTHORIZATION PROFILE LOADED — REYES, R. The card read/write machine on the far wall flickers on.",
-              },
-              onReject: {
-                message: "A document scanner terminal, connected to the lab's secure research database. The feed slot is open. There might be something in your inventory that belongs here.",
-              },
+              type: "setState",
+              flags: ["workbench_notes_read"],
+              message: "Vance's handwritten notes, spread across the bench.\n\nSpecimen batch ref: 3-7-1. Containers stored in sealed unit per protocol.\n\nScanner schematic (partial):\n  [1] Calibration lens — installed (in chassis)\n  [2] Frequency emitter — stored in Container A (reactive band, handle carefully)\n  [3] Power cell — not yet sourced (standard HD cell, cryo kit compatible)\n  [4] Signal amplifier — check bridge command console\n\nNotes on the glitch: audio stimulus in the mid-range produces strong agitation response. Possible interaction with light at higher intensities. Suggest further testing. DO NOT exceed 80% emitter output without additional containment.",
             },
           },
-          // Scanner terminal — already scanned state.
           {
-            id: "scilab_scanner_done",
+            id: "scilab_workbench_notes_read",
             shape: "rect",
-            geom: [580, 180, 560, 620],
-            label: "Research scanner terminal",
-            showIf: { all: ["coded_note_scanned"] },
+            geom: [900, 560, 500, 300],
+            label: "Vance's workbench notes",
+            showIf: { all: ["workbench_notes_read"] },
             action: {
               type: "message",
-              message: "The terminal displays the last decoded entry: REYES, R. — AUTHORIZATION PROFILE LOADED. The card read/write machine on the far wall should be active.",
+              message: "You've already read Vance's notes. Storage batch code: 3-7-1. Scanner needs: calibration lens (in chassis), frequency emitter (Container A), power cell (cryo kit), signal amplifier (bridge).",
+            },
+          },
+          // ---- Scanner chassis ----
+          // Shows assembly state. Currently incomplete.
+          {
+            id: "scilab_scanner_chassis",
+            shape: "rect",
+            geom: [600, 280, 500, 400],
+            label: "Scanner chassis — incomplete",
+            action: {
+              type: "message",
+              message: "Vance's scanner, partially assembled. The calibration lens is installed in the forward housing. Three component slots are empty. The device won't function until all four components are in place. Vance's notes on the bench describe what goes where.",
             },
           },
         ],
       },
+
     ],
   },
 };
@@ -845,6 +1047,34 @@ const CLOSEUPS = {
     image: "Images/closeups/Cryo%20Room%204%20Chest%20Closeup.png?v=2",
     kind: "html",
     controller: "cryo_chest_combo",
+  },
+
+  // ---- Science Lab: Card upgrade terminal ----
+  // 4-digit keypad entry. Correct code: 0743 (Reyes' mission auth
+  // number, found in Log 1 on Wall B).
+  // Solving sets flag: upgrade_puzzle_solved.
+  // The wall hotspot (scilab_upgrade_terminal_ready) then handles
+  // the keycard insertion step.
+  // TODO: Implement controller in js/scilab_upgrade_terminal.js
+  //       mirroring the cryo_chest_combo pattern but for a 4-digit
+  //       keypad (0–9 per digit) rather than a wheel lock.
+  scilab_upgrade_terminal: {
+    image: "Images/Science%20Lab%202.png",   // placeholder — replace with dedicated closeup art
+    kind: "html",
+    controller: "scilab_upgrade_terminal",
+  },
+
+  // ---- Science Lab: Specimen storage panel ----
+  // 3-digit batch code entry. Correct code: 3-7-1 (found in Vance's
+  // workbench notes on Wall D).
+  // Solving sets flag: specimen_storage_unlocked.
+  // TODO: Implement controller in js/scilab_storage_panel.js
+  //       same wheel-lock pattern as cryo_chest_combo but with
+  //       three dials and the solution 3-7-1.
+  scilab_storage_panel: {
+    image: "Images/Science%20Lab%204.png",   // placeholder — replace with dedicated closeup art
+    kind: "html",
+    controller: "scilab_storage_panel",
   },
 };
 
