@@ -204,13 +204,13 @@ const ROOMS = {
         overlays: [
           {
             id: "reader_light_red",
-            x: 1200, y: 415,
+            x: 1205, y: 553,
             dotClass: "reader-dot reader-dot--blink-red",
             hideIf: { all: ["lab_door_unlocked"] },
           },
           {
             id: "reader_light_green",
-            x: 1200, y: 415,
+            x: 1205, y: 553,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["lab_door_unlocked"] },
           },
@@ -231,7 +231,6 @@ const ROOMS = {
           },
           // ---- Science Lab door (open state) ----
           // Visible once the door has been unlocked with the keycard.
-          // NOTE: Replace with gotoRoom action when the lab is built.
           {
             id: "lab_door_open",
             shape: "rect",
@@ -239,8 +238,9 @@ const ROOMS = {
             label: "Door — 02: Science Lab (open)",
             showIf: { all: ["lab_door_unlocked"] },
             action: {
-              type: "message",
-              message: "The Science Lab door is open. [Room coming soon]",
+              type: "gotoRoom",
+              room: "science_lab",
+              startWall: 0,
             },
           },
           // ---- Keycard reader panel (right of the door) ----
@@ -552,6 +552,148 @@ const ROOMS = {
             },
           },
         ],
+      },
+    ],
+  },
+
+  // ============================================================
+  // SCIENCE LAB
+  // Four walls in a clockwise ring. Player enters facing the
+  // bridge door (wall 0). Two right turns reaches the cryo
+  // return door (wall 2).
+  //   0: Bridge door  (01: BRIDGE)   — Science Lab 2.png
+  //   1: Plain wall                  — Science Lab 1.png
+  //   2: Cryo Room door (03: CRYO)   — Science Lab 4.png
+  //   3: Plain wall                  — Science Lab 3.png
+  // ============================================================
+  science_lab: {
+    title: "Science Lab",
+    startWall: 0,
+
+    walls: [
+      // ============================================================
+      // WALL 0 — BRIDGE DOOR (player enters facing this)
+      // ============================================================
+      {
+        id: "scilab_wall_0_bridge_door",
+        plate: "Images/Science%20Lab%202.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        overlays: [
+          {
+            id: "bridge_reader_light_red",
+            x: 1218, y: 585,
+            dotClass: "reader-dot reader-dot--blink-red",
+            hideIf: { all: ["bridge_door_unlocked"] },
+          },
+          {
+            id: "bridge_reader_light_green",
+            x: 1218, y: 585,
+            dotClass: "reader-dot reader-dot--solid-green",
+            showIf: { all: ["bridge_door_unlocked"] },
+          },
+        ],
+        hotspots: [
+          // Locked state — card reader active.
+          {
+            id: "bridge_door_locked",
+            shape: "rect",
+            geom: [670, 80, 580, 840],
+            label: "Door — 01: Bridge",
+            hideIf: { all: ["bridge_door_unlocked"] },
+            action: {
+              type: "message",
+              message: "The door is sealed. A card reader is mounted on the panel to the right.",
+            },
+          },
+          // Open state — navigate to bridge (placeholder until bridge is built).
+          {
+            id: "bridge_door_open",
+            shape: "rect",
+            geom: [670, 80, 580, 840],
+            label: "Door — 01: Bridge (open)",
+            showIf: { all: ["bridge_door_unlocked"] },
+            action: {
+              type: "message",
+              message: "The bridge is ahead. [Room coming soon]",
+            },
+          },
+          // Card reader panel (right of door). Same geometry as cryo lab reader.
+          {
+            id: "bridge_keycard_reader",
+            shape: "rect",
+            geom: [1060, 290, 160, 380],
+            label: "Keycard reader — Bridge",
+            hideIf: { all: ["bridge_door_unlocked"] },
+            action: {
+              type: "useItem",
+              accepts: ["keycard"],
+              onAccept: {
+                flags: ["bridge_door_unlocked"],
+                message: "The reader blinks green. A heavy clunk echoes through the door frame — bridge access granted.",
+              },
+              onReject: {
+                message: "A keycard reader. Label: 01 — BRIDGE.",
+              },
+            },
+          },
+        ],
+      },
+
+      // ============================================================
+      // WALL 1 — PLAIN WALL (right turn from bridge door)
+      // ============================================================
+      {
+        id: "scilab_wall_1_plain",
+        plate: "Images/Science%20Lab%201.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        overlays: [],
+        hotspots: [],
+      },
+
+      // ============================================================
+      // WALL 2 — CRYO ROOM DOOR (two turns from bridge door)
+      // Green light — the lab was already unlocked from the cryo side.
+      // ============================================================
+      {
+        id: "scilab_wall_2_cryo_door",
+        plate: "Images/Science%20Lab%204.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        overlays: [
+          {
+            id: "cryo_return_light_green",
+            x: 1218, y: 585,
+            dotClass: "reader-dot reader-dot--solid-green",
+            showIf: { all: ["lab_door_unlocked"] },
+          },
+        ],
+        hotspots: [
+          {
+            id: "cryo_return_door",
+            shape: "rect",
+            geom: [670, 80, 580, 840],
+            label: "Door — 03: Cryo Room",
+            action: {
+              type: "gotoRoom",
+              room: "cryo",
+              startWall: 1,   // cryo wall index 1 = the lab door wall
+            },
+          },
+        ],
+      },
+
+      // ============================================================
+      // WALL 3 — PLAIN WALL (left turn from bridge door)
+      // ============================================================
+      {
+        id: "scilab_wall_3_plain",
+        plate: "Images/Science%20Lab%203.png",
+        atmosphere: "cryo-emergency",
+        sprites: [],
+        overlays: [],
+        hotspots: [],
       },
     ],
   },

@@ -215,6 +215,14 @@ const Engine = (() => {
         openCloseup(a.target);
         break;
 
+      case "gotoRoom":
+        state.currentRoom = a.room;
+        state.currentWall = typeof a.startWall === "number"
+          ? a.startWall
+          : (STARLOCK_DATA.ROOMS[a.room]?.startWall || 0);
+        renderWall();
+        break;
+
       default:
         console.warn("Unknown action type:", a.type, hs);
     }

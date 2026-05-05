@@ -1149,11 +1149,11 @@ html, body {
    Coordinates are in the 1920x1080 stage space (set inline by engine). */
 .reader-dot {
   position: absolute;
-  width:  14px;
-  height: 14px;
+  width:  10px;
+  height: 10px;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 6px 2px currentColor;
+  box-shadow: 0 0 5px 2px currentColor;
 }
 .reader-dot--blink-red {
   background: #ff3a3a;
