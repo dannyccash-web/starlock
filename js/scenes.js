@@ -713,11 +713,12 @@ const ROOMS = {
           // ---- Card upgrade terminal — puzzle state (unsolved) ----
           // Opens the upgrade terminal closeup where the player enters
           // the 4-digit authorization code (0743, found in Log 1).
-          // NOTE: geom is a rough estimate — tune with debug mode (D).
+          // The terminal is on the RIGHT side of the wall.
+          // NOTE: geom is an estimate — tune with debug mode (D).
           {
             id: "scilab_upgrade_terminal",
             shape: "rect",
-            geom: [250, 220, 380, 560],
+            geom: [1480, 200, 400, 600],
             label: "Card upgrade terminal",
             hideIf: { all: ["upgrade_puzzle_solved"] },
             action: {
@@ -730,7 +731,7 @@ const ROOMS = {
           {
             id: "scilab_upgrade_terminal_ready",
             shape: "rect",
-            geom: [250, 220, 380, 560],
+            geom: [1480, 200, 400, 600],
             label: "Card upgrade terminal — ARMED",
             showIf: { all: ["upgrade_puzzle_solved"] },
             hideIf: { all: ["card_upgraded"] },
@@ -752,7 +753,7 @@ const ROOMS = {
           {
             id: "scilab_upgrade_terminal_done",
             shape: "rect",
-            geom: [250, 220, 380, 560],
+            geom: [1480, 200, 400, 600],
             label: "Card upgrade terminal",
             showIf: { all: ["card_upgraded"] },
             action: {
@@ -789,20 +790,43 @@ const ROOMS = {
             x: 0, y: 0, w: 1920, h: 1080,
           },
         ],
-        overlays: [],
+        overlays: [
+          // Cryo return door reader — green when unlocked (always, since
+          // you can only be on this wall if you came from the cryo room).
+          {
+            id: "cryo_return_light_green",
+            x: 1700, y: 550,
+            dotClass: "reader-dot reader-dot--solid-green",
+            showIf: { all: ["lab_door_unlocked"] },
+          },
+        ],
         hotspots: [
-          // ---- Log terminal — single hotspot opens the HTML close-up ----
+          // ---- Log terminal — single hotspot in the LEFT THIRD of Wall B ----
           // The close-up controller (scilab_log_terminal) handles all
-          // three log entries, the scanner slot, and Log 3 gating.
+          // three log entries, the physical scanner slot, and Log 3 gating.
           // NOTE: Adjust geom in debug mode (D) once art is confirmed.
           {
             id: "scilab_log_terminal",
             shape: "rect",
-            geom: [540, 140, 700, 760],
+            geom: [60, 120, 480, 780],
             label: "Reyes' log terminal",
             action: {
               type: "openCloseup",
               target: "scilab_log_terminal",
+            },
+          },
+          // ---- Cryo return door (RIGHT side of Wall B) ----
+          // Returns the player to Cryo Room Wall 2 (the science lab door).
+          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
+          {
+            id: "cryo_return_door",
+            shape: "rect",
+            geom: [1300, 80, 580, 840],
+            label: "Door — 03: Cryo Room",
+            action: {
+              type: "gotoRoom",
+              room: "cryo",
+              startWall: 1,
             },
           },
         ],
@@ -834,27 +858,8 @@ const ROOMS = {
             x: 0, y: 0, w: 1920, h: 1080,
           },
         ],
-        overlays: [
-          {
-            id: "cryo_return_light_green",
-            x: 1218, y: 585,
-            dotClass: "reader-dot reader-dot--solid-green",
-            showIf: { all: ["lab_door_unlocked"] },
-          },
-        ],
+        overlays: [],
         hotspots: [
-          // ---- Cryo return door ----
-          {
-            id: "cryo_return_door",
-            shape: "rect",
-            geom: [670, 80, 580, 840],
-            label: "Door — 03: Cryo Room",
-            action: {
-              type: "gotoRoom",
-              room: "cryo",
-              startWall: 1,
-            },
-          },
           // ---- Specimen storage unit — locked state ----
           // Opens the batch-code closeup. Code: 3-7-1 (from workbench).
           {

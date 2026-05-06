@@ -158,6 +158,34 @@ html, body {
 }
 .start-btn:active { transform: translateY(1px); }
 
+/* CONTINUE is shown above START when a save exists.
+   It is the same size / style as the main START button. */
+.start-btn--continue {
+  /* Inherits all .start-btn styles above — no overrides needed.
+     JS removes the .hidden class when a save exists. */
+}
+
+/* NEW GAME button is demoted to secondary when CONTINUE is shown.
+   Smaller, lower contrast, so players recognise CONTINUE is primary. */
+.start-btn--secondary {
+  font-size: 20px;
+  padding: 14px 46px 14px 50px;
+  color: rgba(108, 208, 255, 0.55);
+  background: rgba(8, 22, 38, 0.45);
+  border-color: rgba(120, 200, 240, 0.28);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+    0 0 14px rgba(108, 208, 255, 0.06);
+  text-shadow: 0 0 8px rgba(108, 208, 255, 0.35);
+  letter-spacing: 0.35em;
+}
+.start-btn--secondary:hover {
+  color: rgba(207, 231, 255, 0.8);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.3) inset,
+    0 0 20px rgba(108, 208, 255, 0.14);
+}
+
 /* ---------- Game screen layers ---------- */
 .scene-plate, .sprite-layer, .hotspot-layer, .atmosphere-layer {
   position: absolute;
@@ -1174,25 +1202,25 @@ html, body {
 
 /* ============================================================
    SCIENCE LAB LOG TERMINAL (scilab_log_terminal close-up)
-   Mounts inside .closeup-html. Positioned over the screen area
-   of "Science Lab 4 Terminal.png". Tune left/top/width/height
-   in debug mode (D key) once final art position is confirmed.
+   Position is set inline by the JS controller so it can be
+   tuned via the LT_PANEL_* constants without touching CSS.
+   This class only carries visual styles (typography, colours).
    ============================================================ */
 .lt-terminal {
-  position: absolute;
-  /* Tuned to the screen interior of "Science Lab 4 Terminal.png".
-     Adjust once art is confirmed — press D for debug overlay. */
-  left: 280px;
-  top:  190px;
-  width:  1390px;
-  height: 720px;
+  /* position/size set inline by controller */
   display: flex;
   flex-direction: column;
-  padding: 28px 40px;
+  padding: 24px 32px;
   pointer-events: auto;
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
   text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+  overflow: hidden;
+}
+.lt-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 /* Log list */
@@ -1306,95 +1334,117 @@ html, body {
 }
 .lt-log-para:last-child { margin-bottom: 0; }
 
-/* Scanner slot (Log 3 locked state) */
-.lt-scanner-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 8px 0;
+/* Locked log notice (shown inside log detail when Log 3 is encrypted) */
+.lt-locked-notice {
+  margin-top: 20px;
+  padding: 16px 20px;
+  background: rgba(255, 80, 80, 0.06);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+  border-left: 4px solid var(--warn-red);
 }
-.lt-scanner-label {
-  font: 700 20px/1 "Eurostile", "Bahnschrift", system-ui;
-  letter-spacing: 0.25em;
-  color: var(--warn-red);
-  text-shadow: 0 0 10px rgba(255, 80, 80, 0.5);
-}
-.lt-scanner-desc {
+.lt-locked-notice p {
   margin: 0;
   font: 400 14px/1.55 "Eurostile", "Bahnschrift", system-ui;
-  letter-spacing: 0.05em;
-  color: rgba(207, 231, 255, 0.78);
-  max-width: 760px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 180, 180, 0.88);
 }
-.lt-scanner-slot {
+
+/* Physical scanner slot — positioned absolutely over the paper slot
+   in the closeup image. Position set inline by the controller. */
+.lt-phys-scanner {
+  /* position/size set inline by controller */
   display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding: 22px 28px;
-  background: rgba(4, 10, 20, 0.6);
-  border: 1px solid rgba(108, 208, 255, 0.3);
-  max-width: 600px;
+  align-items: stretch;
+  pointer-events: none;  /* children opt in */
 }
-.lt-scanner-slot-label {
-  font: 600 11px/1 monospace;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: rgba(180, 220, 255, 0.6);
-}
-.lt-scanner-slot-mouth {
+
+.lt-scan-state {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
-  padding: 12px 0;
-  border-top: 1px solid rgba(108, 208, 255, 0.25);
-  border-bottom: 1px solid rgba(108, 208, 255, 0.25);
+  border: 2px dashed rgba(108, 208, 255, 0.35);
+  background: rgba(4, 14, 28, 0.55);
+  cursor: default;
+  transition: background 120ms ease, border-color 120ms ease;
 }
-.lt-scanner-slot-line {
-  display: block;
-  flex: 1;
-  height: 2px;
-  background: repeating-linear-gradient(90deg,
-    rgba(108, 208, 255, 0.55) 0, rgba(108, 208, 255, 0.55) 8px,
-    transparent 8px, transparent 16px);
+.lt-scan-state--idle {
+  pointer-events: auto;
+  cursor: pointer;
+  border-color: rgba(108, 208, 255, 0.5);
 }
-.lt-scanner-slot-text {
-  font: 600 12px/1 monospace;
-  letter-spacing: 0.28em;
-  color: rgba(108, 208, 255, 0.7);
-  white-space: nowrap;
+.lt-scan-state--idle:hover {
+  background: rgba(8, 28, 52, 0.72);
+  border-color: var(--hud-blue);
 }
-.lt-scanner-hint {
-  margin: 0;
-  font: 400 13px/1.5 monospace;
-  letter-spacing: 0.06em;
-  color: rgba(207, 231, 255, 0.6);
+.lt-scan-state--done {
+  border-color: rgba(108, 255, 174, 0.45);
+  background: rgba(4, 20, 14, 0.55);
 }
-.lt-scan-btn {
-  align-self: flex-start;
+.lt-scan-icon {
+  font-size: 32px;
+  color: var(--hud-blue);
+  opacity: 0.7;
+  line-height: 1;
 }
+.lt-scan-state--done .lt-scan-icon {
+  color: #6cffae;
+  opacity: 0.85;
+}
+.lt-scan-text {
+  font: 600 14px/1 monospace;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--hud-blue);
+}
+.lt-scan-state--done .lt-scan-text { color: #6cffae; }
 
 /* ============================================================
    SCIENCE LAB CARD UPGRADE TERMINAL (scilab_upgrade_terminal)
-   Mounts inside .closeup-html. Positioned over the screen area
-   of "Science Lab 2 Terminal.png". Tune as needed.
+   The left panel and keypad overlay are positioned inline by the
+   JS controller (via PANEL_LEFT/KEY_COLS constants). CSS carries
+   only visual styles.
    ============================================================ */
-.ut-panel {
-  position: absolute;
-  /* Screen interior of Science Lab 2 Terminal.png — adjust with D key. */
-  left: 280px;
-  top:  190px;
-  width:  1390px;
-  height: 720px;
+/* Left info panel */
+.ut-left-panel {
+  /* position/size set inline */
   display: flex;
   flex-direction: column;
-  padding: 28px 40px;
+  padding: 24px 32px;
+  pointer-events: auto;
+  font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
+  color: var(--hud-blue);
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+}
+/* Keypad overlay container — transparent, just groups the buttons */
+.ut-key-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;  /* children opt in */
+}
+/* Keep the old class for error/solved flashes */
+.ut-panel {
+  position: absolute;
+  left: 60px; top: 160px; width: 1200px; height: 760px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
   pointer-events: auto;
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
   text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
 }
 
+.ut-left-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+}
+/* Legacy – kept for flash panels */
 .ut-body {
   flex: 1;
   display: flex;
@@ -1475,6 +1525,53 @@ html, body {
 }
 .ut-key-enter:hover {
   box-shadow: 0 0 18px rgba(108, 255, 174, 0.25);
+}
+
+/* Transparent image-overlay key buttons (positioned over art) */
+.ut-img-key {
+  position: absolute;   /* positioned inline by JS */
+  background: rgba(108, 208, 255, 0.04);
+  border: 1px solid rgba(108, 208, 255, 0.12);
+  color: transparent;   /* hide label — the art shows the digit */
+  font-size: 32px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  transition: background 80ms ease, border-color 80ms ease;
+  border-radius: 2px;
+}
+.ut-img-key:hover {
+  background: rgba(108, 208, 255, 0.14);
+  border-color: rgba(108, 208, 255, 0.45);
+}
+.ut-img-key:active {
+  background: rgba(108, 208, 255, 0.26);
+}
+
+/* Status messages in the left panel */
+.ut-status {
+  font: 700 18px/1.3 monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 18px;
+  border: 1px solid;
+  border-radius: 2px;
+  max-width: 100%;
+}
+.ut-status--error {
+  color: var(--warn-red);
+  border-color: rgba(255, 80, 80, 0.35);
+  background: rgba(255, 80, 80, 0.06);
+  text-shadow: 0 0 10px rgba(255, 80, 80, 0.5);
+}
+.ut-status--solved {
+  color: #6cffae;
+  border-color: rgba(108, 255, 174, 0.4);
+  background: rgba(108, 255, 174, 0.06);
+  text-shadow: 0 0 12px rgba(108, 255, 174, 0.6);
 }
 
 /* Solved / error states */

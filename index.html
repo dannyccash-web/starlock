@@ -24,6 +24,10 @@
       <!-- Layer 3: foreground content. -->
       <div class="start-content">
         <img class="start-logo" src="Images/starlock_logo_2.png" alt="Starlock" />
+        <!-- CONTINUE button — only visible when a save exists (JS shows it) -->
+        <button id="continue-button" class="start-btn start-btn--continue hidden" type="button"
+                data-tw-text="CONTINUE">CONTINUE</button>
+        <!-- START / NEW GAME — always visible; text changes when a save exists -->
         <button id="start-button" class="start-btn" type="button"
                 data-tw-text="START">START</button>
       </div>
@@ -135,6 +139,7 @@
   <script src="js/scilab_log_terminal.js"></script>
   <script src="js/scilab_upgrade_terminal.js"></script>
   <script src="js/scilab_storage_panel.js"></script>
+  <script src="js/save.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/main.js"></script>
 </body>

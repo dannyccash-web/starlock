@@ -32,6 +32,11 @@ const Engine = (() => {
     debug: false,
   };
 
+  /* ----- Save hook (registered by SaveManager after it loads) ----- */
+  let _saveHook = null;
+  function setSaveHook(fn) { _saveHook = fn; }
+  function _triggerSave() { if (_saveHook) _saveHook(); }
+
   /* ----- Game state flag helpers ----- */
   const hasFlag = (f) => state.flags.has(f);
   const setFlag = (f) => state.flags.add(f);
@@ -352,6 +357,7 @@ const Engine = (() => {
       renderWall();
     }
     if (state.debug) hotspotEl.classList.add("debug");
+    _triggerSave();
   }
 
   /* ----- Turn navigation (ring of walls) ----- */
@@ -360,9 +366,24 @@ const Engine = (() => {
     const n = room.walls.length;
     state.currentWall = (state.currentWall + delta + n) % n;
     renderWall();
+    _triggerSave();
   }
   arrowLeft.addEventListener("click", () => turn(-1));
   arrowRight.addEventListener("click", () => turn(+1));
+
+  /* ----- Background click handler -----
+     Fires when the player clicks empty space in the scene (no hotspot).
+     If an item is equipped, show a "doesn't work" message so the player
+     knows their item didn't interact with anything. Hotspot buttons call
+     stopPropagation, so this only fires for genuine misses. */
+  hotspotEl.addEventListener("click", () => {
+    if (state.activeCloseup) return;      // closeup handles its own clicks
+    const eq = Inventory.getEquipped();
+    if (!eq) return;
+    const def = STARLOCK_DATA.ITEMS[eq];
+    const name = def ? def.name : eq;
+    showMessage(`${name} doesn't work here.`);
+  });
 
   /* ----- Debug toggle (D key) ----- */
   document.addEventListener("keydown", (e) => {
@@ -391,6 +412,8 @@ const Engine = (() => {
     setFlag,
     hasFlag,
     registerCloseupController,
-    _state: state, // for debugging in console
+    setSaveHook,
+    _state:      state,       // for debugging / SaveManager
+    _renderWall: renderWall,  // for SaveManager restore (re-render after wall override)
   };
 })();
