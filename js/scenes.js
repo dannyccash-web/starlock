@@ -604,9 +604,9 @@ const ROOMS = {
   // Four walls in a clockwise ring. Player enters facing the
   // bridge door (wall 0). Turning clockwise:
   //   0: Wall A — Bridge door + card upgrade terminal  (Science Lab 2.png)
-  //   1: Wall B — Reyes' log terminal                  (Science Lab 1.png)
-  //   2: Wall C — Specimen storage + cryo return door  (Science Lab 4.png)
-  //   3: Wall D — Vance's workbench + scanner assembly (Science Lab 3.png)
+  //   1: Wall B — Reyes' log terminal                  (Science Lab 4.png)
+  //   2: Wall C — Specimen storage + cryo return door  (Science Lab 3.png)
+  //   3: Wall D — Vance's workbench + scanner assembly (Science Lab 1.png)
   //
   // WALL A (0): The player enters here facing the bridge door.
   //   To the side of the door is the card upgrade terminal. The
@@ -643,7 +643,13 @@ const ROOMS = {
         id: "scilab_wall_a_bridge",
         plate: "Images/Science%20Lab%202.png",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          {
+            id: "scilab_wall_a_card_reader_overlay",
+            image: "Images/Science%20Lab%202%20card%20reader.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+        ],
         overlays: [
           {
             id: "bridge_reader_light_red",
@@ -759,92 +765,44 @@ const ROOMS = {
 
       // ============================================================
       // WALL B (1) — REYES' LOG TERMINAL
-      // Science Lab 1.png
+      // Science Lab 4.png (background) + Science Lab 4 terminal.png (foreground)
       //
-      // Three log entries. Log 1 and Log 2 are accessible on first
-      // visit. Log 3 is locked behind a document scanner slot —
-      // the player must scan Reyes' coded note to unlock it.
+      // Three log entries accessed through the HTML terminal close-up.
+      // Log 1 and Log 2 are freely accessible. Log 3 is locked behind
+      // a physical scanner slot inside the terminal UI — the player
+      // must scan Reyes' coded note (coded_message item) to unlock it.
       // The coded note is NOT consumed.
       //
       // Log 1 contains mission auth code 0743. Reading it is the
       // soft prerequisite for solving the upgrade terminal puzzle.
       //
-      // NOTE: All geom values are estimates — tune with debug mode.
+      // NOTE: Hotspot geom is an estimate — tune with debug mode (D).
       // ============================================================
       {
         id: "scilab_wall_b_logs",
-        plate: "Images/Science%20Lab%201.png",
+        plate: "Images/Science%20Lab%204.png",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          {
+            id: "scilab_wall_b_terminal_overlay",
+            image: "Images/Science%20Lab%204%20terminal.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+        ],
         overlays: [],
         hotspots: [
-          // ---- Log terminal — general examine ----
+          // ---- Log terminal — single hotspot opens the HTML close-up ----
+          // The close-up controller (scilab_log_terminal) handles all
+          // three log entries, the scanner slot, and Log 3 gating.
+          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
           {
-            id: "scilab_log_terminal_look",
+            id: "scilab_log_terminal",
             shape: "rect",
-            geom: [580, 160, 620, 700],
+            geom: [540, 140, 700, 760],
             label: "Reyes' log terminal",
-            hideIf: { all: ["log1_read"] },
             action: {
-              type: "message",
-              message: "A research terminal. Three log entries are stored here, authored by Reyes in the captain's capacity as mission commander. Two are accessible directly. The third has a physical scanner slot below the screen — something needs to be fed into it.",
-            },
-          },
-          // ---- Log 1 — Expedition Record ----
-          {
-            id: "scilab_log_1",
-            shape: "rect",
-            geom: [640, 220, 500, 160],
-            label: "Log 1 — Expedition Record",
-            action: {
-              type: "setState",
-              flags: ["log1_read"],
-              message: "LOG 1 — EXPEDITION RECORD\nFiled by: Reyes, Mission Auth: 0743\n\nWe located what appeared to be mineral deposits in a low-lying cave system approximately 3.4 km from the landing site. On closer inspection the deposits were not inert. They responded to light, shifted position when approached, and reorganized when Vance played a tone through the portable speaker. Vance described them as unlike anything in any biological or mineralogical record. We collected three specimens in sealed field containers and returned to the ship.\n\nI've been staring at the footage. Each one is a small cluster of translucent squares. They look like a visual artifact. Vance keeps calling them glitches. I think the name is going to stick.",
-            },
-          },
-          // ---- Log 2 — Experiment Record ----
-          {
-            id: "scilab_log_2",
-            shape: "rect",
-            geom: [640, 420, 500, 160],
-            label: "Log 2 — Experiment Record",
-            action: {
-              type: "setState",
-              flags: ["log2_read"],
-              message: "LOG 2 — EXPERIMENT RECORD\nFiled by: Reyes\n\nVance has been running controlled stimulus tests on one of the live specimens — light intensity, audio frequency, thermal variation. The glitch responds to audio most strongly. During today's session using a mid-range frequency sweep, the specimen became agitated. It moved out of containment before Vance could react.\n\nWhat followed happened quickly. The specimen approached Vance directly and appeared to enter their body through sustained proximity. Vance collapsed. Vitals became erratic, then stabilised at levels that don't correspond to normal human baseline. Vance appears dead. Something is still running.\n\nTarn and I suited Vance in the EVA gear and placed them in pod 4 under full quarantine seal. I documented what I could. The wiring on pod 4 has since been tampered with. I don't know when or by whom.",
-            },
-          },
-          // ---- Log 3 — Dispute Record (locked until coded note scanned) ----
-          // Two states: locked (scanner prompt) and unlocked (full log).
-          {
-            id: "scilab_log_3_locked",
-            shape: "rect",
-            geom: [640, 620, 500, 160],
-            label: "Log 3 — [LOCKED]",
-            hideIf: { all: ["coded_note_scanned"] },
-            action: {
-              type: "useItem",
-              accepts: ["coded_message"],
-              onAccept: {
-                flags: ["coded_note_scanned"],
-                // coded_message NOT consumed.
-                message: "You feed Reyes' coded note into the scanner slot. The terminal hums as it decodes the physical key.\n\nLOG 3 — DISPUTE RECORD\nFiled by: Reyes\n\nTarn wants to take the shuttle, destroy the ship and all specimens, and return alone. No evidence. No organism. No risk. Tarn says bringing the glitch anywhere near other people — even in a sealed lab at base — is a risk we have no right to take. I understand the argument. I don't accept it.\n\nIf we destroy the ship we abandon the engineer, who is still in cryo. We lose any chance of developing a treatment or understanding what the glitch is. We give up on doing this properly. Tarn says that's acceptable. I don't agree.\n\nTarn also sabotaged pod 4's wiring at some point. I only found out today.\n\nWe're not going to agree on this. I can hear Tarn moving toward the shuttle bay. I'm going after them.",
-              },
-              onReject: {
-                message: "Log 3 is locked. The scanner slot below the screen is waiting for a physical key. Something in your inventory might fit.",
-              },
-            },
-          },
-          {
-            id: "scilab_log_3_unlocked",
-            shape: "rect",
-            geom: [640, 620, 500, 160],
-            label: "Log 3 — Dispute Record",
-            showIf: { all: ["coded_note_scanned"] },
-            action: {
-              type: "setState",
-              flags: ["log3_read"],
-              message: "LOG 3 — DISPUTE RECORD\nFiled by: Reyes\n\nTarn wants to take the shuttle, destroy the ship and all specimens, and return alone. No evidence. No organism. No risk. Tarn says bringing the glitch anywhere near other people — even in a sealed lab at base — is a risk we have no right to take. I understand the argument. I don't accept it.\n\nIf we destroy the ship we abandon the engineer, who is still in cryo. We lose any chance of developing a treatment or understanding what the glitch is. We give up on doing this properly. Tarn says that's acceptable. I don't agree.\n\nTarn also sabotaged pod 4's wiring at some point. I only found out today.\n\nWe're not going to agree on this. I can hear Tarn moving toward the shuttle bay. I'm going after them.",
+              type: "openCloseup",
+              target: "scilab_log_terminal",
             },
           },
         ],
@@ -852,7 +810,7 @@ const ROOMS = {
 
       // ============================================================
       // WALL C (2) — SPECIMEN STORAGE + CRYO RETURN DOOR
-      // Science Lab 4.png
+      // Science Lab 3.png (background) + Science Lab 3 specimens.png (foreground)
       //
       // Three specimen containers in a sealed storage unit.
       // The storage access panel requires batch code 3-7-1, which
@@ -867,9 +825,15 @@ const ROOMS = {
       // ============================================================
       {
         id: "scilab_wall_c_storage",
-        plate: "Images/Science%20Lab%204.png",
+        plate: "Images/Science%20Lab%203.png",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          {
+            id: "scilab_wall_c_specimens_overlay",
+            image: "Images/Science%20Lab%203%20specimens.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+        ],
         overlays: [
           {
             id: "cryo_return_light_green",
@@ -963,7 +927,7 @@ const ROOMS = {
 
       // ============================================================
       // WALL D (3) — VANCE'S WORKBENCH + SCANNER ASSEMBLY
-      // Science Lab 3.png
+      // Science Lab 1.png (background) + Science Lab 1 workshop.png (foreground)
       //
       // Vance's workspace. The incomplete scanner chassis sits here
       // with the calibration lens already partially installed
@@ -979,9 +943,15 @@ const ROOMS = {
       // ============================================================
       {
         id: "scilab_wall_d_workbench",
-        plate: "Images/Science%20Lab%203.png",
+        plate: "Images/Science%20Lab%201.png",
         atmosphere: "cryo-emergency",
-        sprites: [],
+        sprites: [
+          {
+            id: "scilab_wall_d_workshop_overlay",
+            image: "Images/Science%20Lab%201%20workshop.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+        ],
         overlays: [],
         hotspots: [
           // ---- Workbench notes ----
@@ -1051,15 +1021,12 @@ const CLOSEUPS = {
 
   // ---- Science Lab: Card upgrade terminal ----
   // 4-digit keypad entry. Correct code: 0743 (Reyes' mission auth
-  // number, found in Log 1 on Wall B).
+  // number, found in Log 1 via the log terminal on Wall B).
   // Solving sets flag: upgrade_puzzle_solved.
   // The wall hotspot (scilab_upgrade_terminal_ready) then handles
   // the keycard insertion step.
-  // TODO: Implement controller in js/scilab_upgrade_terminal.js
-  //       mirroring the cryo_chest_combo pattern but for a 4-digit
-  //       keypad (0–9 per digit) rather than a wheel lock.
   scilab_upgrade_terminal: {
-    image: "Images/Science%20Lab%202.png",   // placeholder — replace with dedicated closeup art
+    image: "Images/closeups/Science%20Lab%202%20Terminal.png",
     kind: "html",
     controller: "scilab_upgrade_terminal",
   },
@@ -1068,13 +1035,20 @@ const CLOSEUPS = {
   // 3-digit batch code entry. Correct code: 3-7-1 (found in Vance's
   // workbench notes on Wall D).
   // Solving sets flag: specimen_storage_unlocked.
-  // TODO: Implement controller in js/scilab_storage_panel.js
-  //       same wheel-lock pattern as cryo_chest_combo but with
-  //       three dials and the solution 3-7-1.
   scilab_storage_panel: {
-    image: "Images/Science%20Lab%204.png",   // placeholder — replace with dedicated closeup art
+    image: "Images/closeups/Science%20Lab%203%20Terminal.png",
     kind: "html",
     controller: "scilab_storage_panel",
+  },
+
+  // ---- Science Lab: Reyes' log terminal ----
+  // HTML terminal with three log entries. Log 1 and Log 2 are
+  // freely accessible. Log 3 requires the coded note (coded_message)
+  // to be scanned — this sets coded_note_scanned and unlocks Log 3.
+  scilab_log_terminal: {
+    image: "Images/closeups/Science%20Lab%204%20Terminal.png",
+    kind: "html",
+    controller: "scilab_log_terminal",
   },
 };
 
