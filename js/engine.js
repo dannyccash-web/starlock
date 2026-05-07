@@ -200,6 +200,14 @@ const Engine = (() => {
 
       case "useItem": {
         const eq = Inventory.getEquipped();
+        // Play keycard swipe sound whenever a card reader is triggered
+        // (whether accepted or rejected). A "keycard reader" hotspot is one
+        // whose `accepts` list includes a keycard-type item.
+        const KEYCARD_IDS = ["keycard", "keycard_upgraded"];
+        const isReaderAction = (a.accepts || []).some(id => KEYCARD_IDS.includes(id));
+        if (isReaderAction && eq && KEYCARD_IDS.includes(eq)) {
+          GameAudio.playKeycardSwipe();
+        }
         if (eq && (a.accepts || []).includes(eq)) {
           (a.onAccept?.flags || []).forEach(setFlag);
           if (a.onAccept?.addItem) {
@@ -208,6 +216,9 @@ const Engine = (() => {
           }
           if (a.onAccept?.message) showMessage(a.onAccept.message);
           if (a.onAccept?.consume) Inventory.removeItem(eq);
+          // Play door-open sound if this acceptance unlocks a door
+          const opensDoor = (a.onAccept?.flags || []).some(f => f.endsWith("_door_unlocked"));
+          if (opensDoor) GameAudio.playDoorOpen();
         } else {
           if (a.onReject?.message) showMessage(a.onReject.message);
         }
@@ -221,6 +232,8 @@ const Engine = (() => {
         break;
 
       case "gotoRoom":
+        // Play door-open sound whenever the player walks through a door
+        GameAudio.playDoorOpen();
         state.currentRoom = a.room;
         state.currentWall = typeof a.startWall === "number"
           ? a.startWall
@@ -266,6 +279,7 @@ const Engine = (() => {
           showMessage,
           renderActive,
           closeCloseup,
+          showPickupNotification,
         });
       } else {
         console.warn("No controller registered for HTML closeup:", c.controller);

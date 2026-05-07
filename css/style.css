@@ -1406,7 +1406,7 @@ html, body {
    JS controller (via PANEL_LEFT/KEY_COLS constants). CSS carries
    only visual styles.
    ============================================================ */
-/* Left info panel */
+/* Left info panel (legacy class kept for other controllers) */
 .ut-left-panel {
   /* position/size set inline */
   display: flex;
@@ -1416,6 +1416,35 @@ html, body {
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
   text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+}
+/* Display panel for the card upgrade terminal (position/size set inline by JS) */
+.ut-display-panel {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 32px;
+  pointer-events: auto;
+  font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
+  color: var(--hud-blue);
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+  overflow: hidden;
+}
+/* Card slot — transparent interactive area over the blue slot in the art */
+.ut-card-slot {
+  position: absolute;   /* positioned inline by JS */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: box-shadow 120ms ease;
+  border-radius: 2px;
+}
+.ut-card-slot:hover {
+  box-shadow: 0 0 0 2px rgba(108, 208, 255, 0.5),
+              0 0 18px rgba(108, 208, 255, 0.3);
+}
+.ut-card-slot:active {
+  box-shadow: 0 0 0 2px rgba(108, 255, 174, 0.7),
+              0 0 24px rgba(108, 255, 174, 0.5);
 }
 /* Keypad overlay container — transparent, just groups the buttons */
 .ut-key-overlay {

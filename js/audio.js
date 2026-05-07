@@ -7,8 +7,8 @@
                     (audio/Space Soundtrack.mp3). Volume controlled
                     by the "soundtrack" slider in the settings menu.
 
-     - Effects:     short SFX (typewriter loop, future click/door
-                    sounds, etc.). Volume controlled by the
+     - Effects:     short SFX (typewriter loop, door open, keycard
+                    swipe, etc.). Volume controlled by the
                     "effects" slider in the settings menu.
 
    Volume preferences persist via localStorage so the player's
@@ -55,6 +55,25 @@ const GameAudio = (() => {
   typewriter.loop = true;
   typewriter.preload = "auto";
   typewriter.volume = state.effectsVolume;
+
+  /* ----- One-shot SFX: door open, keycard swipe ----- */
+  const doorOpenSfx  = new window.Audio("audio/universfield-opening-metal-door-199581.mp3");
+  doorOpenSfx.preload = "auto";
+  doorOpenSfx.volume = state.effectsVolume;
+
+  const keycardSwipeSfx = new window.Audio("audio/driken5482-swipe-236674.mp3");
+  keycardSwipeSfx.preload = "auto";
+  keycardSwipeSfx.volume = state.effectsVolume;
+
+  function playOneShot(audio) {
+    audio.volume = state.effectsVolume;
+    try { audio.currentTime = 0; } catch (e) {}
+    const p = audio.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+  }
+
+  function playDoorOpen()     { playOneShot(doorOpenSfx); }
+  function playKeycardSwipe() { playOneShot(keycardSwipeSfx); }
 
   function startSoundtrack() {
     if (state.soundtrackStarted) return;
@@ -127,7 +146,9 @@ const GameAudio = (() => {
   }
   function setEffectsVolume(v) {
     state.effectsVolume = clamp(parseFloat(v) || 0, 0, 1);
-    typewriter.volume = state.effectsVolume;
+    typewriter.volume      = state.effectsVolume;
+    doorOpenSfx.volume     = state.effectsVolume;
+    keycardSwipeSfx.volume = state.effectsVolume;
     try { localStorage.setItem(EFFECTS_KEY, String(state.effectsVolume)); } catch (e) {}
   }
   function getSoundtrackVolume() { return state.soundtrackVolume; }
@@ -141,5 +162,7 @@ const GameAudio = (() => {
     getEffectsVolume,
     typewriterStart,
     typewriterStop,
+    playDoorOpen,
+    playKeycardSwipe,
   };
 })();

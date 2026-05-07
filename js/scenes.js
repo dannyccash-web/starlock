@@ -247,13 +247,13 @@ const ROOMS = {
         overlays: [
           {
             id: "reader_light_red",
-            x: 1205, y: 553,
+            x: 1215, y: 548,
             dotClass: "reader-dot reader-dot--blink-red",
             hideIf: { all: ["lab_door_unlocked"] },
           },
           {
             id: "reader_light_green",
-            x: 1205, y: 553,
+            x: 1215, y: 548,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["lab_door_unlocked"] },
           },
@@ -601,33 +601,29 @@ const ROOMS = {
 
   // ============================================================
   // SCIENCE LAB
-  // Four walls in a clockwise ring. Player enters facing the
-  // bridge door (wall 0). Turning clockwise:
+  // Four walls in a clockwise ring. Player enters from the cryo
+  // room facing the bridge door (wall 0). Turning right (clockwise):
   //   0: Wall A — Bridge door + card upgrade terminal  (Science Lab 2.png)
-  //   1: Wall B — Reyes' log terminal                  (Science Lab 4.png)
-  //   2: Wall C — Specimen storage + cryo return door  (Science Lab 3.png)
+  //   1: Wall C — Specimen storage unit                (Science Lab 3.png)
+  //   2: Wall B — Cryo return door + Reyes' log term.  (Science Lab 4.png)
   //   3: Wall D — Vance's workbench + scanner assembly (Science Lab 1.png)
   //
-  // WALL A (0): The player enters here facing the bridge door.
-  //   To the side of the door is the card upgrade terminal. The
-  //   terminal has a code-entry puzzle (code: 0743, found in Log 1
-  //   on Wall B). Solving the puzzle allows the player to insert the
-  //   crew keycard and receive keycard_upgraded (SENIOR CREW level).
+  // WALL A (0): Player enters here. Bridge door ahead; card upgrade
+  //   terminal to the right. Terminal puzzle code: 0743 (found in
+  //   Reyes' Log 1 on Wall B). Enter code then insert the crew keycard
+  //   into the blue slot to receive keycard_upgraded (SENIOR CREW).
   //
-  // WALL B (1): Reyes' log terminal. Three logs. Log 1 and Log 2 are
-  //   freely accessible. Log 3 (the dispute record) is locked behind
-  //   a physical document scanner slot — the player must scan Reyes'
-  //   coded note from the cryo room to unlock it.
+  // WALL C (1): Specimen storage unit (first right turn from entry).
+  //   Three containers — empty, cracked, live specimen. Storage access
+  //   panel requires batch code 3-7-1 from Vance's notes on Wall D.
   //
-  // WALL C (2): Specimen storage unit with three containers (empty,
-  //   cracked, live specimen). Shared wall with the cryo return door.
-  //   Storage panel requires a 3-digit batch code (3-7-1) found in
-  //   Vance's workbench notes on Wall D.
+  // WALL B (2): Cryo return door (right side) + Reyes' log terminal
+  //   (left side). Facing this wall puts the cryo door ahead-right.
+  //   Log 3 requires scanning the coded note (coded_message item).
+  //   Log 1 contains mission auth code 0743.
   //
-  // WALL D (3): Vance's workbench. Vance's incomplete glitch scanner
-  //   chassis is here along with the calibration lens (component 1/4)
-  //   and Vance's handwritten notes. Reading the notes reveals the
-  //   specimen storage code and the scanner schematic.
+  // WALL D (3): Vance's workbench. Scanner chassis + calibration lens
+  //   (component 1/4). Notes reveal storage code 3-7-1 and schematic.
   // ============================================================
   science_lab: {
     title: "Science Lab",
@@ -653,13 +649,13 @@ const ROOMS = {
         overlays: [
           {
             id: "bridge_reader_light_red",
-            x: 1218, y: 585,
+            x: 1215, y: 548,
             dotClass: "reader-dot reader-dot--blink-red",
             hideIf: { all: ["bridge_door_unlocked"] },
           },
           {
             id: "bridge_reader_light_green",
-            x: 1218, y: 585,
+            x: 1215, y: 548,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["bridge_door_unlocked"] },
           },
@@ -710,43 +706,21 @@ const ROOMS = {
               },
             },
           },
-          // ---- Card upgrade terminal — puzzle state (unsolved) ----
-          // Opens the upgrade terminal closeup where the player enters
-          // the 4-digit authorization code (0743, found in Log 1).
-          // The terminal is on the RIGHT side of the wall.
+          // ---- Card upgrade terminal ----
+          // Opens the upgrade terminal closeup. The closeup handles both
+          // the 4-digit code entry (code: 0743) AND the keycard insertion
+          // step (equip keycard, click blue slot). Once done, the wall
+          // hotspot shows a simple "idle" message instead.
           // NOTE: geom is an estimate — tune with debug mode (D).
           {
             id: "scilab_upgrade_terminal",
             shape: "rect",
             geom: [1480, 200, 400, 600],
             label: "Card upgrade terminal",
-            hideIf: { all: ["upgrade_puzzle_solved"] },
+            hideIf: { all: ["card_upgraded"] },
             action: {
               type: "openCloseup",
               target: "scilab_upgrade_terminal",
-              message: "An access control terminal with a card read/write slot. A keypad prompts for an authorization code.",
-            },
-          },
-          // ---- Card upgrade terminal — code solved, awaiting keycard ----
-          {
-            id: "scilab_upgrade_terminal_ready",
-            shape: "rect",
-            geom: [1480, 200, 400, 600],
-            label: "Card upgrade terminal — ARMED",
-            showIf: { all: ["upgrade_puzzle_solved"] },
-            hideIf: { all: ["card_upgraded"] },
-            action: {
-              type: "useItem",
-              accepts: ["keycard"],
-              onAccept: {
-                consume: true,
-                addItem: "keycard_upgraded",
-                flags: ["card_upgraded"],
-                message: "You slot the card into the terminal. A soft chime. Display: AUTHORIZATION ACCEPTED — CLEARANCE UPGRADED: SENIOR CREW. The card ejects, its stripe rewritten.",
-              },
-              onReject: {
-                message: "Code accepted. The terminal is waiting for a crew keycard to be inserted.",
-              },
             },
           },
           // ---- Card upgrade terminal — done ----
@@ -765,80 +739,12 @@ const ROOMS = {
       },
 
       // ============================================================
-      // WALL B (1) — REYES' LOG TERMINAL
-      // Science Lab 4.png (background) + Science Lab 4 terminal.png (foreground)
-      //
-      // Three log entries accessed through the HTML terminal close-up.
-      // Log 1 and Log 2 are freely accessible. Log 3 is locked behind
-      // a physical scanner slot inside the terminal UI — the player
-      // must scan Reyes' coded note (coded_message item) to unlock it.
-      // The coded note is NOT consumed.
-      //
-      // Log 1 contains mission auth code 0743. Reading it is the
-      // soft prerequisite for solving the upgrade terminal puzzle.
-      //
-      // NOTE: Hotspot geom is an estimate — tune with debug mode (D).
-      // ============================================================
-      {
-        id: "scilab_wall_b_logs",
-        plate: "Images/Science%20Lab%204.png",
-        atmosphere: "cryo-emergency",
-        sprites: [
-          {
-            id: "scilab_wall_b_terminal_overlay",
-            image: "Images/Science%20Lab%204%20terminal.png",
-            x: 0, y: 0, w: 1920, h: 1080,
-          },
-        ],
-        overlays: [
-          // Cryo return door reader — green when unlocked (always, since
-          // you can only be on this wall if you came from the cryo room).
-          {
-            id: "cryo_return_light_green",
-            x: 1700, y: 550,
-            dotClass: "reader-dot reader-dot--solid-green",
-            showIf: { all: ["lab_door_unlocked"] },
-          },
-        ],
-        hotspots: [
-          // ---- Log terminal — single hotspot in the LEFT THIRD of Wall B ----
-          // The close-up controller (scilab_log_terminal) handles all
-          // three log entries, the physical scanner slot, and Log 3 gating.
-          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
-          {
-            id: "scilab_log_terminal",
-            shape: "rect",
-            geom: [60, 120, 480, 780],
-            label: "Reyes' log terminal",
-            action: {
-              type: "openCloseup",
-              target: "scilab_log_terminal",
-            },
-          },
-          // ---- Cryo return door (RIGHT side of Wall B) ----
-          // Returns the player to Cryo Room Wall 2 (the science lab door).
-          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
-          {
-            id: "cryo_return_door",
-            shape: "rect",
-            geom: [1300, 80, 580, 840],
-            label: "Door — 03: Cryo Room",
-            action: {
-              type: "gotoRoom",
-              room: "cryo",
-              startWall: 1,
-            },
-          },
-        ],
-      },
-
-      // ============================================================
-      // WALL C (2) — SPECIMEN STORAGE + CRYO RETURN DOOR
+      // WALL C (1) — SPECIMEN STORAGE
       // Science Lab 3.png (background) + Science Lab 3 specimens.png (foreground)
       //
-      // Three specimen containers in a sealed storage unit.
-      // The storage access panel requires batch code 3-7-1, which
-      // is found in Vance's workbench notes on Wall D.
+      // First right turn from the bridge-door wall. Three specimen
+      // containers in a sealed storage unit. The storage access panel
+      // requires batch code 3-7-1 from Vance's workbench notes on Wall D.
       //
       // Containers:
       //   A — empty (freq_emitter item stored here by Vance)
@@ -925,6 +831,75 @@ const ROOMS = {
               type: "setState",
               flags: ["container_c_examined"],
               message: "Container C is intact and sealed. Inside, a cluster of small translucent squares shifts and reorganises slowly. It seems aware of you — the cluster orients toward the glass as you lean in. The squares are hollow, crystalline, and beautiful in a way that makes the back of your neck tighten. This is the only surviving glitch specimen on the ship.",
+            },
+          },
+        ],
+      },
+
+      // ============================================================
+      // WALL B (2) — CRYO RETURN DOOR + REYES' LOG TERMINAL
+      // Science Lab 4.png (background) + Science Lab 4 terminal.png (foreground)
+      //
+      // Second right turn from entry. The cryo return door is on the
+      // RIGHT side of this wall. Reyes' log terminal is on the LEFT.
+      // Entering from the cryo room, the player faces the shuttle bay
+      // wall (cryo startWall: 3).
+      //
+      // Three log entries in the HTML terminal close-up. Log 1 and
+      // Log 2 are freely accessible. Log 3 requires scanning Reyes'
+      // coded note (coded_message item) — note is NOT consumed.
+      // Log 1 contains mission auth code 0743.
+      //
+      // NOTE: Hotspot geom is an estimate — tune with debug mode (D).
+      // ============================================================
+      {
+        id: "scilab_wall_b_logs",
+        plate: "Images/Science%20Lab%204.png",
+        atmosphere: "cryo-emergency",
+        sprites: [
+          {
+            id: "scilab_wall_b_terminal_overlay",
+            image: "Images/Science%20Lab%204%20terminal.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+          },
+        ],
+        overlays: [
+          // Cryo return door reader — green once the lab door was unlocked.
+          {
+            id: "cryo_return_light_green",
+            x: 1215, y: 548,
+            dotClass: "reader-dot reader-dot--solid-green",
+            showIf: { all: ["lab_door_unlocked"] },
+          },
+        ],
+        hotspots: [
+          // ---- Log terminal — single hotspot in the LEFT THIRD of Wall B ----
+          // The close-up controller (scilab_log_terminal) handles all
+          // three log entries, the physical scanner slot, and Log 3 gating.
+          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
+          {
+            id: "scilab_log_terminal",
+            shape: "rect",
+            geom: [60, 120, 480, 780],
+            label: "Reyes' log terminal",
+            action: {
+              type: "openCloseup",
+              target: "scilab_log_terminal",
+            },
+          },
+          // ---- Cryo return door (RIGHT side of Wall B) ----
+          // Returns the player to Cryo Room Wall 3 (shuttle bay door wall)
+          // so they face the opposite side of the room from where they came.
+          // NOTE: Adjust geom in debug mode (D) once art is confirmed.
+          {
+            id: "cryo_return_door",
+            shape: "rect",
+            geom: [1300, 80, 580, 840],
+            label: "Door — 03: Cryo Room",
+            action: {
+              type: "gotoRoom",
+              room: "cryo",
+              startWall: 3,
             },
           },
         ],
@@ -1025,11 +1000,12 @@ const CLOSEUPS = {
   },
 
   // ---- Science Lab: Card upgrade terminal ----
-  // 4-digit keypad entry. Correct code: 0743 (Reyes' mission auth
-  // number, found in Log 1 via the log terminal on Wall B).
-  // Solving sets flag: upgrade_puzzle_solved.
-  // The wall hotspot (scilab_upgrade_terminal_ready) then handles
-  // the keycard insertion step.
+  // Phase 1 — 4-digit keypad. Correct code: 0743 (Reyes' mission auth
+  // number, found in Reyes' Log 1 on Wall B). Sets flag: upgrade_puzzle_solved.
+  // Phase 2 — card insertion. The controller keeps the closeup open after the
+  // code is accepted and shows an interactive card slot (252×47 at x=1132,
+  // y=694). Player equips the crew keycard and clicks the slot. This consumes
+  // the keycard and adds keycard_upgraded. Sets flag: card_upgraded.
   scilab_upgrade_terminal: {
     image: "Images/closeups/Science%20Lab%202%20Terminal.png",
     kind: "html",
