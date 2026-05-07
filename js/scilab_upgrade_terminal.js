@@ -4,80 +4,69 @@
    Backs the "scilab_upgrade_terminal" HTML close-up.
    Close-up image: Images/closeups/Science Lab 2 Terminal.png
 
-   LAYOUT — all coordinates are 1920×1080 stage pixels.
+   THREE-PHASE UPGRADE FLOW
+   ─────────────────────────────────────────────────────────────
+   Phase 0  (no flags)
+     Display: "INSERT SECURITY CARD"
+     Card slot (blue slot in art, x=1132 y=694 252×47) is active.
+     Player must EQUIP the crew keycard then click the slot.
+     → keycard removed from inventory; flag card_in_terminal set.
 
-     DISPLAY PANEL (.ut-display-panel)
-       The terminal screen area in the art.
-       x=522, y=202, w=421, h=596
-       Shows: header, 4-digit code entry, status, post-solve prompt.
+   Phase 1  (card_in_terminal, code input not yet activated)
+     Display: science officer card detected + UPGRADE button.
+     Clicking UPGRADE enters Phase 2 (in-memory only, not a flag).
 
-     KEYPAD OVERLAY (.ut-key-overlay)
-       3×3 invisible buttons over the physical keypad in the art.
-       Grid origin: x=1115, y=290  |  total: 241×290
-       Layout:
-         Row 0: 1  2  3
-         Row 1: 4  5  6
-         Row 2: *  0  *   (left * = delete, right * = enter/submit)
-       Each button is fully transparent so the printed keys show.
+   Phase 2  (card_in_terminal, code input active)
+     Display: 4-digit entry keypad.
+     Correct code 0743 → keycard_upgraded added to inventory;
+     flag card_upgraded set; closeup closes.
+     Wrong code → error flash, digits clear, try again.
 
-     CARD SLOT (.ut-card-slot)
-       Invisible clickable area over the blue card slot in the art.
-       x=1132, y=694, w=252, h=47
-       Visible only after the code has been accepted. Player must
-       equip the crew keycard and click this area to insert it.
+   Phase 3  (card_upgraded)
+     Wall hotspot shows "Upgrade complete. The terminal is idle."
+     The closeup is never opened in this state.
 
-   FLOW
-     1. Player opens the closeup (wall hotspot).
-     2. Player enters 4-digit code on the keypad (solution: 0743,
-        found in Reyes' Log 1 on the opposite wall).
-     3. On correct code → AUTHORIZATION ACCEPTED shown; flag
-        upgrade_puzzle_solved set; card slot becomes active.
-     4. Player equips keycard and clicks the card slot.
-        → keycard consumed; keycard_upgraded added to inventory.
-        → flag card_upgraded set; closeup closes.
+   COORDINATES  (1920×1080 stage pixels)
+     Display panel : x=522  y=202  w=421  h=596
+     Keypad grid   : x=1115 y=290  241×290  (3×3, invisible buttons)
+       Columns : 1115, 1196, 1276   Key w=80
+       Rows    : 290,  387,  484    Key h=97
+       Layout  : 1 2 3 / 4 5 6 / * 0 *
+       Left  * = delete,  Right * = enter/submit
+     Card slot     : x=1132 y=694  w=252  h=47
    ============================================================ */
 
 (function () {
-  const SOLUTION  = [0, 7, 4, 3];
-  const CODE_FLAG = "upgrade_puzzle_solved";
-  const CARD_FLAG = "card_upgraded";
+  const SOLUTION        = [0, 7, 4, 3];
+  const CARD_IN_FLAG    = "card_in_terminal";
+  const CARD_DONE_FLAG  = "card_upgraded";
+  const KEYCARD_IDS     = ["keycard"];   // only original crew keycard
 
-  // Accepted keycard IDs (only the original crew keycard works here)
-  const KEYCARD_IDS = ["keycard"];
+  /* ── Display panel ── */
+  const DISPLAY_X = 522,  DISPLAY_Y = 202,
+        DISPLAY_W = 421,  DISPLAY_H = 596;
 
-  // ---------- Display panel ----------
-  const DISPLAY_X = 522;
-  const DISPLAY_Y = 202;
-  const DISPLAY_W = 421;
-  const DISPLAY_H = 596;
-
-  // ---------- Keypad grid ----------
-  // 3×3 grid, 241 px wide × 290 px tall, origin at (1115, 290)
-  const GRID_X  = 1115;
-  const GRID_Y  = 290;
-  const KEY_W   = 80;   // 241 / 3 ≈ 80 px per column
-  const KEY_H   = 97;   // 290 / 3 ≈ 97 px per row
-  const KEY_COLS = [GRID_X, GRID_X + 80, GRID_X + 161];
-  const KEY_ROWS = [GRID_Y, GRID_Y + 97, GRID_Y + 193];
-
-  // Row-major key layout: [label, value]
-  // left * = backspace, right * = enter/submit
+  /* ── Keypad grid ── */
+  const GRID_X = 1115, GRID_Y = 290,
+        KEY_W  = 80,   KEY_H  = 97;
+  const KEY_COLS = [GRID_X,        GRID_X + 80,  GRID_X + 161];
+  const KEY_ROWS = [GRID_Y,        GRID_Y + 97,  GRID_Y + 193];
   const KEYS = [
     [["1",1], ["2",2], ["3",3]],
     [["4",4], ["5",5], ["6",6]],
     [["*","del"], ["0",0], ["*","enter"]],
   ];
 
-  // ---------- Card slot ----------
-  const SLOT_X = 1132;
-  const SLOT_Y = 694;
-  const SLOT_W = 252;
-  const SLOT_H = 47;
+  /* ── Card slot ── */
+  const SLOT_X = 1132, SLOT_Y = 694,
+        SLOT_W = 252,  SLOT_H = 47;
 
-  let input     = [];
-  let statusMsg = "";   // "" | "error" | "solved"
+  /* ── In-memory phase state (reset on unmount) ── */
+  let codeInputActive = false;   // Phase 1 → Phase 2 transition
+  let input           = [];
+  let statusMsg       = "";      // "" | "error"
 
-  /* ---------- Minimal DOM helper ---------- */
+  /* ── Minimal DOM helper ── */
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -102,18 +91,18 @@
     return input.length === 4 && input.every((d, i) => d === SOLUTION[i]);
   }
 
-  /* ---------- Build / refresh the display panel ---------- */
+  /* ── Build / refresh the display panel ── */
   function buildDisplay(layer, ctx) {
     const old = layer.querySelector(".ut-display-panel");
     if (old) old.remove();
 
-    const codeSolved = ctx.hasFlag(CODE_FLAG);
-    const cardDone   = ctx.hasFlag(CARD_FLAG);
+    const cardIn   = ctx.hasFlag(CARD_IN_FLAG);
+    const cardDone = ctx.hasFlag(CARD_DONE_FLAG);
 
-    // Subtitle and body content vary by phase
     let subtitle, bodyChildren;
 
     if (cardDone) {
+      /* Phase 3 — shouldn't really reach here via normal gameplay */
       subtitle = "UPGRADE COMPLETE";
       bodyChildren = [
         el("div", { class: "ut-status ut-status--solved" }, [
@@ -121,18 +110,10 @@
           el("div", { class: "ut-solved-sub" }, ["SENIOR CREW ACCESS GRANTED"]),
         ]),
       ];
-    } else if (codeSolved || statusMsg === "solved") {
-      subtitle = "AWAITING KEYCARD";
-      bodyChildren = [
-        el("div", { class: "ut-status ut-status--solved" }, [
-          "AUTHORIZATION ACCEPTED",
-        ]),
-        el("p", { class: "ut-prompt" }, ["EQUIP CREW KEYCARD"]),
-        el("p", { class: "ut-prompt" }, ["INSERT INTO BLUE SLOT →"]),
-      ];
-    } else {
-      // Code-entry phase
-      subtitle = "AUTHORIZATION REQUIRED";
+
+    } else if (cardIn && codeInputActive) {
+      /* Phase 2 — code entry */
+      subtitle = "ENTER AUTHORIZATION CODE";
       const digits = [];
       for (let i = 0; i < 4; i++) {
         digits.push(el("span", {
@@ -148,6 +129,36 @@
           el("div", { class: "ut-status ut-status--error" }, ["INVALID CODE — ACCESS DENIED"])
         );
       }
+
+    } else if (cardIn) {
+      /* Phase 1 — card detected, awaiting UPGRADE click */
+      subtitle = "CARD DETECTED";
+      bodyChildren = [
+        el("div", { class: "ut-card-detected" }, [
+          el("div", { class: "ut-card-label" }, ["SCIENCE OFFICER KEYCARD"]),
+          el("div", { class: "ut-card-clearance" }, ["CLEARANCE LEVEL: CREW"]),
+        ]),
+        el("button", {
+          type: "button",
+          class: "ut-upgrade-btn",
+          onclick: () => {
+            codeInputActive = true;
+            buildDisplay(layer, ctx);
+            buildKeypad(layer, ctx);
+            buildCardSlot(layer, ctx);
+          },
+        }, ["UPGRADE"]),
+      ];
+
+    } else {
+      /* Phase 0 — awaiting card */
+      subtitle = "AWAITING CARD";
+      bodyChildren = [
+        el("p", { class: "ut-prompt" }, ["INSERT SECURITY CARD"]),
+        el("p", { class: "ut-prompt-hint" }, [
+          "Equip your security card, then insert it into the blue slot →"
+        ]),
+      ];
     }
 
     const panel = el("div", {
@@ -171,187 +182,147 @@
     layer.appendChild(panel);
   }
 
-  /* ---------- Build transparent keypad buttons ----------
-     Buttons are invisible so the printed art shows through.
-     Hidden once the code has been accepted. */
+  /* ── Build transparent keypad (Phase 2 only) ── */
   function buildKeypad(layer, ctx) {
     const old = layer.querySelector(".ut-key-overlay");
     if (old) old.remove();
 
-    if (ctx.hasFlag(CODE_FLAG)) return;   // keypad no longer needed
+    if (!ctx.hasFlag(CARD_IN_FLAG) || !codeInputActive) return;
 
     const overlay = el("div", { class: "ut-key-overlay" });
-
     KEYS.forEach((row, ri) => {
       row.forEach(([label, value], ci) => {
         const ariaLabel =
-          (value === "del")   ? "Delete" :
-          (value === "enter") ? "Enter"  : String(label);
-
-        const btn = el("button", {
-          type:       "button",
-          class:      "ut-img-key",
-          "aria-label": ariaLabel,
+          value === "del"   ? "Delete" :
+          value === "enter" ? "Enter"  : String(label);
+        overlay.appendChild(el("button", {
+          type: "button", class: "ut-img-key", "aria-label": ariaLabel,
           style: {
-            position:   "absolute",
-            left:       KEY_COLS[ci] + "px",
-            top:        KEY_ROWS[ri] + "px",
-            width:      KEY_W + "px",
-            height:     KEY_H + "px",
-            background: "transparent",
-            border:     "none",
-            cursor:     "pointer",
+            position: "absolute",
+            left:     KEY_COLS[ci] + "px",
+            top:      KEY_ROWS[ri] + "px",
+            width:    KEY_W + "px",
+            height:   KEY_H + "px",
+            background: "transparent", border: "none", cursor: "pointer",
           },
           onclick: () => handleKey(value, layer, ctx),
-        }, []);   // no visible children — fully transparent
-
-        overlay.appendChild(btn);
+        }, []));
       });
     });
-
     layer.appendChild(overlay);
   }
 
-  /* ---------- Build card-slot interaction area ----------
-     Visible only while code is solved but card not yet inserted.
-     Fully transparent so the blue slot in the art is the visual cue. */
+  /* ── Build card slot (Phase 0 only) ── */
   function buildCardSlot(layer, ctx) {
     const old = layer.querySelector(".ut-card-slot");
     if (old) old.remove();
 
-    if (!ctx.hasFlag(CODE_FLAG) || ctx.hasFlag(CARD_FLAG)) return;
+    if (ctx.hasFlag(CARD_IN_FLAG) || ctx.hasFlag(CARD_DONE_FLAG)) return;
 
-    const slot = el("button", {
-      type:  "button",
-      class: "ut-card-slot",
-      "aria-label": "Insert keycard into blue slot",
+    layer.appendChild(el("button", {
+      type: "button", class: "ut-card-slot",
+      "aria-label": "Insert security card into terminal",
       style: {
-        position:   "absolute",
-        left:       SLOT_X + "px",
-        top:        SLOT_Y + "px",
-        width:      SLOT_W + "px",
-        height:     SLOT_H + "px",
-        background: "transparent",
-        border:     "none",
-        cursor:     "pointer",
+        position: "absolute",
+        left: SLOT_X + "px", top: SLOT_Y + "px",
+        width: SLOT_W + "px", height: SLOT_H + "px",
+        background: "transparent", border: "none", cursor: "pointer",
       },
       onclick: () => handleCardInsert(layer, ctx),
-    }, []);
-
-    layer.appendChild(slot);
+    }, []));
   }
 
-  /* ---------- Full rebuild ---------- */
+  /* ── Full rebuild ── */
   function rebuild(layer, ctx) {
     buildDisplay(layer, ctx);
     buildKeypad(layer, ctx);
     buildCardSlot(layer, ctx);
   }
 
-  /* ---------- Key press handler ---------- */
-  function handleKey(value, layer, ctx) {
-    if (statusMsg === "solved") return;
-
-    if (value === "del") {
-      if (input.length > 0) {
-        input.pop();
-        statusMsg = "";
-        buildDisplay(layer, ctx);
-      }
+  /* ── Card insertion handler (Phase 0 → Phase 1) ── */
+  function handleCardInsert(layer, ctx) {
+    const eq = Inventory.getEquipped();
+    if (!eq || !KEYCARD_IDS.includes(eq)) {
+      ctx.showMessage(
+        "The terminal is waiting for a security card. Equip your keycard and click the blue slot."
+      );
       return;
     }
+    if (typeof GameAudio !== "undefined") GameAudio.playKeycardSwipe();
+    Inventory.removeItem(eq);
+    ctx.setFlag(CARD_IN_FLAG);
+    ctx.showMessage(
+      "You slot the keycard into the terminal. It hums quietly as it reads the stripe."
+    );
+    rebuild(layer, ctx);
+  }
 
+  /* ── Key press handler (Phase 2) ── */
+  function handleKey(value, layer, ctx) {
+    if (value === "del") {
+      if (input.length > 0) { input.pop(); statusMsg = ""; buildDisplay(layer, ctx); }
+      return;
+    }
     if (value === "enter") {
       if (input.length < 4) {
-        statusMsg = "error";
-        buildDisplay(layer, ctx);
+        statusMsg = "error"; buildDisplay(layer, ctx);
         setTimeout(() => { statusMsg = ""; buildDisplay(layer, ctx); }, 900);
         return;
       }
       checkSolution(layer, ctx);
       return;
     }
-
-    // Digit (0–9)
     if (input.length < 4) {
-      input.push(value);
-      statusMsg = "";
-      buildDisplay(layer, ctx);
-      if (input.length === 4) {
-        setTimeout(() => checkSolution(layer, ctx), 200);
-      }
+      input.push(value); statusMsg = ""; buildDisplay(layer, ctx);
+      if (input.length === 4) setTimeout(() => checkSolution(layer, ctx), 200);
     }
   }
 
   function checkSolution(layer, ctx) {
     if (isSolved()) {
-      statusMsg = "solved";
-      buildDisplay(layer, ctx);
+      // Show a quick success flash in the display before closing
+      const panel = layer.querySelector(".ut-display-panel");
+      if (panel) {
+        const body = panel.querySelector(".ut-left-body");
+        if (body) {
+          body.innerHTML = "";
+          body.appendChild(el("div", { class: "ut-status ut-status--solved" }, [
+            "AUTHORIZATION ACCEPTED",
+            el("div", { class: "ut-solved-sub" }, ["ISSUING UPGRADED CARD…"]),
+          ]));
+        }
+      }
       setTimeout(() => {
-        ctx.setFlag(CODE_FLAG);
+        Inventory.addItem("keycard_upgraded");
+        if (ctx.showPickupNotification) ctx.showPickupNotification("keycard_upgraded");
+        ctx.setFlag(CARD_DONE_FLAG);
         ctx.showMessage(
-          "Authorization code accepted. CLEARANCE GRANTED. " +
-          "Equip your crew keycard and insert it into the blue slot."
+          "Authorization accepted. CLEARANCE UPGRADED: SENIOR CREW. " +
+          "The terminal ejects an updated card."
         );
-        // Keep closeup open — player must now insert the keycard
-        rebuild(layer, ctx);
+        ctx.closeCloseup();
+        ctx.renderActive();
       }, 1400);
     } else {
-      statusMsg = "error";
-      buildDisplay(layer, ctx);
+      statusMsg = "error"; buildDisplay(layer, ctx);
       input = [];
-      setTimeout(() => {
-        statusMsg = "";
-        buildDisplay(layer, ctx);
-      }, 900);
+      setTimeout(() => { statusMsg = ""; buildDisplay(layer, ctx); }, 900);
     }
   }
 
-  /* ---------- Card insertion handler ---------- */
-  function handleCardInsert(layer, ctx) {
-    const eq = Inventory.getEquipped();
-    if (!eq || !KEYCARD_IDS.includes(eq)) {
-      ctx.showMessage(
-        "The terminal is armed. Equip your crew keycard, then click the blue slot to insert it."
-      );
-      return;
-    }
-
-    // Play keycard swipe SFX
-    if (typeof GameAudio !== "undefined") GameAudio.playKeycardSwipe();
-
-    // Consume original keycard, award upgraded one
-    Inventory.removeItem(eq);
-    Inventory.addItem("keycard_upgraded");
-    if (ctx.showPickupNotification) ctx.showPickupNotification("keycard_upgraded");
-    ctx.setFlag(CARD_FLAG);
-    ctx.showMessage(
-      "Card accepted. CLEARANCE UPGRADED: SENIOR CREW. " +
-      "The card ejects, its stripe rewritten."
-    );
-
-    // Refresh display to show completion state
-    buildDisplay(layer, ctx);
-    buildCardSlot(layer, ctx);   // removes the slot (card_upgraded now set)
-
-    // Auto-close after a moment
-    setTimeout(() => {
-      ctx.closeCloseup();
-      ctx.renderActive();
-    }, 2200);
-  }
-
-  /* ---------- Mount / unmount ---------- */
+  /* ── Mount / unmount ── */
   function mount(layer, ctx) {
-    input     = [];
-    statusMsg = "";
+    codeInputActive = false;
+    input           = [];
+    statusMsg       = "";
     layer.innerHTML = "";
     rebuild(layer, ctx);
   }
 
   function unmount() {
-    input     = [];
-    statusMsg = "";
+    codeInputActive = false;
+    input           = [];
+    statusMsg       = "";
   }
 
   Engine.registerCloseupController("scilab_upgrade_terminal", { mount, unmount });

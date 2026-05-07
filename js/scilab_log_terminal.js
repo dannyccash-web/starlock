@@ -4,34 +4,35 @@
    Backs the "scilab_log_terminal" HTML close-up.
    Close-up image: Images/closeups/Science Lab 4 Terminal.png
 
-   LAYOUT
-   Two independent layers mounted into #closeup-html:
+   LAYOUT  (1920×1080 stage pixels)
 
-     1. LOG PANEL (.lt-terminal)
-        Narrow panel on the LEFT side of the screen, showing the
-        terminal UI: log list → log detail navigation.
+     TERMINAL SCREEN (.lt-terminal)
+       x=334  y=91  w=1280  h=565
+       Shows the log list → log detail navigation.
 
-     2. PHYSICAL SCANNER SLOT (.lt-phys-scanner)
-        A persistent interactive element at the BOTTOM-CENTRE of
-        the closeup, positioned over the actual paper scanner slot
-        visible in the terminal image. Always shown. Behaviour:
-          - If player has coded_message in inventory → clicking
-            inserts it and sets coded_note_scanned (not consumed).
-          - If already scanned → shows "DECRYPTED" indicator.
-          - Otherwise → shows a hint message in the message bar.
-        Tune LT_SCAN_* constants to the art position (D key = debug).
+     PHYSICAL SCANNER SLOT (.lt-phys-scanner)
+       x=751  y=907  w=413  h=94
+       Invisible interactive area over the physical document
+       scanner slot in the art. Has a soft blue pulsing glow.
+       Behaviour:
+         — Player must EQUIP coded_message, then click here.
+         — On first use: sets flag coded_note_scanned (note kept).
+         — If already scanned: shows "already decoded" message.
+         — If wrong/no item equipped: hint message shown.
 
    THREE LOG ENTRIES:
-     Log 1 — Expedition Record (auth code 0743, sets log1_read)
-     Log 2 — Experiment Record (sets log2_read)
-     Log 3 — Dispute Record   (locked until coded_note_scanned)
+     Log 01 — Expedition Record                  (flag: log1_read)
+     Log 02 — Experiment Record                  (flag: log2_read)
+     Log 03 — Dispute Record                     (flag: log3_read)
+              Locked/red until coded_note_scanned.
+              Ends with "Unencrypted: authorization code 0743"
 
-   unmount() resets view to list so each fresh open starts there.
+   unmount() resets to list view so each fresh open starts there.
    ============================================================ */
 
 (function () {
 
-  /* ---------- Log data ---------- */
+  /* ── Log data ── */
   const LOGS = [
     {
       id: "log1",
@@ -49,8 +50,7 @@
         "sealed field containers and returned to the ship.\n\n" +
         "I've been staring at the footage. Each one is a small cluster of " +
         "translucent squares. They look like a visual artifact. Vance keeps " +
-        "calling them glitches. I think the name is going to stick.\n\n" +
-        "Mission auth code logged: 0743",
+        "calling them glitches. I think the name is going to stick.",
     },
     {
       id: "log2",
@@ -79,7 +79,7 @@
       title: "DISPUTE RECORD",
       date: "T-00d 02h",
       flag: "log3_read",
-      locked: true,   // unlocked by coded_note_scanned
+      locked: true,   // unlocked when coded_note_scanned is set
       body:
         "Tarn wants to take the shuttle, destroy the ship and all specimens, " +
         "and return alone. No evidence. No organism. No risk. Tarn says bringing " +
@@ -94,30 +94,27 @@
         "today.\n\n" +
         "We're not going to agree on this. I can hear Tarn moving toward the " +
         "shuttle bay. I'm going after them.",
+      // Appended after the body as a decoded footer line
+      decodedFooter: "Unencrypted: authorization code 0743",
     },
   ];
 
-  /* ---------- Physical scanner slot position ----------
-     Position the scanner slot over the actual paper slot in the
-     closeup image. Tune these constants in debug mode (D key).
-     Values are in 1920×1080 stage coordinates. */
-  const LT_SCAN_LEFT   = 620;   // left edge of the slot area
-  const LT_SCAN_TOP    = 870;   // top edge
-  const LT_SCAN_WIDTH  = 680;   // width of the clickable zone
-  const LT_SCAN_HEIGHT = 160;   // height of the clickable zone
+  /* ── Panel / slot dimensions ── */
+  const LT_PANEL_LEFT   = 334;
+  const LT_PANEL_TOP    = 91;
+  const LT_PANEL_WIDTH  = 1280;
+  const LT_PANEL_HEIGHT = 565;
 
-  /* ---------- Log panel position ----------
-     Narrow panel on the left side of the closeup image. */
-  const LT_PANEL_LEFT   = 60;
-  const LT_PANEL_TOP    = 140;
-  const LT_PANEL_WIDTH  = 820;
-  const LT_PANEL_HEIGHT = 700;
+  const LT_SCAN_LEFT   = 751;
+  const LT_SCAN_TOP    = 907;
+  const LT_SCAN_WIDTH  = 413;
+  const LT_SCAN_HEIGHT = 94;
 
-  /* ---------- Module-scope view state ---------- */
+  /* ── Module-scope view state ── */
   let currentView   = "list";
   let selectedLogId = null;
 
-  /* ---------- DOM helper ---------- */
+  /* ── Minimal DOM helper ── */
   function el(tag, attrs, children) {
     const node = document.createElement(tag);
     if (attrs) {
@@ -138,46 +135,39 @@
     return node;
   }
 
-  /* ---------- Status helpers ---------- */
-  function logStatusClass(log, hasFlag) {
-    if (log.locked && !hasFlag("coded_note_scanned")) return "lt-log-locked";
-    if (hasFlag(log.flag)) return "lt-log-read";
-    return "lt-log-unread";
+  /* ── Status helpers ── */
+  function isLogLocked(log, hasFlag) {
+    return !!(log.locked && !hasFlag("coded_note_scanned"));
   }
-
   function logStatusLabel(log, hasFlag) {
-    if (log.locked && !hasFlag("coded_note_scanned")) return "LOCKED";
-    if (hasFlag(log.flag)) return "READ";
+    if (isLogLocked(log, hasFlag)) return "LOCKED";
+    if (hasFlag(log.flag))         return "READ";
     return "UNREAD";
   }
 
-  /* ---------- Build the log panel ---------- */
+  /* ── Build the terminal screen ── */
   function buildLogPanel(layer, ctx) {
     const old = layer.querySelector(".lt-terminal");
     if (old) old.remove();
 
-    let content;
-    if (currentView === "detail" && selectedLogId) {
-      content = buildDetail(ctx, selectedLogId);
-    } else {
-      content = buildList(ctx);
-    }
+    const content = (currentView === "detail" && selectedLogId)
+      ? buildDetail(ctx, selectedLogId)
+      : buildList(ctx);
 
-    const panel = el("div", {
+    layer.appendChild(el("div", {
       class: "lt-terminal",
       style: {
         position: "absolute",
-        left:   LT_PANEL_LEFT + "px",
-        top:    LT_PANEL_TOP + "px",
-        width:  LT_PANEL_WIDTH + "px",
-        height: LT_PANEL_HEIGHT + "px",
+        left:     LT_PANEL_LEFT   + "px",
+        top:      LT_PANEL_TOP    + "px",
+        width:    LT_PANEL_WIDTH  + "px",
+        height:   LT_PANEL_HEIGHT + "px",
+        overflow: "hidden",
       },
-    }, [content]);
-
-    layer.appendChild(panel);
+    }, [content]));
   }
 
-  /* ----- List view ----- */
+  /* ── List view ── */
   function buildList(ctx) {
     const { hasFlag } = ctx;
     return el("div", {
@@ -186,140 +176,166 @@
       "aria-label": "Mission logs",
     }, [
       el("header", { class: "ct-header" }, [
-        el("span", { class: "ct-title" }, ["MISSION LOGS"]),
+        el("span", { class: "ct-title" },    ["MISSION LOGS"]),
         el("span", { class: "ct-subtitle" }, ["REYES, A. · COMMANDER"]),
       ]),
       el("div", { class: "lt-log-list" },
         LOGS.map((log) => {
-          const statusClass = logStatusClass(log, hasFlag);
-          const isLocked = log.locked && !hasFlag("coded_note_scanned");
+          const locked      = isLogLocked(log, hasFlag);
+          const statusLabel = logStatusLabel(log, hasFlag);
+          const rowClass    = "lt-log-row" +
+            (locked            ? " lt-log-locked"  :
+             hasFlag(log.flag) ? " lt-log-read"    :
+                                 " lt-log-unread");
+
           return el("button", {
-            type: "button",
-            class: "lt-log-row " + statusClass,
+            type:    "button",
+            class:   rowClass,
             onclick: () => {
               selectedLogId = log.id;
-              currentView = "detail";
+              currentView   = "detail";
               ctx.renderActive();
             },
           }, [
             el("span", { class: "lt-log-num" }, [`LOG ${log.num}`]),
             el("span", { class: "lt-log-info" }, [
               el("span", { class: "lt-log-title" }, [
-                isLocked ? `LOG ${log.num} — ENCRYPTED` : log.title,
+                locked ? `LOG ${log.num} — ENCRYPTED` : log.title,
               ]),
               el("span", { class: "lt-log-meta" }, [
-                isLocked ? "INSERT KEY DOCUMENT TO UNLOCK" : log.date,
+                locked
+                  ? "AUTHORIZATION REQUIRED — SCAN KEY DOCUMENT TO UNLOCK"
+                  : log.date,
               ]),
             ]),
-            el("span", { class: "lt-log-status" }, [logStatusLabel(log, hasFlag)]),
-            el("span", { class: "ct-pod-chevron" }, [isLocked ? "🔒" : "❯"]),
+            el("span", { class: "lt-log-status" }, [statusLabel]),
+            el("span", { class: "ct-pod-chevron" }, [locked ? "🔒" : "❯"]),
           ]);
         })
       ),
     ]);
   }
 
-  /* ----- Detail view ----- */
+  /* ── Detail view ── */
   function buildDetail(ctx, logId) {
     const { hasFlag, setFlag } = ctx;
-    const log = LOGS.find((l) => l.id === logId);
+    const log    = LOGS.find((l) => l.id === logId);
     if (!log) return buildList(ctx);
 
-    const isLocked = log.locked && !hasFlag("coded_note_scanned");
-    if (!isLocked && !hasFlag(log.flag)) setFlag(log.flag);
+    const locked = isLogLocked(log, hasFlag);
+    if (!locked && !hasFlag(log.flag)) setFlag(log.flag);
+
+    const backBtn = el("button", {
+      type: "button",
+      class: "ct-back-btn",
+      onclick: () => {
+        currentView   = "list";
+        selectedLogId = null;
+        ctx.renderActive();
+      },
+    }, ["❮ LOGS"]);
+
+    if (locked) {
+      return el("div", { role: "region" }, [
+        el("header", { class: "ct-header" }, [
+          backBtn,
+          el("span", { class: "ct-subtitle" }, [`LOG ${log.num}`]),
+        ]),
+        el("div", { class: "lt-locked-notice" }, [
+          el("div", { class: "lt-locked-icon" }, ["🔒"]),
+          el("p",   { class: "lt-locked-msg"  }, ["LOG ENCRYPTED — AUTHORIZATION REQUIRED"]),
+          el("p",   { class: "lt-locked-hint" }, [
+            "Equip the physical key document and scan it in the slot below to decode this entry."
+          ]),
+        ]),
+      ]);
+    }
+
+    // Unlocked body
+    const paragraphEls = log.body.split("\n\n").map((p) =>
+      el("p", { class: "lt-log-para" }, [p])
+    );
+
+    // Decoded footer for Log 03
+    const footerEl = log.decodedFooter
+      ? el("p", { class: "lt-log-para lt-log-decoded" }, [log.decodedFooter])
+      : null;
 
     return el("div", { role: "region" }, [
       el("header", { class: "ct-header" }, [
-        el("button", {
-          type: "button",
-          class: "ct-back-btn",
-          onclick: () => {
-            currentView = "list";
-            selectedLogId = null;
-            ctx.renderActive();
-          },
-        }, ["❮ LOGS"]),
+        backBtn,
         el("span", { class: "ct-subtitle" }, [`LOG ${log.num}`]),
       ]),
-      isLocked
-        ? el("div", { class: "lt-locked-notice" }, [
-            el("p", null, [
-              "This log is encrypted. Insert the physical key document " +
-              "into the scanner slot at the bottom of the terminal to unlock it."
-            ]),
-          ])
-        : el("div", { class: "lt-log-body" }, [
-            el("div", { class: "lt-log-header-row" }, [
-              el("span", { class: "lt-log-detail-title" }, [log.title]),
-              el("span", { class: "lt-log-detail-meta" }, [log.date]),
-            ]),
-            el("div", { class: "lt-log-text" },
-              log.body.split("\n\n").map((p) =>
-                el("p", { class: "lt-log-para" }, [p])
-              )
-            ),
-          ]),
+      el("div", { class: "lt-log-body" }, [
+        el("div", { class: "lt-log-header-row" }, [
+          el("span", { class: "lt-log-detail-title" }, [log.title]),
+          el("span", { class: "lt-log-detail-meta"  }, [log.date]),
+        ]),
+        el("div", { class: "lt-log-text" }, [...paragraphEls, footerEl]),
+      ]),
     ]);
   }
 
-  /* ---------- Build the physical scanner slot ----------
-     Always mounted regardless of which log view is showing. */
+  /* ── Build the physical scanner slot ── */
   function buildScannerSlot(layer, ctx) {
     const old = layer.querySelector(".lt-phys-scanner");
     if (old) old.remove();
 
     const { hasFlag, setFlag, showMessage, renderActive } = ctx;
     const alreadyScanned = hasFlag("coded_note_scanned");
-    const hasNote        = Inventory.hasItem("coded_message");
 
-    let inner;
-    if (alreadyScanned) {
-      inner = el("div", { class: "lt-scan-state lt-scan-state--done" }, [
-        el("span", { class: "lt-scan-icon" }, ["▓"]),
-        el("span", { class: "lt-scan-text" }, ["DOCUMENT DECODED · LOG 03 UNLOCKED"]),
-      ]);
-    } else {
-      inner = el("button", {
-        type: "button",
-        class: "lt-scan-state lt-scan-state--idle",
-        onclick: () => {
-          if (hasNote) {
-            setFlag("coded_note_scanned");
-            showMessage(
-              "You feed Reyes' coded note into the scanner slot. " +
-              "The terminal hums as it decodes the physical key. Log 03 unlocked."
-            );
-            renderActive();
-          } else {
-            showMessage(
-              "The scanner slot is waiting for the physical key document. " +
-              "Find Reyes' coded note."
-            );
-          }
-        },
-      }, [
-        el("span", { class: "lt-scan-icon" }, ["▒"]),
-        el("span", { class: "lt-scan-text" }, [
-          hasNote ? "INSERT CODED NOTE →" : "INSERT DOCUMENT",
-        ]),
-      ]);
-    }
+    // Invisible button over the scanner slot in the art
+    const btn = el("button", {
+      type:  "button",
+      class: "lt-scan-btn",
+      "aria-label": alreadyScanned ? "Document decoded" : "Scan document",
+      style: {
+        position:   "absolute",
+        inset:      "0",
+        background: "transparent",
+        border:     "none",
+        cursor:     alreadyScanned ? "default" : "pointer",
+        width:      "100%",
+        height:     "100%",
+      },
+      onclick: () => {
+        if (alreadyScanned) {
+          showMessage("The key document has already been decoded. Log 03 is unlocked.");
+          return;
+        }
+        const eq = Inventory.getEquipped();
+        if (eq === "coded_message") {
+          setFlag("coded_note_scanned");
+          showMessage(
+            "You feed Reyes' coded note into the scanner slot. " +
+            "The terminal hums as it decodes the document. Log 03 is now unlocked."
+          );
+          renderActive();
+        } else {
+          showMessage(
+            "The scanner slot is waiting for the physical key document. " +
+            "Equip Reyes' coded note, then click the scanner slot."
+          );
+        }
+      },
+    }, []);
 
-    const slot = el("div", {
-      class: "lt-phys-scanner",
+    // Wrapper carries the blue pulse glow animation
+    const wrapper = el("div", {
+      class: "lt-phys-scanner" + (alreadyScanned ? " lt-phys-scanner--done" : ""),
       style: {
         position: "absolute",
-        left:   LT_SCAN_LEFT + "px",
-        top:    LT_SCAN_TOP + "px",
-        width:  LT_SCAN_WIDTH + "px",
-        height: LT_SCAN_HEIGHT + "px",
+        left:     LT_SCAN_LEFT   + "px",
+        top:      LT_SCAN_TOP    + "px",
+        width:    LT_SCAN_WIDTH  + "px",
+        height:   LT_SCAN_HEIGHT + "px",
       },
-    }, [inner]);
+    }, [btn]);
 
-    layer.appendChild(slot);
+    layer.appendChild(wrapper);
   }
 
-  /* ---------- Mount / unmount ---------- */
+  /* ── Mount / unmount ── */
   function mount(layer, ctx) {
     layer.innerHTML = "";
     buildLogPanel(layer, ctx);

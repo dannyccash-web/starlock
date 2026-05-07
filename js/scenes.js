@@ -76,11 +76,15 @@
      container_c_examined    - live specimen container examined
      freq_emitter_taken      - frequency emitter retrieved from
                                Container A; scanner component 2/4.
-     upgrade_puzzle_solved   - player entered the correct authorization
-                               code (0743) at the card upgrade terminal.
-     card_upgraded           - player inserted keycard after solving the
-                               upgrade puzzle; keycard_upgraded is now in
-                               inventory; original keycard consumed.
+     card_in_terminal        - player has inserted the crew keycard into
+                               the upgrade terminal. The card is held by
+                               the machine until the correct authorization
+                               code (0743) is entered. The card is NOT in
+                               inventory while this flag is set.
+     upgrade_puzzle_solved   - (legacy, no longer used by hotspots)
+     card_upgraded           - player completed the upgrade sequence;
+                               keycard_upgraded is now in inventory;
+                               original keycard was consumed by terminal.
 
    CRYO PODS IMAGE STATES (Cryo Room 3 Pods *.png):
      [default]              Pods.png   — wiring sabotaged, pod 4 sealed
@@ -887,14 +891,14 @@ const ROOMS = {
               target: "scilab_log_terminal",
             },
           },
-          // ---- Cryo return door (RIGHT side of Wall B) ----
+          // ---- Cryo return door (CENTRE of Wall B) ----
           // Returns the player to Cryo Room Wall 3 (shuttle bay door wall)
           // so they face the opposite side of the room from where they came.
           // NOTE: Adjust geom in debug mode (D) once art is confirmed.
           {
             id: "cryo_return_door",
             shape: "rect",
-            geom: [1300, 80, 580, 840],
+            geom: [670, 80, 580, 840],
             label: "Door — 03: Cryo Room",
             action: {
               type: "gotoRoom",

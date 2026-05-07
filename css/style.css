@@ -1262,8 +1262,21 @@ html, body {
   box-shadow: -2px 0 22px rgba(108, 255, 174, 0.30);
 }
 .lt-log-row.lt-log-locked {
-  border-left-color: rgba(255, 80, 80, 0.6);
-  opacity: 0.85;
+  border-left-color: rgba(255, 80, 80, 0.7);
+  background: rgba(255, 30, 30, 0.06);
+}
+.lt-log-row.lt-log-locked .lt-log-title {
+  color: rgba(255, 140, 140, 0.9);
+}
+.lt-log-row.lt-log-locked .lt-log-meta {
+  color: rgba(255, 140, 140, 0.6);
+  letter-spacing: 0.15em;
+}
+.lt-log-row.lt-log-locked .lt-log-num {
+  color: rgba(255, 120, 120, 0.8);
+}
+.lt-log-row.lt-log-locked .lt-log-status {
+  color: rgba(255, 120, 120, 0.8);
 }
 
 .lt-log-num {
@@ -1334,64 +1347,78 @@ html, body {
 }
 .lt-log-para:last-child { margin-bottom: 0; }
 
-/* Locked log notice (shown inside log detail when Log 3 is encrypted) */
+/* Decoded footer appended to Log 03 after scanning */
+.lt-log-decoded {
+  margin-top: 18px;
+  padding: 12px 16px;
+  font: 600 14px/1.4 monospace !important;
+  letter-spacing: 0.2em;
+  color: #6cffae !important;
+  text-shadow: 0 0 10px rgba(108, 255, 174, 0.6);
+  background: rgba(4, 20, 14, 0.55);
+  border: 1px solid rgba(108, 255, 174, 0.35);
+  border-radius: 2px;
+  text-transform: uppercase;
+}
+
+/* Locked log detail notice */
 .lt-locked-notice {
   margin-top: 20px;
-  padding: 16px 20px;
-  background: rgba(255, 80, 80, 0.06);
-  border: 1px solid rgba(255, 80, 80, 0.25);
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 30, 30, 0.07);
+  border: 1px solid rgba(255, 80, 80, 0.3);
   border-left: 4px solid var(--warn-red);
 }
-.lt-locked-notice p {
+.lt-locked-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+.lt-locked-msg {
   margin: 0;
-  font: 400 14px/1.55 "Eurostile", "Bahnschrift", system-ui;
-  letter-spacing: 0.04em;
-  color: rgba(255, 180, 180, 0.88);
+  font: 700 15px/1 monospace;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 140, 140, 0.95);
+  text-shadow: 0 0 8px rgba(255, 80, 80, 0.4);
+}
+.lt-locked-hint {
+  margin: 0;
+  font: 400 13px/1.5 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.06em;
+  color: rgba(255, 180, 180, 0.7);
+  text-align: center;
 }
 
 /* Physical scanner slot — positioned absolutely over the paper slot
-   in the closeup image. Position set inline by the controller. */
+   in the closeup image. Position/size set inline by the controller.
+   The slot has a soft blue pulsing glow to draw the player's attention. */
+@keyframes scanner-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(108, 208, 255, 0.25),
+                          0 0 24px 4px rgba(108, 208, 255, 0.10); }
+  50%       { box-shadow: 0 0 16px 4px rgba(108, 208, 255, 0.50),
+                          0 0 40px 8px rgba(108, 208, 255, 0.20); }
+}
 .lt-phys-scanner {
   /* position/size set inline by controller */
-  display: flex;
-  align-items: stretch;
+  border-radius: 3px;
   pointer-events: none;  /* children opt in */
+  animation: scanner-pulse 2.8s ease-in-out infinite;
 }
-
-.lt-scan-state {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  border: 2px dashed rgba(108, 208, 255, 0.35);
-  background: rgba(4, 14, 28, 0.55);
-  cursor: default;
-  transition: background 120ms ease, border-color 120ms ease;
+.lt-phys-scanner--done {
+  animation: none;
+  box-shadow: 0 0 12px 3px rgba(108, 255, 174, 0.3);
 }
-.lt-scan-state--idle {
+/* Invisible click button that sits over the scanner art */
+.lt-scan-btn {
   pointer-events: auto;
-  cursor: pointer;
-  border-color: rgba(108, 208, 255, 0.5);
+  display: block;
+  border-radius: 3px;
 }
-.lt-scan-state--idle:hover {
-  background: rgba(8, 28, 52, 0.72);
-  border-color: var(--hud-blue);
-}
-.lt-scan-state--done {
-  border-color: rgba(108, 255, 174, 0.45);
-  background: rgba(4, 20, 14, 0.55);
-}
-.lt-scan-icon {
-  font-size: 32px;
-  color: var(--hud-blue);
-  opacity: 0.7;
-  line-height: 1;
-}
-.lt-scan-state--done .lt-scan-icon {
-  color: #6cffae;
-  opacity: 0.85;
-}
+/* Legacy scan-state classes kept for any older controllers */
 .lt-scan-text {
   font: 600 14px/1 monospace;
   letter-spacing: 0.25em;
@@ -1489,6 +1516,57 @@ html, body {
   letter-spacing: 0.32em;
   color: rgba(180, 220, 255, 0.7);
   text-transform: uppercase;
+}
+.ut-prompt-hint {
+  margin: 0;
+  font: 400 12px/1.5 monospace;
+  letter-spacing: 0.12em;
+  color: rgba(108, 208, 255, 0.45);
+  text-transform: uppercase;
+}
+/* Phase 1: card-detected display */
+.ut-card-detected {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 18px;
+  border: 1px solid rgba(108, 208, 255, 0.35);
+  background: rgba(4, 14, 26, 0.6);
+  border-radius: 2px;
+}
+.ut-card-label {
+  font: 700 15px/1 monospace;
+  letter-spacing: 0.22em;
+  color: var(--hud-blue);
+  text-shadow: 0 0 10px rgba(108, 208, 255, 0.5);
+  text-transform: uppercase;
+}
+.ut-card-clearance {
+  font: 400 12px/1 monospace;
+  letter-spacing: 0.18em;
+  color: rgba(180, 220, 255, 0.55);
+  text-transform: uppercase;
+}
+.ut-upgrade-btn {
+  padding: 16px 28px;
+  background: rgba(8, 30, 55, 0.7);
+  border: 1px solid rgba(108, 208, 255, 0.45);
+  color: var(--hud-blue);
+  font: 700 16px/1 monospace;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 120ms ease, box-shadow 120ms ease;
+  text-shadow: 0 0 8px rgba(108, 208, 255, 0.5);
+  align-self: flex-start;
+}
+.ut-upgrade-btn:hover {
+  background: rgba(20, 55, 95, 0.8);
+  box-shadow: 0 0 16px rgba(108, 208, 255, 0.25);
+}
+.ut-upgrade-btn:active {
+  background: rgba(30, 75, 125, 0.85);
 }
 
 /* 4-digit display */
