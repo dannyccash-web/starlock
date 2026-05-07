@@ -305,6 +305,7 @@
         }
         const eq = Inventory.getEquipped();
         if (eq === "coded_message") {
+          Inventory.removeItem("coded_message");
           setFlag("coded_note_scanned");
           showMessage(
             "You feed Reyes' coded note into the scanner slot. " +

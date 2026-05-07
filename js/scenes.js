@@ -98,7 +98,7 @@ const ITEMS = {
     name: "Crew Keycard",
     icon:   "Images/items/keycard.png?v=2",
     cursor: "Images/items/keycard_cursor.png?v=2",
-    description: "Magnetic ID card pulled from the science officer's suit. Unlocks low-level crew systems.",
+    description: "Science officer's ID card. Grants crew-level system access.",
   },
 
   // Found in Container A of the specimen storage in the science lab.
@@ -107,7 +107,7 @@ const ITEMS = {
   freq_emitter: {
     name: "Frequency Emitter",
     icon:   "Images/items/keycard.png?v=2",   // placeholder icon — replace when art exists
-    description: "A small audio transducer, tuned to a narrow frequency range. Vance's handwriting on the case reads: 'reactive band — do not exceed 80%'. One of four components needed to complete the scanner.",
+    description: "A compact audio transducer from Vance's kit. Tuned to a narrow reactive frequency band.",
   },
 
   // Produced by entering the authorization code at the card upgrade
@@ -117,7 +117,7 @@ const ITEMS = {
     name: "Upgraded Keycard",
     icon:   "Images/items/keycard.png?v=2",
     cursor: "Images/items/keycard_cursor.png?v=2",
-    description: "Your crew keycard, rewritten to senior clearance. The stripe now carries bridge-level authorization.",
+    description: "Crew keycard upgraded to senior clearance. Bridge-level access granted.",
   },
 
   // Found in chest 003 on Wall 4 (combo lock, code: 003).
@@ -135,7 +135,7 @@ const ITEMS = {
   coded_message: {
     name: "Coded Note",
     icon:   "Images/items/coded_message.png",
-    description: "A folded piece of paper covered in rows of dense symbols. The pattern looks deliberate, but you can't make sense of it.",
+    description: "A folded note covered in dense symbols. The pattern looks deliberate, but you can't decode it.",
   },
 
   // Obtained by using the metal shears on the foil jacket in
@@ -251,13 +251,13 @@ const ROOMS = {
         overlays: [
           {
             id: "reader_light_red",
-            x: 1215, y: 548,
+            x: 1220, y: 553,
             dotClass: "reader-dot reader-dot--blink-red",
             hideIf: { all: ["lab_door_unlocked"] },
           },
           {
             id: "reader_light_green",
-            x: 1215, y: 548,
+            x: 1220, y: 553,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["lab_door_unlocked"] },
           },
@@ -653,13 +653,13 @@ const ROOMS = {
         overlays: [
           {
             id: "bridge_reader_light_red",
-            x: 1215, y: 548,
+            x: 1220, y: 553,
             dotClass: "reader-dot reader-dot--blink-red",
             hideIf: { all: ["bridge_door_unlocked"] },
           },
           {
             id: "bridge_reader_light_green",
-            x: 1215, y: 548,
+            x: 1220, y: 553,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["bridge_door_unlocked"] },
           },
@@ -871,7 +871,7 @@ const ROOMS = {
           // Cryo return door reader — green once the lab door was unlocked.
           {
             id: "cryo_return_light_green",
-            x: 1215, y: 548,
+            x: 1220, y: 553,
             dotClass: "reader-dot reader-dot--solid-green",
             showIf: { all: ["lab_door_unlocked"] },
           },

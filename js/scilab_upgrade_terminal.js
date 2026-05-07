@@ -28,11 +28,11 @@
 
    COORDINATES  (1920×1080 stage pixels)
      Display panel : x=522  y=202  w=421  h=596
-     Keypad grid   : x=1115 y=290  241×290  (3×3, invisible buttons)
+     Keypad grid   : x=1115 y=290  241×290  (3×4, invisible buttons)
        Columns : 1115, 1196, 1276   Key w=80
-       Rows    : 290,  387,  484    Key h=97
-       Layout  : 1 2 3 / 4 5 6 / * 0 *
-       Left  * = delete,  Right * = enter/submit
+       Rows    : 290,  362,  434,  506   Key h=72
+       Layout  : 1 2 3 / 4 5 6 / 7 8 9 / * 0 del
+       Left  * = noop,  Right del = delete last digit
      Card slot     : x=1132 y=694  w=252  h=47
    ============================================================ */
 
@@ -48,13 +48,14 @@
 
   /* ── Keypad grid ── */
   const GRID_X = 1115, GRID_Y = 290,
-        KEY_W  = 80,   KEY_H  = 97;
+        KEY_W  = 80,   KEY_H  = 72;
   const KEY_COLS = [GRID_X,        GRID_X + 80,  GRID_X + 161];
-  const KEY_ROWS = [GRID_Y,        GRID_Y + 97,  GRID_Y + 193];
+  const KEY_ROWS = [GRID_Y,        GRID_Y + 72,  GRID_Y + 144, GRID_Y + 216];
   const KEYS = [
-    [["1",1], ["2",2], ["3",3]],
-    [["4",4], ["5",5], ["6",6]],
-    [["*","del"], ["0",0], ["*","enter"]],
+    [["1",1],      ["2",2], ["3",3]],
+    [["4",4],      ["5",5], ["6",6]],
+    [["7",7],      ["8",8], ["9",9]],
+    [["*","noop"], ["0",0], ["del","del"]],
   ];
 
   /* ── Card slot ── */
@@ -193,8 +194,8 @@
     KEYS.forEach((row, ri) => {
       row.forEach(([label, value], ci) => {
         const ariaLabel =
-          value === "del"   ? "Delete" :
-          value === "enter" ? "Enter"  : String(label);
+          value === "del"  ? "Delete" :
+          value === "noop" ? ""       : String(label);
         overlay.appendChild(el("button", {
           type: "button", class: "ut-img-key", "aria-label": ariaLabel,
           style: {
@@ -259,17 +260,9 @@
 
   /* ── Key press handler (Phase 2) ── */
   function handleKey(value, layer, ctx) {
+    if (value === "noop") return;
     if (value === "del") {
       if (input.length > 0) { input.pop(); statusMsg = ""; buildDisplay(layer, ctx); }
-      return;
-    }
-    if (value === "enter") {
-      if (input.length < 4) {
-        statusMsg = "error"; buildDisplay(layer, ctx);
-        setTimeout(() => { statusMsg = ""; buildDisplay(layer, ctx); }, 900);
-        return;
-      }
-      checkSolution(layer, ctx);
       return;
     }
     if (input.length < 4) {
