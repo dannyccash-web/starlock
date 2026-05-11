@@ -1711,6 +1711,227 @@ html, body {
   margin: auto;
 }
 
+/* ============================================================
+   SCIENCE LAB SPECIMEN TERMINAL (scilab_specimen_terminal)
+   Position / size set inline by the JS controller. Only
+   visual styles live here. Prefix: .st-
+   ============================================================ */
+
+/* Main container */
+.st-terminal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 32px 20px;
+  pointer-events: auto;
+  font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
+  color: var(--hud-blue);
+  text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
+  overflow: hidden;
+}
+
+/* ── Tab bar ── */
+.st-tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid rgba(108, 208, 255, 0.28);
+  padding-bottom: 0;
+  flex-shrink: 0;
+}
+.st-tab-btn {
+  background: transparent;
+  border: 1px solid rgba(108, 208, 255, 0.28);
+  border-bottom: none;
+  color: rgba(108, 208, 255, 0.55);
+  font: 600 12px/1 "Eurostile", "Bahnschrift", monospace;
+  letter-spacing: 0.2em;
+  padding: 8px 22px 9px;
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms;
+}
+.st-tab-btn:hover {
+  background: rgba(108, 208, 255, 0.08);
+  color: var(--hud-blue);
+}
+.st-tab-btn.active {
+  background: rgba(108, 208, 255, 0.14);
+  border-color: var(--hud-blue);
+  color: var(--hud-blue);
+  box-shadow: 0 -1px 10px rgba(108, 208, 255, 0.18);
+}
+
+/* ── Content area ── */
+.st-content {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Status row ── */
+.st-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.st-status-label {
+  font: 600 11px/1 monospace;
+  letter-spacing: 0.28em;
+  color: rgba(108, 208, 255, 0.55);
+}
+.st-status-badge {
+  font: 700 12px/1 "Eurostile", monospace;
+  letter-spacing: 0.28em;
+  padding: 4px 12px;
+  border: 1px solid;
+}
+.st-status-stasis {
+  color: rgba(255, 190, 70, 0.95);
+  border-color: rgba(255, 180, 50, 0.45);
+  background: rgba(255, 150, 0, 0.07);
+  text-shadow: 0 0 8px rgba(255, 165, 40, 0.55);
+}
+.st-status-active {
+  color: #6cffae;
+  border-color: rgba(108, 255, 174, 0.5);
+  background: rgba(108, 255, 174, 0.07);
+  text-shadow: 0 0 8px rgba(108, 255, 174, 0.55);
+}
+
+/* ── Intro paragraph ── */
+.st-intro {
+  font: 400 13px/1.52 "Eurostile", "Bahnschrift", system-ui;
+  color: rgba(190, 225, 255, 0.85);
+  text-shadow: none;
+  letter-spacing: 0.02em;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+/* ── Puzzle area ── */
+.st-puzzle-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+  justify-content: flex-start;
+}
+.st-tile-row {
+  display: flex;
+  gap: 5px;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+.st-tile {
+  flex: 1;
+  height: 84px;
+  background: rgba(8, 22, 38, 0.72);
+  border: 1px solid rgba(108, 208, 255, 0.22);
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 120ms, background 120ms, box-shadow 120ms;
+}
+.st-tile:hover {
+  border-color: rgba(108, 208, 255, 0.55);
+  background: rgba(20, 45, 70, 0.78);
+}
+.st-tile.selected {
+  border-color: #ffffff;
+  background: rgba(40, 70, 100, 0.82);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.28);
+}
+.st-tile.solved {
+  border-color: rgba(108, 255, 174, 0.45);
+  background: rgba(8, 28, 18, 0.72);
+  cursor: default;
+}
+.st-tile.solved:hover {
+  border-color: rgba(108, 255, 174, 0.45);
+  box-shadow: none;
+}
+.st-tile-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.st-solved-badge {
+  font: 700 12px/1 "Eurostile", monospace;
+  letter-spacing: 0.3em;
+  color: #6cffae;
+  text-shadow: 0 0 10px rgba(108, 255, 174, 0.65);
+  text-align: center;
+  padding: 5px 0;
+  flex-shrink: 0;
+}
+
+/* ── Button row ── */
+.st-btn-row {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.st-btn {
+  font: 600 12px/1 "Eurostile", "Bahnschrift", monospace;
+  letter-spacing: 0.22em;
+  padding: 10px 24px;
+  border: 1px solid;
+  cursor: pointer;
+  transition: background 120ms, border-color 120ms, box-shadow 120ms, color 120ms;
+  text-transform: uppercase;
+}
+.st-play-btn {
+  color: var(--hud-blue);
+  border-color: rgba(108, 208, 255, 0.45);
+  background: rgba(8, 22, 38, 0.6);
+}
+.st-play-btn:hover {
+  background: rgba(20, 55, 85, 0.7);
+  border-color: var(--hud-blue);
+  box-shadow: 0 0 12px rgba(108, 208, 255, 0.28);
+}
+.st-play-btn.played {
+  color: rgba(108, 208, 255, 0.55);
+  border-color: rgba(108, 208, 255, 0.28);
+}
+.st-play-btn.played:hover {
+  color: var(--hud-blue);
+  border-color: rgba(108, 208, 255, 0.55);
+}
+/* Activate — disabled state */
+.st-activate-btn {
+  color: rgba(110, 115, 130, 0.65);
+  border-color: rgba(110, 115, 130, 0.35);
+  background: rgba(6, 8, 16, 0.55);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+/* Activate — ready (solved + played) */
+.st-activate-btn.ready {
+  color: #6cffae;
+  border-color: rgba(108, 255, 174, 0.65);
+  background: rgba(8, 28, 18, 0.6);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.st-activate-btn.ready:hover {
+  background: rgba(18, 55, 35, 0.72);
+  box-shadow: 0 0 16px rgba(108, 255, 174, 0.38);
+}
+/* Activate — already activated */
+.st-activate-btn.activated {
+  color: rgba(108, 255, 174, 0.5);
+  border-color: rgba(108, 255, 174, 0.3);
+  background: rgba(8, 22, 14, 0.5);
+  cursor: default;
+  pointer-events: none;
+}
+
 /* ---------- Utility ---------- */
 .hidden { display: none !important; }
 

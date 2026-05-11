@@ -86,6 +86,18 @@
                                keycard_upgraded is now in inventory;
                                original keycard was consumed by terminal.
 
+     SPECIMEN TERMINAL FLAGS (scilab_specimen_terminal):
+     specimen1_solved        - player solved the 5-tile tone puzzle for specimen 1
+     specimen1_played        - player clicked Play after solving specimen 1's puzzle
+     specimen1_active        - specimen 1 has been activated (green square on wall)
+     specimen2_solved        - player solved the 7-tile tone puzzle for specimen 2
+     specimen2_played        - player clicked Play after solving specimen 2's puzzle
+     specimen2_active        - specimen 2 has been activated (blue square on wall)
+     specimen3_solved        - set automatically on first terminal open (pre-solved)
+     specimen3_played        - set automatically on first terminal open (pre-played)
+     specimen3_active        - player clicked Activate for specimen 3; nothing
+                               appears (the Glitch is inhabiting Vance)
+
    CRYO PODS IMAGE STATES (Cryo Room 3 Pods *.png):
      [default]              Pods.png   — wiring sabotaged, pod 4 sealed
      pod4_wiring_repaired   Pods B.png — wiring patched, pod 4 still sealed
@@ -767,6 +779,28 @@ const ROOMS = {
             image: "Images/Science%20Lab%203%20specimens.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
+          // ---- Activated specimen placeholders ----
+          // Placeholder SVG overlays shown when each specimen is activated.
+          // Adjust positions inside the SVG files to match the desk holes
+          // in Science Lab 3.png once the final art is in place.
+          {
+            id: "specimen1_active_sprite",
+            image: "Images/specimen1_placeholder.svg",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["specimen1_active"] },
+          },
+          {
+            id: "specimen2_active_sprite",
+            image: "Images/specimen2_placeholder.svg",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["specimen2_active"] },
+          },
+          {
+            id: "specimen3_active_sprite",
+            image: "Images/specimen3_placeholder.svg",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["specimen3_active"] },
+          },
         ],
         overlays: [],
         hotspots: [
@@ -835,6 +869,22 @@ const ROOMS = {
               type: "setState",
               flags: ["container_c_examined"],
               message: "Container C is intact and sealed. Inside, a cluster of small translucent squares shifts and reorganises slowly. It seems aware of you — the cluster orients toward the glass as you lean in. The squares are hollow, crystalline, and beautiful in a way that makes the back of your neck tighten. This is the only surviving glitch specimen on the ship.",
+            },
+          },
+          // ---- Specimen terminal ----
+          // The experiment terminal to the right of the storage unit.
+          // Vance's tone-puzzle interface for activating each specimen.
+          // NOTE: geom is a placeholder — press D in-game to tune it to
+          //       the actual terminal position in Science Lab 3.png art.
+          {
+            id: "scilab_specimen_terminal",
+            shape: "rect",
+            geom: [900, 80, 700, 600],
+            label: "Specimen terminal",
+            action: {
+              type: "openCloseup",
+              target: "scilab_specimen_terminal",
+              message: "A research terminal. Vance's specimen activation interface.",
             },
           },
         ],
@@ -1034,6 +1084,19 @@ const CLOSEUPS = {
     image: "Images/closeups/Science%20Lab%204%20Terminal.png",
     kind: "html",
     controller: "scilab_log_terminal",
+  },
+
+  // ---- Science Lab: Specimen terminal ----
+  // Vance's tone-puzzle activation interface for all three specimens.
+  // Currently reuses the Science Lab 4 terminal frame art; replace
+  // with a dedicated Science Lab 3 terminal closeup image when ready.
+  // Solving each tile puzzle and playing the sequence enables Activate.
+  // Specimen 3 is pre-solved (Vance already activated it; the Glitch
+  // is inhabiting Vance — nothing appears when the player activates it).
+  scilab_specimen_terminal: {
+    image: "Images/closeups/Science%20Lab%204%20Terminal.png",
+    kind: "html",
+    controller: "scilab_specimen_terminal",
   },
 };
 

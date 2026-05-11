@@ -1,0 +1,13 @@
+<!-- Specimen 3 activated — empty white outline (1920x1080 stage overlay).
+     Specimen 3 is inhabiting Vance; the chamber is empty. The outline
+     indicates the slot was activated but nothing is present.
+     Adjust x/y to align with the correct desk hole in Science Lab 3.png. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <!-- Faint fill to suggest the slot exists -->
+  <rect x="1260" y="685" width="100" height="100" rx="6"
+        fill="rgba(255,255,255,0.04)" stroke="none"/>
+  <!-- Outline only — no specimen inside -->
+  <rect x="1272" y="697" width="76" height="76" rx="4"
+        fill="none" stroke="rgba(220,240,255,0.7)" stroke-width="2.5"
+        stroke-dasharray="6 4"/>
+</svg>
