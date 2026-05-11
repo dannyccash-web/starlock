@@ -804,28 +804,28 @@ const ROOMS = {
         ],
         overlays: [],
         hotspots: [
-          // ---- Specimen storage unit — locked state ----
-          // Opens the batch-code closeup. Code: 3-7-1 (from workbench).
+          // ---- Specimen terminal ----
+          // Vance's tone-puzzle activation interface. Replaced the old
+          // 3-digit dial lock — the storage unit is now open; the terminal
+          // is the primary interactive element on this wall.
           {
-            id: "scilab_storage_locked",
+            id: "scilab_specimen_terminal",
             shape: "rect",
             geom: [150, 180, 500, 640],
-            label: "Specimen storage unit",
-            hideIf: { all: ["specimen_storage_unlocked"] },
+            label: "Specimen terminal",
             action: {
               type: "openCloseup",
-              target: "scilab_storage_panel",
-              message: "A sealed specimen storage unit. The access panel has a 3-digit code entry. The batch reference number should be in Vance's notes.",
+              target: "scilab_specimen_terminal",
+              message: "A research terminal. Vance's notes on the Glitch specimens and their tonal activation sequences.",
             },
           },
-          // ---- Container A — empty (unlocked) ----
+          // ---- Container A — has frequency emitter ----
           // Contains the frequency emitter (scanner component 2/4).
           {
             id: "scilab_container_a",
             shape: "rect",
             geom: [180, 220, 140, 300],
             label: "Container A",
-            showIf: { all: ["specimen_storage_unlocked"] },
             hideIf: { all: ["freq_emitter_taken"] },
             action: {
               type: "pickup",
@@ -839,7 +839,7 @@ const ROOMS = {
             shape: "rect",
             geom: [180, 220, 140, 300],
             label: "Container A — empty",
-            showIf: { all: ["specimen_storage_unlocked", "freq_emitter_taken"] },
+            showIf: { all: ["freq_emitter_taken"] },
             action: {
               type: "message",
               message: "Container A is empty. The frequency emitter has been retrieved. The container itself is clean — whatever specimen was catalogued here is gone. Tarn's badge was last logged in this lab before the shuttle launched.",
@@ -851,7 +851,6 @@ const ROOMS = {
             shape: "rect",
             geom: [360, 220, 140, 300],
             label: "Container B — cracked",
-            showIf: { all: ["specimen_storage_unlocked"] },
             action: {
               type: "setState",
               flags: ["container_b_examined"],
@@ -864,27 +863,10 @@ const ROOMS = {
             shape: "rect",
             geom: [540, 220, 140, 300],
             label: "Container C — live specimen",
-            showIf: { all: ["specimen_storage_unlocked"] },
             action: {
               type: "setState",
               flags: ["container_c_examined"],
               message: "Container C is intact and sealed. Inside, a cluster of small translucent squares shifts and reorganises slowly. It seems aware of you — the cluster orients toward the glass as you lean in. The squares are hollow, crystalline, and beautiful in a way that makes the back of your neck tighten. This is the only surviving glitch specimen on the ship.",
-            },
-          },
-          // ---- Specimen terminal ----
-          // The experiment terminal to the right of the storage unit.
-          // Vance's tone-puzzle interface for activating each specimen.
-          // NOTE: geom is a placeholder — press D in-game to tune it to
-          //       the actual terminal position in Science Lab 3.png art.
-          {
-            id: "scilab_specimen_terminal",
-            shape: "rect",
-            geom: [900, 80, 700, 600],
-            label: "Specimen terminal",
-            action: {
-              type: "openCloseup",
-              target: "scilab_specimen_terminal",
-              message: "A research terminal. Vance's specimen activation interface.",
             },
           },
         ],
@@ -1088,13 +1070,13 @@ const CLOSEUPS = {
 
   // ---- Science Lab: Specimen terminal ----
   // Vance's tone-puzzle activation interface for all three specimens.
-  // Currently reuses the Science Lab 4 terminal frame art; replace
-  // with a dedicated Science Lab 3 terminal closeup image when ready.
+  // Uses the Science Lab 3 terminal closeup frame (same wall as the
+  // specimen storage unit). Panel area: x=319 y=192 w=1334 h=597.
   // Solving each tile puzzle and playing the sequence enables Activate.
   // Specimen 3 is pre-solved (Vance already activated it; the Glitch
   // is inhabiting Vance — nothing appears when the player activates it).
   scilab_specimen_terminal: {
-    image: "Images/closeups/Science%20Lab%204%20Terminal.png",
+    image: "Images/closeups/Science%20Lab%203%20Terminal.png",
     kind: "html",
     controller: "scilab_specimen_terminal",
   },

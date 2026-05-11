@@ -45,10 +45,10 @@
 (function () {
 
   /* ── Terminal panel dimensions ── */
-  const ST_LEFT   = 334;
-  const ST_TOP    = 91;
-  const ST_WIDTH  = 1280;
-  const ST_HEIGHT = 565;
+  const ST_LEFT   = 319;
+  const ST_TOP    = 192;
+  const ST_WIDTH  = 1334;
+  const ST_HEIGHT = 597;
 
   /* ── Specimen definitions ── */
   // Each tile: { id (solution-position index), inY, outY, freq }
