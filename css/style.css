@@ -1713,60 +1713,113 @@ html, body {
 
 /* ============================================================
    SCIENCE LAB SPECIMEN TERMINAL (scilab_specimen_terminal)
-   Position / size set inline by the JS controller. Only
-   visual styles live here. Prefix: .st-
+   Position / size set inline by JS. Visual styles only. Prefix: .st-
+   Typography matches the log terminal (.lt-*) exactly.
    ============================================================ */
 
-/* Main container */
+/* Main container — same padding/font as .lt-terminal */
 .st-terminal {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 18px 32px 20px;
+  padding: 24px 32px;
   pointer-events: auto;
   font-family: "Eurostile", "Bahnschrift", "Segoe UI", system-ui, monospace;
   color: var(--hud-blue);
   text-shadow: 0 0 6px rgba(108, 208, 255, 0.45);
   overflow: hidden;
+  gap: 0;
 }
 
-/* ── Tab bar ── */
-.st-tab-bar {
-  display: flex;
-  gap: 4px;
-  border-bottom: 1px solid rgba(108, 208, 255, 0.28);
-  padding-bottom: 0;
-  flex-shrink: 0;
-}
-.st-tab-btn {
-  background: transparent;
-  border: 1px solid rgba(108, 208, 255, 0.28);
-  border-bottom: none;
-  color: rgba(108, 208, 255, 0.55);
-  font: 600 12px/1 "Eurostile", "Bahnschrift", monospace;
-  letter-spacing: 0.2em;
-  padding: 8px 22px 9px;
-  cursor: pointer;
-  transition: background 120ms, color 120ms, border-color 120ms;
-}
-.st-tab-btn:hover {
-  background: rgba(108, 208, 255, 0.08);
-  color: var(--hud-blue);
-}
-.st-tab-btn.active {
-  background: rgba(108, 208, 255, 0.14);
-  border-color: var(--hud-blue);
-  color: var(--hud-blue);
-  box-shadow: 0 -1px 10px rgba(108, 208, 255, 0.18);
-}
-
-/* ── Content area ── */
-.st-content {
+/* ── Home view ── */
+.st-home {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 14px;
   flex: 1;
   overflow: hidden;
+}
+
+/* Specimen list — mirrors .lt-log-list */
+.st-spec-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Specimen row — mirrors .lt-log-row exactly */
+.st-spec-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 90px 28px;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px 14px 22px;
+  background: rgba(8, 22, 38, 0.55);
+  border: 1px solid rgba(108, 208, 255, 0.22);
+  border-left: 7px solid rgba(108, 208, 255, 0.55);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms, border-color 150ms, box-shadow 150ms;
+}
+.st-spec-row:hover {
+  background: rgba(20, 50, 80, 0.65);
+  border-color: rgba(108, 208, 255, 0.55);
+}
+.st-spec-row.st-spec-active {
+  border-left-color: #6cffae;
+  box-shadow: -2px 0 14px rgba(108, 255, 174, 0.15);
+}
+.st-spec-num {
+  font: 700 16px/1 monospace;
+  letter-spacing: 0.18em;
+  color: var(--hud-blue);
+}
+.st-spec-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+.st-spec-title {
+  font: 600 20px/1 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.1em;
+  color: #e8f6ff;
+}
+.st-spec-meta {
+  font: 500 11px/1 monospace;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(180, 220, 255, 0.6);
+}
+.st-spec-status {
+  font: 600 10px/1 monospace;
+  letter-spacing: 0.25em;
+  text-align: right;
+  color: rgba(180, 220, 255, 0.7);
+}
+
+/* ── Body paragraph — matches .lt-log-para exactly ── */
+.st-para {
+  margin: 0 0 14px;
+  font: 400 15px/1.6 "Eurostile", "Bahnschrift", system-ui;
+  letter-spacing: 0.04em;
+  color: rgba(207, 231, 255, 0.88);
+  text-shadow: none;
+  flex-shrink: 0;
+}
+.st-para:last-child { margin-bottom: 0; }
+
+/* ── Detail view ── */
+.st-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  overflow: hidden;
+  padding-top: 4px;
 }
 
 /* ── Status row ── */
@@ -1777,12 +1830,12 @@ html, body {
   flex-shrink: 0;
 }
 .st-status-label {
-  font: 600 11px/1 monospace;
+  font: 600 10px/1 monospace;
   letter-spacing: 0.28em;
   color: rgba(108, 208, 255, 0.55);
 }
 .st-status-badge {
-  font: 700 12px/1 "Eurostile", monospace;
+  font: 700 10px/1 "Eurostile", monospace;
   letter-spacing: 0.28em;
   padding: 4px 12px;
   border: 1px solid;
@@ -1800,34 +1853,21 @@ html, body {
   text-shadow: 0 0 8px rgba(108, 255, 174, 0.55);
 }
 
-/* ── Intro paragraph ── */
-.st-intro {
-  font: 400 13px/1.52 "Eurostile", "Bahnschrift", system-ui;
-  color: rgba(190, 225, 255, 0.85);
-  text-shadow: none;
-  letter-spacing: 0.02em;
-  margin: 0;
-  flex-shrink: 0;
-}
-
 /* ── Puzzle area ── */
 .st-puzzle-area {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  flex: 1;
-  min-height: 0;
-  justify-content: flex-start;
+  flex-shrink: 0;
 }
 .st-tile-row {
   display: flex;
-  gap: 5px;
+  gap: 4px;
   align-items: stretch;
-  flex-shrink: 0;
 }
 .st-tile {
   flex: 1;
-  height: 84px;
+  height: 88px;
   background: rgba(8, 22, 38, 0.72);
   border: 1px solid rgba(108, 208, 255, 0.22);
   cursor: pointer;
@@ -1849,23 +1889,19 @@ html, body {
   background: rgba(8, 28, 18, 0.72);
   cursor: default;
 }
-.st-tile.solved:hover {
-  border-color: rgba(108, 255, 174, 0.45);
-  box-shadow: none;
-}
+.st-tile.solved:hover { box-shadow: none; }
 .st-tile-svg {
   display: block;
   width: 100%;
   height: 100%;
 }
 .st-solved-badge {
-  font: 700 12px/1 "Eurostile", monospace;
+  font: 700 10px/1 "Eurostile", monospace;
   letter-spacing: 0.3em;
   color: #6cffae;
   text-shadow: 0 0 10px rgba(108, 255, 174, 0.65);
   text-align: center;
-  padding: 5px 0;
-  flex-shrink: 0;
+  padding: 4px 0;
 }
 
 /* ── Button row ── */
@@ -1874,12 +1910,11 @@ html, body {
   gap: 14px;
   align-items: center;
   flex-shrink: 0;
-  padding-top: 2px;
 }
 .st-btn {
-  font: 600 12px/1 "Eurostile", "Bahnschrift", monospace;
+  font: 600 13px/1 "Eurostile", "Bahnschrift", monospace;
   letter-spacing: 0.22em;
-  padding: 10px 24px;
+  padding: 11px 26px;
   border: 1px solid;
   cursor: pointer;
   transition: background 120ms, border-color 120ms, box-shadow 120ms, color 120ms;
@@ -1903,16 +1938,14 @@ html, body {
   color: var(--hud-blue);
   border-color: rgba(108, 208, 255, 0.55);
 }
-/* Activate — disabled state */
-.st-activate-btn {
+.st-activate-btn {                         /* disabled */
   color: rgba(110, 115, 130, 0.65);
   border-color: rgba(110, 115, 130, 0.35);
   background: rgba(6, 8, 16, 0.55);
   cursor: not-allowed;
   pointer-events: none;
 }
-/* Activate — ready (solved + played) */
-.st-activate-btn.ready {
+.st-activate-btn.ready {                   /* solved + played */
   color: #6cffae;
   border-color: rgba(108, 255, 174, 0.65);
   background: rgba(8, 28, 18, 0.6);
@@ -1923,8 +1956,7 @@ html, body {
   background: rgba(18, 55, 35, 0.72);
   box-shadow: 0 0 16px rgba(108, 255, 174, 0.38);
 }
-/* Activate — already activated */
-.st-activate-btn.activated {
+.st-activate-btn.activated {               /* already done */
   color: rgba(108, 255, 174, 0.5);
   border-color: rgba(108, 255, 174, 0.3);
   background: rgba(8, 22, 14, 0.5);
