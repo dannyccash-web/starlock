@@ -103,7 +103,7 @@
     {
       id: "specimen3", label: "SPECIMEN 3",
       solvedFlag: "specimen3_solved", playedFlag: "specimen3_played", activeFlag: "specimen3_active",
-      statusMeta: "3-TILE SEQUENCE · SEQUENCE VERIFIED",
+      statusMeta: "5-TILE SEQUENCE · SEQUENCE VERIFIED",
       preSolved: true,
       introText:
         "Finally. After weeks of careful observation I believe I have isolated the " +
@@ -121,14 +121,16 @@
         "⚠  EMERGENCY LOCKDOWN INITIATED  ⚠\n" +
         "BIOHAZARD PROTOCOL ENGAGED — SCIENCE LAB C SEALED",
       activateMsg: null,
-      // Chain solved by [0,1,2]:
-      //   (0,1)→(1,2)→(2,0)  all t2=next t1 ✓
+      // Chain solved by [0,1,2,3,4]:
+      //   (0,1)→(1,0)→(0,2)→(2,1)→(1,2)  all t2=next t1 ✓
       tiles: [
         { id: 0, t1: 0, t2: 1 },
-        { id: 1, t1: 1, t2: 2 },
-        { id: 2, t1: 2, t2: 0 },
+        { id: 1, t1: 1, t2: 0 },
+        { id: 2, t1: 0, t2: 2 },
+        { id: 3, t1: 2, t2: 1 },
+        { id: 4, t1: 1, t2: 2 },
       ],
-      startOrder: [0, 1, 2],
+      startOrder: [0, 1, 2, 3, 4],
     },
   ];
 
@@ -146,6 +148,7 @@
   let selectedSpec = null;
   let tileOrders   = null;
   let playedNow    = [false, false, false];
+  let playingNow   = [false, false, false];  // true while audio is in progress
   let _ctx         = null;   // set in mount; used by drag callbacks
 
   function initOrders(ctx) {
@@ -185,7 +188,7 @@
     ln.setAttribute("x2", x2); ln.setAttribute("y2", y2);
     ln.setAttribute("stroke", stroke);
     ln.setAttribute("stroke-width", strokeW);
-    ln.setAttribute("stroke-linecap", "square");
+    ln.setAttribute("stroke-linecap", "butt");  // no bleed past endpoints
     return ln;
   }
 
@@ -220,6 +223,14 @@
         playTone(TONE_FREQ[spec.tiles[ti].t2], now + i * step + tLen + tGap, tLen);
       });
     } catch (_) {}
+  }
+
+  // Returns milliseconds until the last tone in the sequence finishes.
+  function calcPlayDurationMs(specIdx) {
+    const n = tileOrders[specIdx].length;
+    const tLen = 0.36, tGap = 0.06, iGap = 0.14;
+    const step = tLen + tGap + tLen + iGap;
+    return Math.ceil((0.05 + (n - 1) * step + tLen + tGap + tLen + 0.35) * 1000);
   }
 
   /* ── Puzzle helpers ── */
@@ -398,19 +409,21 @@
           [isActive ? "ACTIVE" : "EMERGENCY STASIS"]),
       ]),
       buildPara(spec.introText),
-      buildPuzzle(spec, solved, ctx),
+      buildPuzzle(spec, solved, hasPlayed),
       buildButtons(spec, ctx, solved, hasPlayed, canActivate, isActive),
     ]);
   }
 
   /* ── Tile puzzle ── */
-  function buildPuzzle(spec, solved, ctx) {
-    const order = tileOrders[selectedSpec];
+  function buildPuzzle(spec, solved, hasPlayed) {
+    const order    = tileOrders[selectedSpec];
+    const verified = solved && hasPlayed;
+    const canDrag  = !verified && !playingNow[selectedSpec];
 
     const tileRow = el("div", { class: "st-tile-row" }, []);
     order.forEach((tileIdx, slot) => {
-      const tileEl = buildTile(spec, tileIdx, slot, solved);
-      if (!solved) {
+      const tileEl = buildTile(spec, tileIdx, slot, verified);
+      if (canDrag) {
         tileEl.addEventListener("mousedown", (e) => startDrag(e, slot, tileRow));
       }
       tileRow.appendChild(tileEl);
@@ -418,7 +431,7 @@
 
     return el("div", { class: "st-puzzle-area" }, [
       tileRow,
-      solved ? el("div", { class: "st-solved-badge" }, ["✓  SEQUENCE VERIFIED"]) : null,
+      verified ? el("div", { class: "st-solved-badge" }, ["✓  SEQUENCE VERIFIED"]) : null,
     ]);
   }
 
@@ -437,6 +450,7 @@
     svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
     svg.setAttribute("width",  "100%");
     svg.setAttribute("height", "100%");
+    svg.setAttribute("preserveAspectRatio", "none");  // stretch to fill tile exactly
     svg.classList.add("st-tile-svg");
 
     // Glow under each bar
@@ -457,18 +471,40 @@
 
   /* ── Buttons ── */
   function buildButtons(spec, ctx, solved, hasPlayed, canActivate, isActive) {
+    const isPlaying   = playingNow[selectedSpec];
+    const verified    = solved && hasPlayed;
+    let playLabel;
+    if (isPlaying)     playLabel = "▶  PLAYING...";
+    else if (verified) playLabel = "▶  REPLAY SEQUENCE";
+    else               playLabel = "▶  PLAY SEQUENCE";
+
     const playBtn = el("button", {
       type: "button",
-      class: "st-btn st-play-btn" + (solved && hasPlayed ? " played" : ""),
+      class: "st-btn st-play-btn" + (verified ? " played" : ""),
+      disabled: isPlaying,
       onclick: () => {
-        playSequence(selectedSpec);
-        if (solved) { playedNow[selectedSpec] = true; ctx.setFlag(spec.playedFlag); }
-        ctx.renderActive();
+        const si = selectedSpec;
+        playSequence(si);
+        if (solved && !playedNow[si]) {
+          // Mark playing; after audio finishes mark verified and re-render
+          playingNow[si] = true;
+          ctx.renderActive();
+          setTimeout(() => {
+            playedNow[si]  = true;
+            playingNow[si] = false;
+            if (_ctx) {
+              _ctx.setFlag(spec.playedFlag);
+              _ctx.renderActive();
+            }
+          }, calcPlayDurationMs(si));
+        } else {
+          ctx.renderActive();
+        }
       },
-    }, [solved && hasPlayed ? "▶  REPLAY SEQUENCE" : "▶  PLAY SEQUENCE"]);
+    }, [playLabel]);
 
     let actClass = "st-btn st-activate-btn";
-    if (isActive) actClass += " activated";
+    if (isActive)       actClass += " activated";
     else if (canActivate) actClass += " ready";
 
     const actBtn = el("button", {
@@ -484,7 +520,7 @@
           "Specimen 3 is not in storage. It is not here."
         );
       } : null,
-    }, [isActive ? "SPECIMEN ACTIVE" : "ACTIVATE"]);
+    }, [isActive ? "STASIS RELEASED" : "RELEASE STASIS"]);
 
     return el("div", { class: "st-btn-row" }, [playBtn, actBtn]);
   }
@@ -504,6 +540,7 @@
     selectedSpec = null;
     tileOrders   = null;
     playedNow    = [false, false, false];
+    playingNow   = [false, false, false];
     dragInfo     = null;
     _ctx         = null;
     // Clean up any stale drag listeners
