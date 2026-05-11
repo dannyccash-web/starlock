@@ -1862,15 +1862,16 @@ html, body {
 }
 .st-tile-row {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   align-items: stretch;
+  overflow: visible;
 }
 .st-tile {
   flex: 1;
   height: 88px;
   background: rgba(8, 22, 38, 0.72);
   border: 1px solid rgba(108, 208, 255, 0.22);
-  cursor: pointer;
+  cursor: grab;
   padding: 0;
   overflow: hidden;
   transition: border-color 120ms, background 120ms, box-shadow 120ms;
@@ -1890,6 +1891,14 @@ html, body {
   cursor: default;
 }
 .st-tile.solved:hover { box-shadow: none; }
+.st-tile.st-dragging {
+  cursor: grabbing;
+  opacity: 0.85;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55), 0 0 14px rgba(108, 208, 255, 0.35);
+  border-color: rgba(108, 208, 255, 0.7);
+  position: relative;
+  z-index: 10;
+}
 .st-tile-svg {
   display: block;
   width: 100%;
