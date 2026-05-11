@@ -27,9 +27,8 @@
      On Play: each tile sounds tone1 (0.36s) then tone2 (0.36s),
      with a small gap between tiles. Gain 0.65 with soft envelope.
 
-   TONE LEVELS  (0 = highest, 5 = lowest)
-     0 → 880 Hz   1 → 784 Hz   2 → 659 Hz
-     3 → 587 Hz   4 → 494 Hz   5 → 440 Hz
+   TONE LEVELS  (0 = highest, 2 = lowest)
+     0 → 880 Hz   1 → 659 Hz   2 → 440 Hz
    ============================================================ */
 
 (function () {
@@ -40,12 +39,13 @@
   const ST_WIDTH  = 1334;
   const ST_HEIGHT = 597;
 
-  /* ── Tone table ── */
-  const TONE_Y    = [0.14, 0.28, 0.43, 0.57, 0.71, 0.85];
-  const TONE_FREQ = [880,  784,  659,  587,  494,  440 ];
+  /* ── Tone table (3 tones only, 0 = high, 2 = low) ── */
+  const TONE_Y    = [0.20, 0.50, 0.80];
+  const TONE_FREQ = [880,  659,  440 ];
 
   /* ── Specimen data ── */
-  // Solution order: tile[n].t2 === tile[n+1].t1 for all n.
+  // Tiles use tones 0 (high/880Hz), 1 (mid/659Hz), 2 (low/440Hz).
+  // Solution: any arrangement where tile[n].t2 === tile[n+1].t1 for all n.
   // startOrder: scrambled indices shown on first open.
   const SPECIMENS = [
     {
@@ -62,15 +62,16 @@
       activateMsg:
         "The containment field shifts frequency. Specimen 1 rises slowly from the " +
         "desk, its translucent squares catching the emergency light. It's active.",
-      // Chain: t2→t1: 3→3, 1→1, 4→4, 2→2  ✓
+      // Chain solved by [0,1,2,3,4]:
+      //   (0,1)→(1,2)→(2,0)→(0,2)→(2,1)  all t2=next t1 ✓
       tiles: [
-        { id: 0, t1: 0, t2: 3 },
-        { id: 1, t1: 3, t2: 1 },
-        { id: 2, t1: 1, t2: 4 },
-        { id: 3, t1: 4, t2: 2 },
-        { id: 4, t1: 2, t2: 5 },
+        { id: 0, t1: 0, t2: 1 },
+        { id: 1, t1: 1, t2: 2 },
+        { id: 2, t1: 2, t2: 0 },
+        { id: 3, t1: 0, t2: 2 },
+        { id: 4, t1: 2, t2: 1 },
       ],
-      startOrder: [2, 4, 0, 3, 1],
+      startOrder: [3, 1, 4, 0, 2],
     },
     {
       id: "specimen2", label: "SPECIMEN 2",
@@ -78,23 +79,24 @@
       statusMeta: "7-TILE SEQUENCE · ANALYSIS INCOMPLETE",
       introText:
         "Specimen 2 is considerably more complex than the first. I am detecting " +
-        "more distinct tonal frequencies, and their relationships are less obvious " +
-        "on initial analysis. Three sessions to isolate the individual tones; I " +
+        "more distinct tonal relationships, and their order is less obvious on " +
+        "initial analysis. Three sessions to isolate the individual tiles; I " +
         "believe the set is complete. The sequencing logic is identical to Specimen " +
         "1 — each tile's second tone must match the first tone of the tile to its " +
         "right. There are simply more tiles to order. Work carefully.",
       activateMsg:
         "The containment field hums at a higher register. Specimen 2 rises from " +
         "the desk, its structure pulsing with a faint blue luminescence. It's active.",
-      // Chain: t2→t1: 4→4, 2→2, 5→5, 1→1, 3→3, 0→0  ✓
+      // Chain solved by [0,1,2,3,4,5,6]:
+      //   (0,1)→(1,2)→(2,1)→(1,1)→(1,0)→(0,2)→(2,0)  all t2=next t1 ✓
       tiles: [
-        { id: 0, t1: 0, t2: 4 },
-        { id: 1, t1: 4, t2: 2 },
-        { id: 2, t1: 2, t2: 5 },
-        { id: 3, t1: 5, t2: 1 },
-        { id: 4, t1: 1, t2: 3 },
-        { id: 5, t1: 3, t2: 0 },
-        { id: 6, t1: 0, t2: 2 },
+        { id: 0, t1: 0, t2: 1 },
+        { id: 1, t1: 1, t2: 2 },
+        { id: 2, t1: 2, t2: 1 },
+        { id: 3, t1: 1, t2: 1 },
+        { id: 4, t1: 1, t2: 0 },
+        { id: 5, t1: 0, t2: 2 },
+        { id: 6, t1: 2, t2: 0 },
       ],
       startOrder: [4, 1, 6, 2, 0, 5, 3],
     },
@@ -104,18 +106,27 @@
       statusMeta: "3-TILE SEQUENCE · SEQUENCE VERIFIED",
       preSolved: true,
       introText:
-        "I have to note something about Specimen 3. The tonal sequence was — " +
-        "immediate. I sat down to begin the analysis and found myself arranging " +
-        "the tiles before I had consciously worked through the logic. I verified " +
-        "the result twice. It was correct both times. The specimen seemed almost " +
-        "to want me to solve it. There was a clarity I cannot account for. I have " +
-        "already played the sequence. I am activating it now.",
+        "Finally. After weeks of careful observation I believe I have isolated the " +
+        "correct tonal sequence for Specimen 3. What struck me was how quickly the " +
+        "pattern revealed itself — as if the specimen wanted to be understood. I " +
+        "confirmed the arrangement three times. Each time, correct. I have played " +
+        "the sequence. The resonance is unlike anything I have recorded from the " +
+        "other two. There is an almost musical quality to it. I am beginning " +
+        "activation now. Initial response is unusual — the specimen is reacting far " +
+        "more immediately than expected. The field readings are spiking and I can " +
+        "see it moving toward the glass. I have never seen this level of — it's " +
+        "coming through the seal. I need to — it's" +
+        "\n\n" +
+        "[LOG entry abruptly terminated]\n" +
+        "⚠  EMERGENCY LOCKDOWN INITIATED  ⚠\n" +
+        "BIOHAZARD PROTOCOL ENGAGED — SCIENCE LAB C SEALED",
       activateMsg: null,
-      // Chain: t2→t1: 3→3, 0→0  ✓
+      // Chain solved by [0,1,2]:
+      //   (0,1)→(1,2)→(2,0)  all t2=next t1 ✓
       tiles: [
-        { id: 0, t1: 1, t2: 3 },
-        { id: 1, t1: 3, t2: 0 },
-        { id: 2, t1: 0, t2: 2 },
+        { id: 0, t1: 0, t2: 1 },
+        { id: 1, t1: 1, t2: 2 },
+        { id: 2, t1: 2, t2: 0 },
       ],
       startOrder: [0, 1, 2],
     },
@@ -214,7 +225,12 @@
   /* ── Puzzle helpers ── */
   function isSolved(specIdx) {
     if (SPECIMENS[specIdx].preSolved) return true;
-    return tileOrders[specIdx].every((ti, slot) => ti === slot);
+    const spec  = SPECIMENS[specIdx];
+    const order = tileOrders[specIdx];
+    for (let i = 0; i < order.length - 1; i++) {
+      if (spec.tiles[order[i]].t2 !== spec.tiles[order[i + 1]].t1) return false;
+    }
+    return true;
   }
 
   /* ── Drag-and-drop ── */
@@ -295,6 +311,18 @@
     document.addEventListener("mouseup",   onUp);
   }
 
+  /* ── Text helpers ── */
+  // Builds a <p class="st-para"> where \n becomes <br>.
+  function buildPara(text) {
+    const p = document.createElement("p");
+    p.className = "st-para";
+    text.split("\n").forEach((line, i) => {
+      if (i > 0) p.appendChild(document.createElement("br"));
+      p.appendChild(document.createTextNode(line));
+    });
+    return p;
+  }
+
   /* ── Build terminal ── */
   function buildTerminal(layer, ctx) {
     _ctx = ctx;
@@ -369,7 +397,7 @@
         el("span", { class: "st-status-badge " + (isActive ? "st-status-active" : "st-status-stasis") },
           [isActive ? "ACTIVE" : "EMERGENCY STASIS"]),
       ]),
-      el("p", { class: "st-para" }, [spec.introText]),
+      buildPara(spec.introText),
       buildPuzzle(spec, solved, ctx),
       buildButtons(spec, ctx, solved, hasPlayed, canActivate, isActive),
     ]);
@@ -396,7 +424,7 @@
 
   function buildTile(spec, tileIdx, slot, solved) {
     const tile = spec.tiles[tileIdx];
-    const W = 120, H = 90;
+    const W = 120, H = 120;
     const y1 = TONE_Y[tile.t1] * H;   // Tone 1 — left half
     const y2 = TONE_Y[tile.t2] * H;   // Tone 2 — right half
     const HW = W / 2;                  // half-width split point

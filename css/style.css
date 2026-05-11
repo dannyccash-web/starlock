@@ -1868,7 +1868,7 @@ html, body {
 }
 .st-tile {
   flex: 1;
-  height: 88px;
+  height: 120px;
   background: rgba(8, 22, 38, 0.72);
   border: 1px solid rgba(108, 208, 255, 0.22);
   cursor: grab;
