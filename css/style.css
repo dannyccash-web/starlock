@@ -1751,7 +1751,7 @@ html, body {
 /* Specimen row — mirrors .lt-log-row exactly */
 .st-spec-row {
   display: grid;
-  grid-template-columns: 140px 1fr 90px 28px;
+  grid-template-columns: 1fr 90px 28px;
   align-items: center;
   gap: 18px;
   padding: 14px 18px 14px 22px;

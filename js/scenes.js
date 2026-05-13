@@ -159,6 +159,20 @@ const ITEMS = {
     cursor: "Images/items/foil%20strips%20cursor.png",
     description: "A few lengths of conductive foil tape. Thin enough to bridge a broken circuit.",
   },
+
+  // Released from specimen containment via the specimen terminal.
+  // Collected from the desk after the stasis field is disengaged.
+  glitch_specimen_1: {
+    name: "Glitch Specimen 1",
+    icon:   "Images/items/glitch_specimen_1.png",
+    description: "A small cluster of translucent crystalline squares. Still shifting, still reorganising. Warm to the touch.",
+  },
+
+  glitch_specimen_2: {
+    name: "Glitch Specimen 2",
+    icon:   "Images/items/glitch_specimen_2.png",
+    description: "A denser cluster than the first — more facets, more movement. It pulses faintly when you hold it.",
+  },
 };
 
 const ROOMS = {
@@ -779,25 +793,26 @@ const ROOMS = {
             image: "Images/Science%20Lab%203%20specimens.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
-          // ---- Activated specimen placeholders ----
-          // Placeholder SVG overlays shown when each specimen is activated.
-          // Adjust positions inside the SVG files to match the desk holes
-          // in Science Lab 3.png once the final art is in place.
+          // ---- Released specimen glitch overlays ----
+          // Full-scene PNGs that appear on the desk after stasis is released.
+          // Glitch 1 & 2 hide once the player picks up the specimen.
           {
-            id: "specimen1_active_sprite",
-            image: "Images/specimen1_placeholder.svg",
+            id: "specimen1_glitch_sprite",
+            image: "Images/Science%20Lab%203%20Glitch%201.png",
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["specimen1_active"] },
+            hideIf: { all: ["glitch1_taken"] },
           },
           {
-            id: "specimen2_active_sprite",
-            image: "Images/specimen2_placeholder.svg",
+            id: "specimen2_glitch_sprite",
+            image: "Images/Science%20Lab%203%20Glitch%202.png",
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["specimen2_active"] },
+            hideIf: { all: ["glitch2_taken"] },
           },
           {
-            id: "specimen3_active_sprite",
-            image: "Images/specimen3_placeholder.svg",
+            id: "specimen3_glitch_sprite",
+            image: "Images/Science%20Lab%203%20Glitch%203.png",
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["specimen3_active"] },
           },
@@ -805,13 +820,11 @@ const ROOMS = {
         overlays: [],
         hotspots: [
           // ---- Specimen terminal ----
-          // Vance's tone-puzzle activation interface. Replaced the old
-          // 3-digit dial lock — the storage unit is now open; the terminal
-          // is the primary interactive element on this wall.
+          // Vance's tone-puzzle activation interface.
           {
             id: "scilab_specimen_terminal",
             shape: "rect",
-            geom: [150, 180, 500, 640],
+            geom: [222, 301, 428, 266],
             label: "Specimen terminal",
             action: {
               type: "openCloseup",
@@ -819,54 +832,68 @@ const ROOMS = {
               message: "A research terminal. Vance's notes on the Glitch specimens and their tonal activation sequences.",
             },
           },
-          // ---- Container A — has frequency emitter ----
-          // Contains the frequency emitter (scanner component 2/4).
+          // ---- Wall diagram — glitch ----
           {
-            id: "scilab_container_a",
+            id: "scilab_diagram_glitch",
             shape: "rect",
-            geom: [180, 220, 140, 300],
-            label: "Container A",
-            hideIf: { all: ["freq_emitter_taken"] },
-            action: {
-              type: "pickup",
-              item: "freq_emitter",
-              flags: ["container_a_examined", "freq_emitter_taken"],
-              message: "Container A is empty — no specimen. But Vance stored something here for safekeeping: a small audio transducer in a padded case. Handwritten label: 'Freq. emitter — reactive band.' A component for the scanner.",
-            },
-          },
-          {
-            id: "scilab_container_a_empty",
-            shape: "rect",
-            geom: [180, 220, 140, 300],
-            label: "Container A — empty",
-            showIf: { all: ["freq_emitter_taken"] },
+            geom: [804, 343, 315, 213],
+            label: "Wall diagram",
             action: {
               type: "message",
-              message: "Container A is empty. The frequency emitter has been retrieved. The container itself is clean — whatever specimen was catalogued here is gone. Tarn's badge was last logged in this lab before the shuttle launched.",
+              message: "A pinned diagram of the Glitch — cross-section sketches of the crystalline structure, annotated in Vance's handwriting. The shapes shift between frames as if the specimen refused to stay still long enough to be drawn.",
             },
           },
-          // ---- Container B — cracked ----
+          // ---- Wall diagram — soundwaves ----
           {
-            id: "scilab_container_b",
+            id: "scilab_diagram_soundwaves",
             shape: "rect",
-            geom: [360, 220, 140, 300],
-            label: "Container B — cracked",
+            geom: [1386, 343, 315, 213],
+            label: "Wall diagram",
             action: {
-              type: "setState",
-              flags: ["container_b_examined"],
-              message: "Container B's seal is broken from the inside. The glass is cracked in an outward pattern. Inside, there are faint traces of residue — a kind of crystalline film left behind when the specimen moved through. This is where the glitch escaped during Vance's experiment.",
+              type: "message",
+              message: "A printed diagram of different soundwave profiles — high, mid, and low frequency waveforms stacked and labelled. Someone has circled the mid-range band in red marker.",
             },
           },
-          // ---- Container C — live specimen ----
+          // ---- Glitch 1 — pickup from desk ----
           {
-            id: "scilab_container_c",
+            id: "scilab_glitch1_pickup",
             shape: "rect",
-            geom: [540, 220, 140, 300],
-            label: "Container C — live specimen",
+            geom: [1149, 499, 120, 180],
+            label: "Glitch specimen",
+            showIf: { all: ["specimen1_active"] },
+            hideIf: { all: ["glitch1_taken"] },
             action: {
-              type: "setState",
-              flags: ["container_c_examined"],
-              message: "Container C is intact and sealed. Inside, a cluster of small translucent squares shifts and reorganises slowly. It seems aware of you — the cluster orients toward the glass as you lean in. The squares are hollow, crystalline, and beautiful in a way that makes the back of your neck tighten. This is the only surviving glitch specimen on the ship.",
+              type: "pickup",
+              item: "glitch_specimen_1",
+              flags: ["glitch1_taken"],
+              message: "The specimen sits motionless on the desk — its translucent squares arranged in a quiet stack. You pick it up carefully. It feels lighter than it looks.",
+            },
+          },
+          // ---- Glitch 2 — pickup from desk ----
+          {
+            id: "scilab_glitch2_pickup",
+            shape: "rect",
+            geom: [1246, 499, 120, 180],
+            label: "Glitch specimen",
+            showIf: { all: ["specimen2_active"] },
+            hideIf: { all: ["glitch2_taken"] },
+            action: {
+              type: "pickup",
+              item: "glitch_specimen_2",
+              flags: ["glitch2_taken"],
+              message: "The specimen pulses faintly as you reach for it. Its cluster of squares is denser than the first — more complex, more alive. You close your hand around it and it goes still.",
+            },
+          },
+          // ---- Glitch 3 — broken cylinder ----
+          {
+            id: "scilab_glitch3_examine",
+            shape: "rect",
+            geom: [1321, 499, 120, 180],
+            label: "Broken specimen cylinder",
+            showIf: { all: ["specimen3_active"] },
+            action: {
+              type: "message",
+              message: "A broken specimen cylinder — the seal shattered outward. Whatever was inside is gone. Something escaped.",
             },
           },
         ],

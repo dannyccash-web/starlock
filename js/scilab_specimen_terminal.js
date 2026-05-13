@@ -51,59 +51,55 @@
     {
       id: "specimen1", label: "SPECIMEN 1",
       solvedFlag: "specimen1_solved", playedFlag: "specimen1_played", activeFlag: "specimen1_active",
-      statusMeta: "5-TILE SEQUENCE · ANALYSIS INCOMPLETE",
+      activateMsg: null,
       introText:
         "I am confident I have isolated the correct set of tones for Specimen 1. " +
         "The specimen responds to audio stimuli more readily than the others — its " +
-        "structure visibly shifts when specific frequencies are applied. Each tile " +
-        "carries two tones. The second tone of each tile must match the first tone " +
-        "of the tile to its right. Drag the tiles into the correct order, then play " +
-        "the sequence to confirm before activating.",
-      activateMsg:
-        "The containment field shifts frequency. Specimen 1 rises slowly from the " +
-        "desk, its translucent squares catching the emergency light. It's active.",
-      // Chain solved by [0,1,2,3,4]:
-      //   (0,1)→(1,2)→(2,0)→(0,2)→(2,1)  all t2=next t1 ✓
+        "structure visibly shifts when specific frequencies are applied. The tones " +
+        "must be played in the correct sequence. Play and confirm before activating.",
+      // Chain solved by [0,1,2,3,4,5,6]:
+      //   (0,1)→(1,2)→(2,0)→(0,2)→(2,1)→(1,0)→(0,2)  all t2=next t1 ✓
       tiles: [
         { id: 0, t1: 0, t2: 1 },
         { id: 1, t1: 1, t2: 2 },
         { id: 2, t1: 2, t2: 0 },
         { id: 3, t1: 0, t2: 2 },
         { id: 4, t1: 2, t2: 1 },
+        { id: 5, t1: 1, t2: 0 },
+        { id: 6, t1: 0, t2: 2 },
       ],
-      startOrder: [3, 1, 4, 0, 2],
+      startOrder: [3, 6, 1, 5, 0, 4, 2],
     },
     {
       id: "specimen2", label: "SPECIMEN 2",
       solvedFlag: "specimen2_solved", playedFlag: "specimen2_played", activeFlag: "specimen2_active",
-      statusMeta: "7-TILE SEQUENCE · ANALYSIS INCOMPLETE",
+      activateMsg: null,
       introText:
         "Specimen 2 is considerably more complex than the first. I am detecting " +
         "more distinct tonal relationships, and their order is less obvious on " +
-        "initial analysis. Three sessions to isolate the individual tiles; I " +
-        "believe the set is complete. The sequencing logic is identical to Specimen " +
-        "1 — each tile's second tone must match the first tone of the tile to its " +
-        "right. There are simply more tiles to order. Work carefully.",
-      activateMsg:
-        "The containment field hums at a higher register. Specimen 2 rises from " +
-        "the desk, its structure pulsing with a faint blue luminescence. It's active.",
-      // Chain solved by [0,1,2,3,4,5,6]:
-      //   (0,1)→(1,2)→(2,1)→(1,1)→(1,0)→(0,2)→(2,0)  all t2=next t1 ✓
+        "initial analysis. Three sessions to isolate the individual components — " +
+        "I believe the set is complete. The sequencing logic follows from Specimen 1. " +
+        "Work carefully.",
+      // Chain solved by [0,1,2,3,4,5,6,7,8,9]:
+      //   (0,1)→(1,2)→(2,0)→(0,1)→(1,0)→(0,2)→(2,1)→(1,2)→(2,2)→(2,0)  all t2=next t1 ✓
       tiles: [
         { id: 0, t1: 0, t2: 1 },
         { id: 1, t1: 1, t2: 2 },
-        { id: 2, t1: 2, t2: 1 },
-        { id: 3, t1: 1, t2: 1 },
+        { id: 2, t1: 2, t2: 0 },
+        { id: 3, t1: 0, t2: 1 },
         { id: 4, t1: 1, t2: 0 },
         { id: 5, t1: 0, t2: 2 },
-        { id: 6, t1: 2, t2: 0 },
+        { id: 6, t1: 2, t2: 1 },
+        { id: 7, t1: 1, t2: 2 },
+        { id: 8, t1: 2, t2: 2 },
+        { id: 9, t1: 2, t2: 0 },
       ],
-      startOrder: [4, 1, 6, 2, 0, 5, 3],
+      startOrder: [5, 2, 8, 0, 7, 3, 9, 1, 6, 4],
     },
     {
       id: "specimen3", label: "SPECIMEN 3",
       solvedFlag: "specimen3_solved", playedFlag: "specimen3_played", activeFlag: "specimen3_active",
-      statusMeta: "5-TILE SEQUENCE · SEQUENCE VERIFIED",
+      activateMsg: null,
       preSolved: true,
       introText:
         "Finally. After weeks of careful observation I believe I have isolated the " +
@@ -375,15 +371,15 @@
           const active  = ctx.hasFlag(spec.activeFlag);
           const solved  = isSolved(i) || ctx.hasFlag(spec.solvedFlag);
           const status  = active ? "ACTIVE" : (solved ? "SOLVED" : "STASIS");
+          const metaText = solved ? "SEQUENCE VERIFIED" : "ANALYSIS INCOMPLETE";
           return el("button", {
             type: "button",
             class: "st-spec-row" + (active ? " st-spec-active" : ""),
             onclick: () => { currentView = "detail"; selectedSpec = i; ctx.renderActive(); },
           }, [
-            el("span", { class: "st-spec-num"    }, [spec.label]),
             el("div",  { class: "st-spec-info"   }, [
               el("span", { class: "st-spec-title" }, [spec.label]),
-              el("span", { class: "st-spec-meta"  }, [spec.statusMeta]),
+              el("span", { class: "st-spec-meta"  }, [metaText]),
             ]),
             el("span", { class: "st-spec-status" }, [status]),
             el("span", { class: "ct-pod-chevron" }, ["❯"]),
@@ -514,11 +510,6 @@
         ctx.setFlag(spec.activeFlag);
         ctx.closeCloseup();
         ctx.renderActive();
-        ctx.showMessage(
-          spec.activateMsg ||
-          "The containment field activates. The chamber reads empty. " +
-          "Specimen 3 is not in storage. It is not here."
-        );
       } : null,
     }, [isActive ? "STASIS RELEASED" : "RELEASE STASIS"]);
 
