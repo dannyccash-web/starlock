@@ -294,7 +294,7 @@ const ROOMS = {
           {
             id: "lab_door_locked",
             shape: "rect",
-            geom: [670, 80, 580, 840],
+            geom: [752, 242, 420, 675],
             label: "Door — 02: Science Lab",
             hideIf: { all: ["lab_door_unlocked"] },
             action: {
@@ -307,7 +307,7 @@ const ROOMS = {
           {
             id: "lab_door_open",
             shape: "rect",
-            geom: [670, 80, 580, 840],
+            geom: [752, 242, 420, 675],
             label: "Door — 02: Science Lab (open)",
             showIf: { all: ["lab_door_unlocked"] },
             action: {
@@ -322,7 +322,7 @@ const ROOMS = {
           {
             id: "lab_keycard_reader",
             shape: "rect",
-            geom: [1060, 290, 160, 380],
+            geom: [1204, 538, 32, 99],
             label: "Keycard reader — Science Lab",
             hideIf: { all: ["lab_door_unlocked"] },
             action: {
@@ -378,7 +378,7 @@ const ROOMS = {
           {
             id: "foil_jacket",
             shape: "rect",
-            geom: [200, 300, 450, 480],
+            geom: [374, 379, 150, 300],
             label: "Metallic foil jacket",
             hideIf: { all: ["foil_jacket_used"] },
             action: {
