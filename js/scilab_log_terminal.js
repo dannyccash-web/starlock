@@ -105,10 +105,10 @@
   const LT_PANEL_WIDTH  = 1280;
   const LT_PANEL_HEIGHT = 565;
 
-  const LT_SCAN_LEFT   = 751;
-  const LT_SCAN_TOP    = 907;
-  const LT_SCAN_WIDTH  = 413;
-  const LT_SCAN_HEIGHT = 94;
+  const LT_SCAN_LEFT   = 783;
+  const LT_SCAN_TOP    = 944;
+  const LT_SCAN_WIDTH  = 356;
+  const LT_SCAN_HEIGHT = 24;
 
   /* ── Module-scope view state ── */
   let currentView   = "list";
@@ -204,7 +204,7 @@
               ]),
               el("span", { class: "lt-log-meta" }, [
                 locked
-                  ? "AUTHORIZATION REQUIRED — SCAN KEY DOCUMENT TO UNLOCK"
+                  ? "ENCRYPTED — KEYCODE SCAN REQUIRED"
                   : log.date,
               ]),
             ]),
@@ -245,7 +245,7 @@
           el("div", { class: "lt-locked-icon" }, ["🔒"]),
           el("p",   { class: "lt-locked-msg"  }, ["LOG ENCRYPTED — AUTHORIZATION REQUIRED"]),
           el("p",   { class: "lt-locked-hint" }, [
-            "Equip the physical key document and scan it in the slot below to decode this entry."
+            "This log is encrypted. A physical keycode scan is required for authorization."
           ]),
         ]),
       ]);
@@ -314,8 +314,8 @@
           renderActive();
         } else {
           showMessage(
-            "The scanner slot is waiting for the physical key document. " +
-            "Equip Reyes' coded note, then click the scanner slot."
+            "A document scanner built into the terminal housing. " +
+            "The slot appears to be waiting for input."
           );
         }
       },

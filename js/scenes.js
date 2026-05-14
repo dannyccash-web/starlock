@@ -164,14 +164,16 @@ const ITEMS = {
   // Collected from the desk after the stasis field is disengaged.
   glitch_specimen_1: {
     name: "Glitch Specimen 1",
-    icon:   "Images/items/glitch_specimen_1.png",
-    description: "A small cluster of translucent crystalline squares. Still shifting, still reorganising. Warm to the touch.",
+    icon:       "Images/items/glitch_specimen_1.png",
+    cursorSize: 96,
+    description: "A tight formation of translucent shapes, moving in slow unison. They hum faintly in your hand, pulsing with a soft blue light.",
   },
 
   glitch_specimen_2: {
     name: "Glitch Specimen 2",
-    icon:   "Images/items/glitch_specimen_2.png",
-    description: "A denser cluster than the first — more facets, more movement. It pulses faintly when you hold it.",
+    icon:       "Images/items/glitch_specimen_2.png",
+    cursorSize: 96,
+    description: "A denser arrangement of the same shifting forms — more facets, more motion. They pulse with a pale green light, steady and rhythmic.",
   },
 };
 
@@ -695,7 +697,7 @@ const ROOMS = {
           {
             id: "bridge_door_locked",
             shape: "rect",
-            geom: [670, 80, 580, 840],
+            geom: [752, 242, 420, 675],
             label: "Door — 01: Bridge",
             hideIf: { all: ["bridge_door_unlocked"] },
             action: {
@@ -707,7 +709,7 @@ const ROOMS = {
           {
             id: "bridge_door_open",
             shape: "rect",
-            geom: [670, 80, 580, 840],
+            geom: [752, 242, 420, 675],
             label: "Door — 01: Bridge (open)",
             showIf: { all: ["bridge_door_unlocked"] },
             action: {
@@ -721,7 +723,7 @@ const ROOMS = {
           {
             id: "bridge_keycard_reader",
             shape: "rect",
-            geom: [1060, 290, 160, 380],
+            geom: [1204, 538, 32, 99],
             label: "Keycard reader — Bridge",
             hideIf: { all: ["bridge_door_unlocked"] },
             action: {
@@ -745,7 +747,7 @@ const ROOMS = {
           {
             id: "scilab_upgrade_terminal",
             shape: "rect",
-            geom: [1480, 200, 400, 600],
+            geom: [1459, 356, 214, 273],
             label: "Card upgrade terminal",
             hideIf: { all: ["card_upgraded"] },
             action: {
@@ -757,7 +759,7 @@ const ROOMS = {
           {
             id: "scilab_upgrade_terminal_done",
             shape: "rect",
-            geom: [1480, 200, 400, 600],
+            geom: [1459, 356, 214, 273],
             label: "Card upgrade terminal",
             showIf: { all: ["card_upgraded"] },
             action: {
@@ -866,7 +868,7 @@ const ROOMS = {
               type: "pickup",
               item: "glitch_specimen_1",
               flags: ["glitch1_taken"],
-              message: "The specimen sits motionless on the desk — its translucent squares arranged in a quiet stack. You pick it up carefully. It feels lighter than it looks.",
+              message: "The specimen rests on the desk, its forms arranged in careful formation. You pick it up carefully. It hums against your palm.",
             },
           },
           // ---- Glitch 2 — pickup from desk ----
@@ -943,7 +945,7 @@ const ROOMS = {
           {
             id: "scilab_log_terminal",
             shape: "rect",
-            geom: [60, 120, 480, 780],
+            geom: [207, 365, 336, 267],
             label: "Reyes' log terminal",
             action: {
               type: "openCloseup",
@@ -957,7 +959,7 @@ const ROOMS = {
           {
             id: "cryo_return_door",
             shape: "rect",
-            geom: [670, 80, 580, 840],
+            geom: [752, 242, 420, 675],
             label: "Door — 03: Cryo Room",
             action: {
               type: "gotoRoom",
