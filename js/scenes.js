@@ -66,6 +66,12 @@
                                log terminal; Log 3 is now unlocked.
      log3_read               - player has read Reyes' Log 3
                                (the Reyes/Tarn dispute record)
+     schematic2_taken        - player retrieved Schematic 2 from Vance's
+                               lab coat pocket on Science Lab Wall A.
+     schematic1_placed       - Schematic 1 has been placed on the backlit
+                               display; overlay shown on Wall D.
+     schematic2_placed       - Schematic 2 has been placed on the backlit
+                               display; overlay shown on Wall D.
      workbench_notes_read    - player has read Vance's workbench notes;
                                storage access code 3-7-1 is now known.
      specimen_storage_unlocked - the specimen storage unit has been
@@ -174,6 +180,24 @@ const ITEMS = {
     icon:       "Images/items/glitch_specimen_2.png",
     cursorSize: 96,
     description: "A denser arrangement of the same shifting forms — more facets, more motion. They pulse with a pale green light, steady and rhythmic.",
+  },
+
+  // Found in Vance's locker (chest 004, Cryo Room Wall 4).
+  // Half of Vance's scanner assembly instructions, printed on clear acetate.
+  // Place on the backlit display in the science lab to read it properly.
+  schematic_1: {
+    name: "Schematic 1",
+    icon: "Images/items/Schematic%201.png",
+    description: "A sheet of clear acetate covered in numbers and lines. It looks like part of a technical diagram — hard to read without a light source behind it.",
+  },
+
+  // Found in Vance's lab coat pocket on the Science Lab 2 wall.
+  // The other half of Vance's scanner assembly instructions, on clear acetate.
+  // Place on the backlit display in the science lab alongside Schematic 1.
+  schematic_2: {
+    name: "Schematic 2",
+    icon: "Images/items/Schematic%202.png",
+    description: "A sheet of clear acetate printed with device component diagrams. Combined with Schematic 1, it forms Vance's full scanner assembly guide.",
   },
 };
 
@@ -612,8 +636,9 @@ const ROOMS = {
             },
           },
 
-          // ---- Chest 004 (bottom-right) — Vance's locker, empty ----
+          // ---- Chest 004 (bottom-right) — Vance's locker ----
           // Bbox of closed chest sprite: x=1367–1764, y=784–1011
+          // Contains Schematic 1 — clear acetate with numbers and lines.
           {
             id: "chest4_004",
             shape: "rect",
@@ -621,9 +646,10 @@ const ROOMS = {
             label: "Locker 004 — Vance",
             hideIf: { all: ["chest4_004_opened"] },
             action: {
-              type: "setState",
+              type: "pickup",
+              item: "schematic_1",
               flags: ["chest4_004_opened"],
-              message: "Vance's locker. Empty.",
+              message: "Vance's locker. At the bottom, tucked flat: a sheet of clear acetate covered in lines and numbers — some kind of technical diagram.",
             },
           },
         ],
@@ -676,6 +702,14 @@ const ROOMS = {
             id: "scilab_wall_a_card_reader_overlay",
             image: "Images/Science%20Lab%202%20card%20reader.png",
             x: 0, y: 0, w: 1920, h: 1080,
+          },
+          // Vance's lab coat hanging on the wall. Hidden once the player
+          // has taken the schematic from the pocket.
+          {
+            id: "scilab_wall_a_lab_coat_overlay",
+            image: "Images/Science%20Lab%202%20lab%20coat.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["schematic2_taken"] },
           },
         ],
         overlays: [
@@ -765,6 +799,35 @@ const ROOMS = {
             action: {
               type: "message",
               message: "Upgrade complete. The terminal is idle.",
+            },
+          },
+          // ---- Vance's lab coat ----
+          // Hanging on the wall. Contains Schematic 2 in the pocket.
+          // Hidden once the schematic has been retrieved.
+          // NOTE: geom matches the lab coat position in Science Lab 2 lab coat.png.
+          {
+            id: "scilab_lab_coat",
+            shape: "rect",
+            geom: [299, 397, 240, 430],
+            label: "Vance's lab coat",
+            hideIf: { all: ["schematic2_taken"] },
+            action: {
+              type: "pickup",
+              item: "schematic_2",
+              flags: ["schematic2_taken"],
+              message: "Vance's lab coat. In the breast pocket, folded carefully: a sheet of clear acetate printed with component diagrams.",
+            },
+          },
+          // ---- Vance's lab coat — after schematic taken ----
+          {
+            id: "scilab_lab_coat_empty",
+            shape: "rect",
+            geom: [299, 397, 240, 430],
+            label: "Vance's lab coat",
+            showIf: { all: ["schematic2_taken"] },
+            action: {
+              type: "message",
+              message: "Vance's lab coat. The pockets are empty.",
             },
           },
         ],
@@ -996,44 +1059,37 @@ const ROOMS = {
             image: "Images/Science%20Lab%201%20workshop.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
+          // Schematic overlays on the backlit display — shown once the
+          // player has placed the corresponding acetate sheet on it.
+          // Both can appear simultaneously.
+          {
+            id: "scilab_wall_d_schematic1_overlay",
+            image: "Images/Science%20Lab%201%20Schematic%201.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["schematic1_placed"] },
+          },
+          {
+            id: "scilab_wall_d_schematic2_overlay",
+            image: "Images/Science%20Lab%201%20Schematic%202.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["schematic2_placed"] },
+          },
         ],
         overlays: [],
         hotspots: [
-          // ---- Workbench notes ----
-          // Reading reveals storage code 3-7-1 and scanner schematic.
+          // ---- Backlit display ----
+          // A light panel on the wall used to view transparent schematics.
+          // Clicking opens the backlit display close-up where the player
+          // can place Schematic 1 and/or Schematic 2 to read them together.
+          // NOTE: geom is 286x180 at X818 Y325 — tune with debug mode (D).
           {
-            id: "scilab_workbench_notes",
+            id: "scilab_backlight_display",
             shape: "rect",
-            geom: [900, 560, 500, 300],
-            label: "Vance's workbench notes",
-            hideIf: { all: ["workbench_notes_read"] },
+            geom: [818, 325, 286, 180],
+            label: "Backlit display",
             action: {
-              type: "setState",
-              flags: ["workbench_notes_read"],
-              message: "Vance's handwritten notes, spread across the bench.\n\nSpecimen batch ref: 3-7-1. Containers stored in sealed unit per protocol.\n\nScanner schematic (partial):\n  [1] Calibration lens — installed (in chassis)\n  [2] Frequency emitter — stored in Container A (reactive band, handle carefully)\n  [3] Power cell — not yet sourced (standard HD cell, cryo kit compatible)\n  [4] Signal amplifier — check bridge command console\n\nNotes on the glitch: audio stimulus in the mid-range produces strong agitation response. Possible interaction with light at higher intensities. Suggest further testing. DO NOT exceed 80% emitter output without additional containment.",
-            },
-          },
-          {
-            id: "scilab_workbench_notes_read",
-            shape: "rect",
-            geom: [900, 560, 500, 300],
-            label: "Vance's workbench notes",
-            showIf: { all: ["workbench_notes_read"] },
-            action: {
-              type: "message",
-              message: "You've already read Vance's notes. Storage batch code: 3-7-1. Scanner needs: calibration lens (in chassis), frequency emitter (Container A), power cell (cryo kit), signal amplifier (bridge).",
-            },
-          },
-          // ---- Scanner chassis ----
-          // Shows assembly state. Currently incomplete.
-          {
-            id: "scilab_scanner_chassis",
-            shape: "rect",
-            geom: [600, 280, 500, 400],
-            label: "Scanner chassis — incomplete",
-            action: {
-              type: "message",
-              message: "Vance's scanner, partially assembled. The calibration lens is installed in the forward housing. Three component slots are empty. The device won't function until all four components are in place. Vance's notes on the bench describe what goes where.",
+              type: "openCloseup",
+              target: "scilab_backlight",
             },
           },
         ],
@@ -1108,6 +1164,19 @@ const CLOSEUPS = {
     image: "Images/closeups/Science%20Lab%203%20Terminal.png",
     kind: "html",
     controller: "scilab_specimen_terminal",
+  },
+
+  // ---- Science Lab: Backlit display ----
+  // A light panel on Vance's workbench wall used to view transparent
+  // schematics. The player places Schematic 1 and/or Schematic 2 by
+  // equipping them and clicking the white screen area. The controller
+  // overlays the corresponding closeup images (both can be shown at once).
+  // Placing a schematic removes it from inventory and sets a state flag
+  // that causes the schematic overlay to appear on Wall D.
+  scilab_backlight: {
+    image: "Images/closeups/Science%20Lab%201%20Backlight.png",
+    kind: "html",
+    controller: "scilab_backlight",
   },
 };
 
