@@ -172,14 +172,14 @@ const ITEMS = {
     name: "Glitch Specimen 1",
     icon:       "Images/items/glitch_specimen_1.png",
     cursorSize: 96,
-    description: "A tight formation of translucent shapes, moving in slow unison. They hum faintly in your hand, pulsing with a soft blue light.",
+    description: "Translucent shapes in slow formation. They hum faintly in your hand, pulsing with a soft blue light.",
   },
 
   glitch_specimen_2: {
     name: "Glitch Specimen 2",
     icon:       "Images/items/glitch_specimen_2.png",
     cursorSize: 96,
-    description: "A denser arrangement of the same shifting forms — more facets, more motion. They pulse with a pale green light, steady and rhythmic.",
+    description: "A denser cluster of shifting forms. They pulse with a pale green light, steady and rhythmic.",
   },
 
   // Found in Vance's locker (chest 004, Cryo Room Wall 4).
@@ -188,16 +188,16 @@ const ITEMS = {
   schematic_1: {
     name: "Schematic 1",
     icon: "Images/items/Schematic%201.png",
-    description: "A sheet of clear acetate covered in numbers and lines. It looks like part of a technical diagram — hard to read without a light source behind it.",
+    cursorSize: 80,
+    description: "Clear acetate covered in lines and numbers. Hard to make out without a light source behind it.",
   },
 
   // Found in Vance's lab coat pocket on the Science Lab 2 wall.
-  // The other half of Vance's scanner assembly instructions, on clear acetate.
-  // Place on the backlit display in the science lab alongside Schematic 1.
   schematic_2: {
     name: "Schematic 2",
     icon: "Images/items/Schematic%202.png",
-    description: "A sheet of clear acetate printed with device component diagrams. Combined with Schematic 1, it forms Vance's full scanner assembly guide.",
+    cursorSize: 80,
+    description: "Clear acetate printed with a component diagram.",
   },
 };
 
@@ -703,13 +703,12 @@ const ROOMS = {
             image: "Images/Science%20Lab%202%20card%20reader.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
-          // Vance's lab coat hanging on the wall. Hidden once the player
-          // has taken the schematic from the pocket.
+          // Vance's lab coat hanging on the wall. Always visible —
+          // the coat stays even after the schematic is taken from it.
           {
             id: "scilab_wall_a_lab_coat_overlay",
             image: "Images/Science%20Lab%202%20lab%20coat.png",
             x: 0, y: 0, w: 1920, h: 1080,
-            hideIf: { all: ["schematic2_taken"] },
           },
         ],
         overlays: [

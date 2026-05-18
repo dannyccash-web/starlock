@@ -97,7 +97,7 @@
       ctx.setFlag(FLAG_S1);
       Inventory.removeItem("schematic_1");
       ctx.showMessage(
-        "You hold the acetate against the lit panel. The lines and numbers snap into focus — a partial wiring layout for some kind of scanning device."
+        "You hold the acetate against the lit panel. The lines and numbers come into focus."
       );
       buildUI(layer, ctx);
       ctx.renderActive(); // also re-renders Wall D schematic sprite
@@ -107,7 +107,7 @@
       ctx.setFlag(FLAG_S2);
       Inventory.removeItem("schematic_2");
       ctx.showMessage(
-        "You lay the second sheet on the display. Overlaid with the first, the full assembly diagram comes together — Vance's instructions for the scanner."
+        "You press the sheet against the panel. The diagram is clearer under the light."
       );
       buildUI(layer, ctx);
       ctx.renderActive(); // also re-renders Wall D schematic sprite
@@ -116,10 +116,10 @@
       // No item equipped
       if (!ctx.hasFlag(FLAG_S1) && !ctx.hasFlag(FLAG_S2)) {
         ctx.showMessage(
-          "A backlit panel — the kind used to trace or read transparent sheets. The surface is blank."
+          "A backlit panel — used to illuminate transparent sheets. The surface is blank."
         );
       } else {
-        ctx.showMessage("The schematic is pinned to the display.");
+        ctx.showMessage("The acetate is clipped to the display.");
       }
     } else {
       // Wrong item equipped
