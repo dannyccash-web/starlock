@@ -65,6 +65,10 @@ const GameAudio = (() => {
   keycardSwipeSfx.preload = "auto";
   keycardSwipeSfx.volume = state.effectsVolume;
 
+  const cabinetDoorSfx = new window.Audio("audio/soundreality-door-opening-2-455061.mp3");
+  cabinetDoorSfx.preload = "auto";
+  cabinetDoorSfx.volume = state.effectsVolume;
+
   function playOneShot(audio) {
     audio.volume = state.effectsVolume;
     try { audio.currentTime = 0; } catch (e) {}
@@ -74,6 +78,7 @@ const GameAudio = (() => {
 
   function playDoorOpen()     { playOneShot(doorOpenSfx); }
   function playKeycardSwipe() { playOneShot(keycardSwipeSfx); }
+  function playCabinetDoor()  { playOneShot(cabinetDoorSfx); }
 
   function startSoundtrack() {
     if (state.soundtrackStarted) return;
@@ -149,6 +154,7 @@ const GameAudio = (() => {
     typewriter.volume      = state.effectsVolume;
     doorOpenSfx.volume     = state.effectsVolume;
     keycardSwipeSfx.volume = state.effectsVolume;
+    cabinetDoorSfx.volume  = state.effectsVolume;
     try { localStorage.setItem(EFFECTS_KEY, String(state.effectsVolume)); } catch (e) {}
   }
   function getSoundtrackVolume() { return state.soundtrackVolume; }
@@ -164,5 +170,6 @@ const GameAudio = (() => {
     typewriterStop,
     playDoorOpen,
     playKeycardSwipe,
+    playCabinetDoor,
   };
 })();

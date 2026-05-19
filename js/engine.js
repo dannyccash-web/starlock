@@ -185,12 +185,17 @@ const Engine = (() => {
         showMessage(a.message);
         break;
 
-      case "setState":
+      case "setState": {
         (a.flags || []).forEach(setFlag);
         (a.clearFlags || []).forEach(clearFlag);
+        // Play cabinet door SFX when the door open/close flag is toggled.
+        const touchesCabinetDoor = [...(a.flags || []), ...(a.clearFlags || [])]
+          .some(f => f === "cabinet_door_open");
+        if (touchesCabinetDoor) GameAudio.playCabinetDoor();
         if (a.message) showMessage(a.message);
         renderActive();
         break;
+      }
 
       case "pickup":
         Inventory.addItem(a.item);
