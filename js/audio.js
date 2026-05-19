@@ -84,6 +84,8 @@ const GameAudio = (() => {
   function playKeycardSwipe() { playOneShot(keycardSwipeSfx); }
   function playCabinetDoor()  { playOneShot(cabinetDoorSfx); }
   function playPowerSupply()  { playOneShot(powerSupplySfx); }
+  // Generic drawer/cabinet open — same SFX as power supply pickup.
+  function playDrawerOpen()   { playOneShot(powerSupplySfx); }
 
   function startSoundtrack() {
     if (state.soundtrackStarted) return;
@@ -178,5 +180,6 @@ const GameAudio = (() => {
     playKeycardSwipe,
     playCabinetDoor,
     playPowerSupply,
+    playDrawerOpen,
   };
 })();

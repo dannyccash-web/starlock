@@ -124,8 +124,8 @@ const ITEMS = {
   // Required for assembling Vance's glitch scanner on the workbench.
   freq_emitter: {
     name: "Frequency Emitter",
-    icon:   "Images/items/keycard.png?v=2",   // placeholder icon — replace when art exists
-    description: "A compact audio transducer from Vance's kit. Tuned to a narrow reactive frequency band.",
+    icon:   "Images/items/scanner_frequency_emitter.png",
+    description: "A compact audio transducer. Tuned to a narrow reactive frequency band.",
   },
 
   // Produced by entering the authorization code at the card upgrade
@@ -197,15 +197,21 @@ const ITEMS = {
   scanner_power_supply: {
     name: "Power Supply",
     icon: "Images/items/scanner_power_supply.png",
-    description: "A compact power supply unit. Part of Vance's scanner assembly.",
+    description: "A compact power supply unit. Looks like it belongs to some kind of device.",
   },
 
   // Found in the cabinet on Science Lab Wall B (Science Lab 4.png).
-  // Scanner component — required for Vance's scanner assembly.
   scanner_signal_amplifier: {
     name: "Signal Amplifier",
     icon:   "Images/items/scanner_signal_amplifier.png",
-    description: "A compact signal amplifier module. Part of Vance's scanner assembly.",
+    description: "A compact signal amplifier module. Purpose unclear without context.",
+  },
+
+  // Found on Science Lab Wall D (Science Lab 1.png, workbench wall).
+  scanner_cover: {
+    name: "Scanner Cover",
+    icon: "Images/items/scanner_cover.png",
+    description: "A transparent protective casing. Looks like it fits over something precision-built.",
   },
 
   // Found in Vance's lab coat pocket on the Science Lab 2 wall.
@@ -846,8 +852,6 @@ const ROOMS = {
             },
           },
           // ---- Power supply pick-up (149×57 at X1354 Y849) ----
-          // Scanner component sitting on the wall. Picked up once;
-          // hotspot disappears after.
           {
             id: "scilab_power_supply_hs",
             shape: "rect",
@@ -858,8 +862,32 @@ const ROOMS = {
               type: "pickup",
               item: "scanner_power_supply",
               flags: ["power_supply_taken"],
-              sound: "powerSupply",
-              message: "A compact power supply unit — exactly what Vance's scanner needs.",
+              sound: "drawerOpen",
+              message: "A compact power supply unit.",
+            },
+          },
+          // ---- Drawer — empty (200×243 at X1509 Y672) ----
+          {
+            id: "scilab2_drawer_a_hs",
+            shape: "rect",
+            geom: [1509, 672, 200, 243],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Drawer — empty (147×166 at X1354 Y672) ----
+          {
+            id: "scilab2_drawer_b_hs",
+            shape: "rect",
+            geom: [1354, 672, 147, 166],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
             },
           },
         ],
@@ -991,6 +1019,45 @@ const ROOMS = {
             action: {
               type: "message",
               message: "A broken specimen cylinder — the seal shattered outward. Whatever was inside is gone. Something escaped.",
+            },
+          },
+          // ---- Drawer — empty (621×191 at X886 Y733) ----
+          {
+            id: "scilab3_drawer_a_hs",
+            shape: "rect",
+            geom: [886, 733, 621, 191],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Drawer — empty (103×123 at X1507 Y801) ----
+          {
+            id: "scilab3_drawer_b_hs",
+            shape: "rect",
+            geom: [1507, 801, 103, 123],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Frequency emitter pick-up (103×61 at X1507 Y740) ----
+          {
+            id: "scilab3_freq_emitter_hs",
+            shape: "rect",
+            geom: [1507, 740, 103, 61],
+            label: "Frequency Emitter",
+            hideIf: { all: ["freq_emitter_taken"] },
+            action: {
+              type: "pickup",
+              item: "freq_emitter",
+              flags: ["freq_emitter_taken"],
+              sound: "drawerOpen",
+              message: "A compact audio transducer. You're not sure what it's for, but it looks important.",
             },
           },
         ],
@@ -1185,6 +1252,18 @@ const ROOMS = {
               clearFlags: ["cabinet_door_open"],
             },
           },
+          // ---- Drawer — empty (355×239 at X162 Y668) ----
+          {
+            id: "scilab4_drawer_a_hs",
+            shape: "rect",
+            geom: [162, 668, 355, 239],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
         ],
       },
 
@@ -1229,6 +1308,13 @@ const ROOMS = {
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["schematic2_placed"] },
           },
+          // Scanner cover sitting on the workbench. Disappears once taken.
+          {
+            id: "scilab_scanner_cover_sprite",
+            image: "Images/Science%20Lab%201%20Scanner%20Cover.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["scanner_cover_taken"] },
+          },
         ],
         overlays: [],
         hotspots: [
@@ -1245,6 +1331,21 @@ const ROOMS = {
             action: {
               type: "openCloseup",
               target: "scilab_backlight",
+            },
+          },
+          // ---- Scanner cover pick-up (119×50 at X1505 Y789) ----
+          // Removes the scanner cover sprite; adds item to inventory.
+          {
+            id: "scilab_scanner_cover_hs",
+            shape: "rect",
+            geom: [1505, 789, 119, 50],
+            label: "Scanner Cover",
+            hideIf: { all: ["scanner_cover_taken"] },
+            action: {
+              type: "pickup",
+              item: "scanner_cover",
+              flags: ["scanner_cover_taken"],
+              message: "A transparent protective casing. Precision-made — it must belong to something.",
             },
           },
         ],

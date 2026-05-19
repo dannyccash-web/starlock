@@ -170,6 +170,11 @@ const Engine = (() => {
                      otherwise run onReject
        openCloseup - load a close-up view by id
   */
+  // Play a named sound cue defined in audio.js.
+  function playActionSound(key) {
+    if (key === "drawerOpen") GameAudio.playDrawerOpen();
+  }
+
   function handleAction(hs) {
     const a = hs.action;
     if (!a) return;
@@ -179,6 +184,9 @@ const Engine = (() => {
       showMessage(a.requireMessage || "You need to equip the right item first.");
       return;
     }
+
+    // Play any sound attached to this action (works for all action types).
+    if (a.sound) playActionSound(a.sound);
 
     switch (a.type) {
       case "message":
@@ -200,7 +208,6 @@ const Engine = (() => {
       case "pickup": {
         Inventory.addItem(a.item);
         (a.flags || []).forEach(setFlag);
-        if (a.sound === "powerSupply") GameAudio.playPowerSupply();
         if (a.message) showMessage(a.message);
         showPickupNotification(a.item);
         renderActive();
