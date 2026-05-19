@@ -997,14 +997,13 @@ const ROOMS = {
             image: "Images/Science%20Lab%204%20terminal.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
-          // Cabinet — unlocked/closed layer (shows once metal band is cut).
-          // Sits beneath the locked overlay; also hides when door is open.
+          // Cabinet — unlocked base layer. Always visible — acts as the
+          // background for the cabinet, sitting in front of the room plate
+          // but behind the locked overlay, open overlay, and amplifier sprite.
           {
             id: "scilab_cabinet_unlocked",
             image: "Images/Science%20Lab%204%20Cabinet%20Unlocked.png",
             x: 0, y: 0, w: 1920, h: 1080,
-            showIf: { all: ["cabinet_unlocked"] },
-            hideIf: { all: ["cabinet_door_open"] },
           },
           // Cabinet — locked overlay (metal band visible). Hidden once cut.
           {
