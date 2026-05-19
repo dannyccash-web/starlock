@@ -197,13 +197,15 @@ const Engine = (() => {
         break;
       }
 
-      case "pickup":
+      case "pickup": {
         Inventory.addItem(a.item);
         (a.flags || []).forEach(setFlag);
+        if (a.sound === "powerSupply") GameAudio.playPowerSupply();
         if (a.message) showMessage(a.message);
         showPickupNotification(a.item);
         renderActive();
         break;
+      }
 
       case "useItem": {
         const eq = Inventory.getEquipped();

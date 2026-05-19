@@ -192,6 +192,14 @@ const ITEMS = {
     description: "Clear acetate covered in lines and numbers. Hard to make out without a light source behind it.",
   },
 
+  // Found on Science Lab Wall A (Science Lab 2.png, bridge-door wall).
+  // Scanner component — required for Vance's scanner assembly.
+  scanner_power_supply: {
+    name: "Power Supply",
+    icon: "Images/items/scanner_power_supply.png",
+    description: "A compact power supply unit. Part of Vance's scanner assembly.",
+  },
+
   // Found in the cabinet on Science Lab Wall B (Science Lab 4.png).
   // Scanner component — required for Vance's scanner assembly.
   scanner_signal_amplifier: {
@@ -835,6 +843,23 @@ const ROOMS = {
             action: {
               type: "message",
               message: "Vance's lab coat. The pockets are empty.",
+            },
+          },
+          // ---- Power supply pick-up (149×57 at X1354 Y849) ----
+          // Scanner component sitting on the wall. Picked up once;
+          // hotspot disappears after.
+          {
+            id: "scilab_power_supply_hs",
+            shape: "rect",
+            geom: [1354, 849, 149, 57],
+            label: "Power Supply",
+            hideIf: { all: ["power_supply_taken"] },
+            action: {
+              type: "pickup",
+              item: "scanner_power_supply",
+              flags: ["power_supply_taken"],
+              sound: "powerSupply",
+              message: "A compact power supply unit — exactly what Vance's scanner needs.",
             },
           },
         ],
