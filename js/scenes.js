@@ -1145,7 +1145,6 @@ const ROOMS = {
             action: {
               type: "setState",
               flags: ["cabinet_door_open"],
-              message: "You open the cabinet.",
             },
           },
 
@@ -1159,7 +1158,6 @@ const ROOMS = {
             action: {
               type: "setState",
               clearFlags: ["cabinet_door_open"],
-              message: "You close the cabinet.",
             },
           },
         ],
