@@ -192,6 +192,14 @@ const ITEMS = {
     description: "Clear acetate covered in lines and numbers. Hard to make out without a light source behind it.",
   },
 
+  // Found in the cabinet on Science Lab Wall B (Science Lab 4.png).
+  // Scanner component — required for Vance's scanner assembly.
+  scanner_signal_amplifier: {
+    name: "Signal Amplifier",
+    icon:   "Images/items/scanner_signal_amplifier.png",
+    description: "A compact signal amplifier module. Part of Vance's scanner assembly.",
+  },
+
   // Found in Vance's lab coat pocket on the Science Lab 2 wall.
   schematic_2: {
     name: "Schematic 2",
@@ -989,6 +997,38 @@ const ROOMS = {
             image: "Images/Science%20Lab%204%20terminal.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
+          // Cabinet — unlocked/closed layer (shows once metal band is cut).
+          // Sits beneath the locked overlay; also hides when door is open.
+          {
+            id: "scilab_cabinet_unlocked",
+            image: "Images/Science%20Lab%204%20Cabinet%20Unlocked.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["cabinet_unlocked"] },
+            hideIf: { all: ["cabinet_door_open"] },
+          },
+          // Cabinet — locked overlay (metal band visible). Hidden once cut.
+          {
+            id: "scilab_cabinet_locked",
+            image: "Images/Science%20Lab%204%20Cabinet%20Locked.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["cabinet_unlocked"] },
+          },
+          // Cabinet — open state (door swung open). Shown when cabinet_door_open is set.
+          {
+            id: "scilab_cabinet_open",
+            image: "Images/Science%20Lab%204%20Cabinet%20Open.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["cabinet_door_open"] },
+          },
+          // Signal amplifier sitting inside the open cabinet.
+          // Appears when cabinet first opened; disappears once picked up.
+          {
+            id: "scilab_signal_amplifier_sprite",
+            image: "Images/Science%20Lab%204%20Signal%20Amplifier.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            showIf: { all: ["cabinet_opened"] },
+            hideIf: { all: ["amplifier_taken"] },
+          },
         ],
         overlays: [
           // Cryo return door reader — green once the lab door was unlocked.
@@ -1027,6 +1067,100 @@ const ROOMS = {
               type: "gotoRoom",
               room: "cryo",
               startWall: 3,
+            },
+          },
+
+          // ============================================================
+          // CABINET (right side of Wall B)
+          //
+          // States:
+          //   Locked   — metal band visible; shears required to open.
+          //   Unlocked — band gone, door closed; signal amplifier inside.
+          //   Opened   — door open, amplifier visible for pick-up.
+          //   After amplifier taken — door toggles open / closed freely.
+          // ============================================================
+
+          // ---- Cabinet lock — metal band (123×105, visible while locked) ----
+          // Default click: "locked by a metal band" message.
+          // Equip metal shears + click: cut the band and unlock the cabinet.
+          {
+            id: "scilab_cabinet_lock_hs",
+            shape: "rect",
+            geom: [1499, 559, 123, 105],
+            label: "Cabinet lock",
+            hideIf: { all: ["cabinet_unlocked"] },
+            action: {
+              type: "useItem",
+              accepts: ["metal_shears"],
+              onAccept: {
+                flags: ["cabinet_unlocked"],
+                message: "You cut through the metal band. The cabinet clicks open.",
+              },
+              onReject: {
+                message: "The cabinet is sealed with a metal band. You'd need something sturdy to cut through it.",
+              },
+            },
+          },
+
+          // ---- Cabinet door — first open (306×641, visible once unlocked, before first open) ----
+          // Clicking opens the cabinet and reveals the signal amplifier inside.
+          {
+            id: "scilab_cabinet_door_first_open_hs",
+            shape: "rect",
+            geom: [1409, 307, 306, 641],
+            label: "Cabinet door",
+            showIf: { all: ["cabinet_unlocked"] },
+            hideIf: { all: ["cabinet_opened"] },
+            action: {
+              type: "setState",
+              flags: ["cabinet_opened", "cabinet_door_open"],
+              message: "You pull the cabinet door open. Inside sits a compact signal amplifier module.",
+            },
+          },
+
+          // ---- Signal amplifier pick-up (104×37, inside open cabinet) ----
+          // Visible once cabinet is opened; disappears once taken.
+          {
+            id: "scilab_signal_amplifier_hs",
+            shape: "rect",
+            geom: [1505, 679, 104, 37],
+            label: "Signal Amplifier",
+            showIf: { all: ["cabinet_opened"] },
+            hideIf: { all: ["amplifier_taken"] },
+            action: {
+              type: "pickup",
+              item: "scanner_signal_amplifier",
+              flags: ["amplifier_taken"],
+              message: "You take the signal amplifier. It's in perfect condition.",
+            },
+          },
+
+          // ---- Cabinet door — open (toggle: closed → open, after amplifier taken) ----
+          {
+            id: "scilab_cabinet_door_open_hs",
+            shape: "rect",
+            geom: [1409, 307, 306, 641],
+            label: "Cabinet door",
+            showIf: { all: ["cabinet_unlocked", "amplifier_taken"] },
+            hideIf: { all: ["cabinet_door_open"] },
+            action: {
+              type: "setState",
+              flags: ["cabinet_door_open"],
+              message: "You open the cabinet.",
+            },
+          },
+
+          // ---- Cabinet door — close (toggle: open → closed, after amplifier taken) ----
+          {
+            id: "scilab_cabinet_door_close_hs",
+            shape: "rect",
+            geom: [1409, 307, 306, 641],
+            label: "Cabinet door",
+            showIf: { all: ["cabinet_unlocked", "amplifier_taken", "cabinet_door_open"] },
+            action: {
+              type: "setState",
+              clearFlags: ["cabinet_door_open"],
+              message: "You close the cabinet.",
             },
           },
         ],

@@ -38,8 +38,9 @@ const Engine = (() => {
   function _triggerSave() { if (_saveHook) _saveHook(); }
 
   /* ----- Game state flag helpers ----- */
-  const hasFlag = (f) => state.flags.has(f);
-  const setFlag = (f) => state.flags.add(f);
+  const hasFlag  = (f) => state.flags.has(f);
+  const setFlag  = (f) => state.flags.add(f);
+  const clearFlag = (f) => state.flags.delete(f);
   // Visibility predicate: pass {all:[],any:[],none:[]}
   function check(cond) {
     if (!cond) return true;
@@ -186,6 +187,7 @@ const Engine = (() => {
 
       case "setState":
         (a.flags || []).forEach(setFlag);
+        (a.clearFlags || []).forEach(clearFlag);
         if (a.message) showMessage(a.message);
         renderActive();
         break;
