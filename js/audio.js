@@ -65,6 +65,14 @@ const GameAudio = (() => {
   keycardSwipeSfx.preload = "auto";
   keycardSwipeSfx.volume = state.effectsVolume;
 
+  const cabinetDoorSfx = new window.Audio("audio/soundreality-door-opening-2-455061.mp3");
+  cabinetDoorSfx.preload = "auto";
+  cabinetDoorSfx.volume = state.effectsVolume;
+
+  const powerSupplySfx = new window.Audio("audio/dragon-studio-opening-door-sfx-454240.mp3");
+  powerSupplySfx.preload = "auto";
+  powerSupplySfx.volume = state.effectsVolume;
+
   function playOneShot(audio) {
     audio.volume = state.effectsVolume;
     try { audio.currentTime = 0; } catch (e) {}
@@ -74,6 +82,10 @@ const GameAudio = (() => {
 
   function playDoorOpen()     { playOneShot(doorOpenSfx); }
   function playKeycardSwipe() { playOneShot(keycardSwipeSfx); }
+  function playCabinetDoor()  { playOneShot(cabinetDoorSfx); }
+  function playPowerSupply()  { playOneShot(powerSupplySfx); }
+  // Generic drawer/cabinet open — same SFX as power supply pickup.
+  function playDrawerOpen()   { playOneShot(powerSupplySfx); }
 
   function startSoundtrack() {
     if (state.soundtrackStarted) return;
@@ -149,6 +161,8 @@ const GameAudio = (() => {
     typewriter.volume      = state.effectsVolume;
     doorOpenSfx.volume     = state.effectsVolume;
     keycardSwipeSfx.volume = state.effectsVolume;
+    cabinetDoorSfx.volume  = state.effectsVolume;
+    powerSupplySfx.volume  = state.effectsVolume;
     try { localStorage.setItem(EFFECTS_KEY, String(state.effectsVolume)); } catch (e) {}
   }
   function getSoundtrackVolume() { return state.soundtrackVolume; }
@@ -164,5 +178,8 @@ const GameAudio = (() => {
     typewriterStop,
     playDoorOpen,
     playKeycardSwipe,
+    playCabinetDoor,
+    playPowerSupply,
+    playDrawerOpen,
   };
 })();

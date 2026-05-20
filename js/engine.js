@@ -170,6 +170,11 @@ const Engine = (() => {
                      otherwise run onReject
        openCloseup - load a close-up view by id
   */
+  // Play a named sound cue defined in audio.js.
+  function playActionSound(key) {
+    if (key === "drawerOpen") GameAudio.playDrawerOpen();
+  }
+
   function handleAction(hs) {
     const a = hs.action;
     if (!a) return;
@@ -180,25 +185,34 @@ const Engine = (() => {
       return;
     }
 
+    // Play any sound attached to this action (works for all action types).
+    if (a.sound) playActionSound(a.sound);
+
     switch (a.type) {
       case "message":
         showMessage(a.message);
         break;
 
-      case "setState":
+      case "setState": {
         (a.flags || []).forEach(setFlag);
         (a.clearFlags || []).forEach(clearFlag);
+        // Play cabinet door SFX when the door open/close flag is toggled.
+        const touchesCabinetDoor = [...(a.flags || []), ...(a.clearFlags || [])]
+          .some(f => f === "cabinet_door_open");
+        if (touchesCabinetDoor) GameAudio.playCabinetDoor();
         if (a.message) showMessage(a.message);
         renderActive();
         break;
+      }
 
-      case "pickup":
+      case "pickup": {
         Inventory.addItem(a.item);
         (a.flags || []).forEach(setFlag);
         if (a.message) showMessage(a.message);
         showPickupNotification(a.item);
         renderActive();
         break;
+      }
 
       case "useItem": {
         const eq = Inventory.getEquipped();
@@ -278,6 +292,7 @@ const Engine = (() => {
         ctrl.mount(closeupHtml, {
           hasFlag,
           setFlag,
+          clearFlag,
           showMessage,
           renderActive,
           closeCloseup,

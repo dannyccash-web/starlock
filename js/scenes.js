@@ -124,8 +124,8 @@ const ITEMS = {
   // Required for assembling Vance's glitch scanner on the workbench.
   freq_emitter: {
     name: "Frequency Emitter",
-    icon:   "Images/items/keycard.png?v=2",   // placeholder icon — replace when art exists
-    description: "A compact audio transducer from Vance's kit. Tuned to a narrow reactive frequency band.",
+    icon:   "Images/items/scanner_frequency_emitter.png",
+    description: "A compact audio transducer. Tuned to a narrow reactive frequency band.",
   },
 
   // Produced by entering the authorization code at the card upgrade
@@ -192,12 +192,26 @@ const ITEMS = {
     description: "Clear acetate covered in lines and numbers. Hard to make out without a light source behind it.",
   },
 
-  // Found in the cabinet on Science Lab Wall B (Science Lab 4.png).
+  // Found on Science Lab Wall A (Science Lab 2.png, bridge-door wall).
   // Scanner component — required for Vance's scanner assembly.
+  scanner_power_supply: {
+    name: "Power Supply",
+    icon: "Images/items/scanner_power_supply.png",
+    description: "A compact power supply unit. Looks like it belongs to some kind of device.",
+  },
+
+  // Found in the cabinet on Science Lab Wall B (Science Lab 4.png).
   scanner_signal_amplifier: {
     name: "Signal Amplifier",
     icon:   "Images/items/scanner_signal_amplifier.png",
-    description: "A compact signal amplifier module. Part of Vance's scanner assembly.",
+    description: "A compact signal amplifier module. Purpose unclear without context.",
+  },
+
+  // Found on Science Lab Wall D (Science Lab 1.png, workbench wall).
+  scanner_cover: {
+    name: "Scanner Cover",
+    icon: "Images/items/scanner_cover.png",
+    description: "A transparent protective casing. Looks like it fits over something precision-built.",
   },
 
   // Found in Vance's lab coat pocket on the Science Lab 2 wall.
@@ -206,6 +220,16 @@ const ITEMS = {
     icon: "Images/items/Schematic%202.png",
     cursorSize: 80,
     description: "Clear acetate printed with a component diagram.",
+  },
+
+  // Assembled on the workbench in Science Lab 1 (Wall D).
+  // Built by installing four components in order — power supply,
+  // signal amplifier, frequency emitter, Glitch 1 — then sealing
+  // it with the scanner cover. Used later to track Glitch signatures.
+  scanner: {
+    name: "Scanner",
+    icon: "Images/items/scanner.png",
+    description: "Vance's assembled glitch scanner. A compact device that detects and tracks Glitch energy signatures.",
   },
 };
 
@@ -837,6 +861,45 @@ const ROOMS = {
               message: "Vance's lab coat. The pockets are empty.",
             },
           },
+          // ---- Power supply pick-up (149×57 at X1354 Y849) ----
+          {
+            id: "scilab_power_supply_hs",
+            shape: "rect",
+            geom: [1354, 849, 149, 57],
+            label: "Power Supply",
+            hideIf: { all: ["power_supply_taken"] },
+            action: {
+              type: "pickup",
+              item: "scanner_power_supply",
+              flags: ["power_supply_taken"],
+              sound: "drawerOpen",
+              message: "A compact power supply unit.",
+            },
+          },
+          // ---- Drawer — empty (200×243 at X1509 Y672) ----
+          {
+            id: "scilab2_drawer_a_hs",
+            shape: "rect",
+            geom: [1509, 672, 200, 243],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Drawer — empty (147×166 at X1354 Y672) ----
+          {
+            id: "scilab2_drawer_b_hs",
+            shape: "rect",
+            geom: [1354, 672, 147, 166],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
         ],
       },
 
@@ -968,6 +1031,45 @@ const ROOMS = {
               message: "A broken specimen cylinder — the seal shattered outward. Whatever was inside is gone. Something escaped.",
             },
           },
+          // ---- Drawer — empty (621×191 at X886 Y733) ----
+          {
+            id: "scilab3_drawer_a_hs",
+            shape: "rect",
+            geom: [886, 733, 621, 191],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Drawer — empty (103×123 at X1507 Y801) ----
+          {
+            id: "scilab3_drawer_b_hs",
+            shape: "rect",
+            geom: [1507, 801, 103, 123],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
+            },
+          },
+          // ---- Frequency emitter pick-up (103×61 at X1507 Y740) ----
+          {
+            id: "scilab3_freq_emitter_hs",
+            shape: "rect",
+            geom: [1507, 740, 103, 61],
+            label: "Frequency Emitter",
+            hideIf: { all: ["freq_emitter_taken"] },
+            action: {
+              type: "pickup",
+              item: "freq_emitter",
+              flags: ["freq_emitter_taken"],
+              sound: "drawerOpen",
+              message: "A compact audio transducer. You're not sure what it's for, but it looks important.",
+            },
+          },
         ],
       },
 
@@ -997,14 +1099,13 @@ const ROOMS = {
             image: "Images/Science%20Lab%204%20terminal.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
-          // Cabinet — unlocked/closed layer (shows once metal band is cut).
-          // Sits beneath the locked overlay; also hides when door is open.
+          // Cabinet — unlocked base layer. Always visible — acts as the
+          // background for the cabinet, sitting in front of the room plate
+          // but behind the locked overlay, open overlay, and amplifier sprite.
           {
             id: "scilab_cabinet_unlocked",
             image: "Images/Science%20Lab%204%20Cabinet%20Unlocked.png",
             x: 0, y: 0, w: 1920, h: 1080,
-            showIf: { all: ["cabinet_unlocked"] },
-            hideIf: { all: ["cabinet_door_open"] },
           },
           // Cabinet — locked overlay (metal band visible). Hidden once cut.
           {
@@ -1146,7 +1247,6 @@ const ROOMS = {
             action: {
               type: "setState",
               flags: ["cabinet_door_open"],
-              message: "You open the cabinet.",
             },
           },
 
@@ -1160,7 +1260,18 @@ const ROOMS = {
             action: {
               type: "setState",
               clearFlags: ["cabinet_door_open"],
-              message: "You close the cabinet.",
+            },
+          },
+          // ---- Drawer — empty (355×239 at X162 Y668) ----
+          {
+            id: "scilab4_drawer_a_hs",
+            shape: "rect",
+            geom: [162, 668, 355, 239],
+            label: "Drawer",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "Empty.",
             },
           },
         ],
@@ -1192,6 +1303,14 @@ const ROOMS = {
             image: "Images/Science%20Lab%201%20workshop.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
+          // Scanner chassis sitting on the workbench. Visible until
+          // the player assembles and picks it up (scanner_built).
+          {
+            id: "scilab_wall_d_scanner_sprite",
+            image: "Images/Science%20Lab%201%20Scanner.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["scanner_built"] },
+          },
           // Schematic overlays on the backlit display — shown once the
           // player has placed the corresponding acetate sheet on it.
           // Both can appear simultaneously.
@@ -1207,9 +1326,44 @@ const ROOMS = {
             x: 0, y: 0, w: 1920, h: 1080,
             showIf: { all: ["schematic2_placed"] },
           },
+          // Scanner cover sitting on the workbench. Disappears once taken.
+          {
+            id: "scilab_scanner_cover_sprite",
+            image: "Images/Science%20Lab%201%20Scanner%20Cover.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["scanner_cover_taken"] },
+          },
         ],
         overlays: [],
         hotspots: [
+          // ---- Storage/drawer area (935×236 at X174 Y674) ----
+          // Large drawer unit under the workbench. Plays the door-open
+          // SFX (dragon-studio-opening-door-sfx-454240.mp3) and shows
+          // an "empty" message.
+          {
+            id: "scilab_wall_d_drawer_hs",
+            shape: "rect",
+            geom: [174, 674, 935, 236],
+            label: "Storage",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "empty",
+            },
+          },
+          // ---- Workbench surface (227×58 at X561 Y573) ----
+          // Opens the scanner assembly close-up. Hidden once the scanner
+          // has been fully built and collected.
+          {
+            id: "scilab_workbench_hs",
+            shape: "rect",
+            geom: [561, 573, 227, 58],
+            label: "Workbench",
+            action: {
+              type: "openCloseup",
+              target: "scilab_workbench",
+            },
+          },
           // ---- Backlit display ----
           // A light panel on the wall used to view transparent schematics.
           // Clicking opens the backlit display close-up where the player
@@ -1223,6 +1377,21 @@ const ROOMS = {
             action: {
               type: "openCloseup",
               target: "scilab_backlight",
+            },
+          },
+          // ---- Scanner cover pick-up (119×50 at X1505 Y789) ----
+          // Removes the scanner cover sprite; adds item to inventory.
+          {
+            id: "scilab_scanner_cover_hs",
+            shape: "rect",
+            geom: [1505, 789, 119, 50],
+            label: "Scanner Cover",
+            hideIf: { all: ["scanner_cover_taken"] },
+            action: {
+              type: "pickup",
+              item: "scanner_cover",
+              flags: ["scanner_cover_taken"],
+              message: "A transparent protective casing. Precision-made — it must belong to something.",
             },
           },
         ],
@@ -1297,6 +1466,18 @@ const CLOSEUPS = {
     image: "Images/closeups/Science%20Lab%203%20Terminal.png",
     kind: "html",
     controller: "scilab_specimen_terminal",
+  },
+
+  // ---- Science Lab: Scanner workbench assembly ----
+  // The HTML controller handles installing four components in order
+  // (power supply → signal amplifier → frequency emitter → Glitch 1),
+  // enforcing the correct build sequence, allowing removal of components,
+  // and finally sealing the scanner with its cover before adding the
+  // completed scanner to the player's inventory.
+  scilab_workbench: {
+    image: "Images/closeups/Science%20Lab%201%20Workbench.png",
+    kind: "html",
+    controller: "scilab_workbench",
   },
 
   // ---- Science Lab: Backlit display ----
