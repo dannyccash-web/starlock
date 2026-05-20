@@ -235,7 +235,7 @@
     if (eq !== SCANNER_COVER_ITEM) {
       if (!eq) {
         ctx.showMessage(
-          "The scanner needs its protective cover before it's ready. Equip it first."
+          "The scanner is almost complete — just needs its cover sealed in place."
         );
       } else {
         const def  = STARLOCK_DATA.ITEMS[eq];

@@ -204,14 +204,14 @@ const ITEMS = {
   scanner_signal_amplifier: {
     name: "Signal Amplifier",
     icon:   "Images/items/scanner_signal_amplifier.png",
-    description: "A compact signal amplifier module. Purpose unclear without context.",
+    description: "A small electronic module. Looks like it's meant to boost or condition a signal of some kind.",
   },
 
   // Found on Science Lab Wall D (Science Lab 1.png, workbench wall).
   scanner_cover: {
-    name: "Scanner Cover",
+    name: "Metal Cover",
     icon: "Images/items/scanner_cover.png",
-    description: "A transparent protective casing. Looks like it fits over something precision-built.",
+    description: "A protective casing. Looks like it fits over something precision-built.",
   },
 
   // Found in Vance's lab coat pocket on the Science Lab 2 wall.
