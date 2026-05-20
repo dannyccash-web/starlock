@@ -65,7 +65,7 @@ MAIN GAME FLOW
 18. Cross the shuttle bay safely
 19. Reach Engineering and discover the extent of the sabotage
 20. Backtrack through the ship to gather remaining engine repair tool components; recover Schematic Piece 1 from pod 4's base compartment in the cryo room
-21. Assemble Vance's scanner at the workbench — set each of the five components to the correct angle and install in the correct order per the schematic; use it to track the infected entity
+21. Assemble Vance's scanner at the workbench — install the four components in the correct order and seal with the Metal Cover; use it to track the infected entity
 22. Confront and eliminate the inhabited Vance
 23. Restart the engines
 24. Return to the Bridge and plot a course home
@@ -230,60 +230,46 @@ A component rack beside the terminal holds a Resonance Prism — a precision opt
 
 WALL B — REYES' LOG TERMINAL (turn right from bridge door) — ADDITIONAL NOTE
 
-A service panel is set into the wall beneath the terminal's lower mounting bracket. The panel is unlocked but easy to overlook; it contains a Signal Amplifier — a signal-boosting circuit board Vance pulled from a lab instrument to use in the scanner before the incident, and never reinstalled. This is a scanner component.
-
-When examining the terminal closely, the player may also notice a folded paper wedged behind the terminal's side bracket. This is Schematic Piece 2 — the middle section of the scanner assembly diagram, showing installation slots 3 and 4 with their rotational angle indicators.
+A locked cabinet is mounted on the right side of this wall. The cabinet is sealed with a metal band. The player must use metal shears to cut through the band and open the cabinet. Inside sits the Signal Amplifier — a small electronic module Vance set aside for use in the scanner before the incident. This is a scanner component.
 
 WALL D — VANCE'S WORKBENCH (left wall)
 
-Vance's workspace. A partially assembled scanner device sits at the center of the bench surrounded by tools, reference notes, and disassembled components. The scanner was Vance's project for analyzing glitch specimens at a distance — using a combination of focused light and frequency detection to map the organism's position and behavior without direct contact. It was never finished.
+Vance's workspace. An incomplete scanner chassis sits at the center of the bench surrounded by tools, reference notes, and disassembled components. The scanner was Vance's project for detecting and tracking glitch specimens at a distance — using a combination of focused frequency output and the organism's own biological resonance. It was never finished before the incident.
 
-Vance's notes on the workbench are readable and include several key details: the specimen storage access code (3-7-1), observations about the glitch's behavior during experiments, and the correct stimulus combination for the specimen experiment terminal (light wavelength and audio frequency). The notes also reference a schematic Vance prepared for the scanner's final assembly — but the schematic itself is not here. Vance tore it into pieces for safekeeping before the incident, unsure whether the scanner would be safe to complete without further testing.
+Vance's notes on the workbench are readable and include several key details: the specimen storage access code (3-7-1), observations about the glitch's behavior during experiments, and the correct stimulus combination for the specimen experiment terminal.
 
-Among the stack of loose papers, reference guides, and component packaging scattered under and around the workbench is Schematic Piece 3 — the bottom section of the scanner assembly diagram, showing installation slot 5 and Vance's final assembly notes.
+A backlit display panel is mounted on this wall. The player can place Schematic 1 and/or Schematic 2 against the panel to read the acetate properly. Both schematics together reveal the scanner's full component list and required assembly order.
+
+The Metal Cover — the scanner's protective casing — sits on the workbench and can be picked up. It is not installed on the chassis here; the player assembles the device by bringing the other components to the workbench close-up.
 
 Scanner Components:
-The scanner requires five components to function. All five are located within the science lab. The order in which they are installed and the angle at which each must be seated in the chassis both matter — the scanner will not calibrate correctly if either is wrong. This information is recorded in the schematic.
+The scanner requires four components installed in the correct order, then sealed with a metal cover. Order matters — installing the components in the wrong sequence produces no result. The correct sequence is recorded in the schematics.
 
-1. Calibration Lens — a precision optical element. One is partially installed on the workbench already (found in place during the lab visit, Wall D).
-2. Signal Amplifier — a signal-boosting circuit board. Found in a service panel beneath the log terminal (Wall B).
-3. Frequency Emitter — a small audio transducer tuned to the organism's reactive range. Found in a utility tray beside Container A in specimen storage (Wall C).
-4. Resonance Prism — a precision optical prism used to channel light stimuli. Found on the component rack in the specimen experiment area (Wall C).
-5. Glitch Specimen 1 — an isolated alpha fragment of the glitch organism in a sealed vial. Unlocked from the specimen experiment terminal (Wall C). The organism's crystalline structure serves as the scanner's biological detection core.
+1. Power Supply — a compact power unit. Found on Wall A (Science Lab 2), in the drawer unit near the card upgrade terminal.
+2. Signal Amplifier — a small electronic module. Found inside a locked cabinet on Wall B (Science Lab 4). The cabinet is sealed with a metal band; metal shears are required to open it.
+3. Frequency Emitter — a compact audio transducer. Found in the drawer beside Container A in specimen storage (Wall C).
+4. Glitch Specimen 1 — an isolated fragment of the glitch organism. Released from the specimen experiment terminal (Wall C) and collected from the desk. The organism's crystalline structure is the scanner's biological detection core.
 
-Scanner Assembly — Order and Angle:
-The scanner chassis has five mounting positions that must be loaded in sequence. Each component also has a required angle of orientation, set at the workbench before installation. The correct sequence and angles are encoded in the torn schematic. Without the schematic, the player can attempt to assemble the scanner, but an incorrect order or angle will cause the scanner to fail calibration.
+Scanner Assembly:
+The workbench close-up shows the scanner chassis with four component slots. Components must be installed in the correct order (1–4 above). Any combination of components can be placed in any slot — the scanner gives no feedback during assembly. Only once all four are seated does the device respond: installed in the correct order, it hums to life; installed in the wrong order, nothing happens and the player must remove components and try again.
 
-Correct installation sequence and angles:
-1. Calibration Lens — 0° (upright, default alignment)
-2. Signal Amplifier — 90° (rotated 90° clockwise)
-3. Frequency Emitter — 270° (rotated 90° counter-clockwise)
-4. Resonance Prism — 45° (tilted diagonally clockwise)
-5. Glitch Specimen 1 — 180° (fully inverted; the specimen must face inward to align with the scanner's detection axis)
+Once all four components are installed correctly, a slot for the Metal Cover appears. Sealing the scanner with the cover completes assembly. The finished scanner is added to the player's inventory and the workbench close-up is no longer accessible.
 
-The 180° orientation of Glitch Specimen 1 is counterintuitive and is the most likely point of failure for a player guessing without the schematic.
-
-Once all five components are gathered and installed at the correct angles in the correct order, the scanner becomes functional. Its initial use is as a detection tool: it can illuminate biological residue left by the infected Vance, acting as a tracker and revealing where the entity has moved through the ship. This is the player's primary tool for anticipating the threat in the second half of the game.
+Once functional, the scanner's primary use is as a detection tool: it highlights biological residue left by the infected Vance, acting as a tracker and revealing where the entity has moved through the ship. This is the player's primary tool for anticipating the threat in the second half of the game.
 
 The scanner's secondary potential — as a weapon — is left open. If the glitch responds with agitation to the audio frequencies Vance used in the experiments, a modified version of the scanner broadcasting at full power might be capable of driving it out of a host or disrupting it directly. This is the subject of a later design decision.
 
-VANCE'S SCANNER SCHEMATIC
+VANCE'S SCANNER SCHEMATICS
 
-Vance tore the scanner assembly schematic into four pieces before the incident — either to prevent anyone from completing the scanner without understanding the risks, or simply to store the sections separately in case any were lost. The pieces are hidden across the science lab and the cryo room.
+Vance prepared two schematic sheets for the scanner's final assembly, printed on clear acetate so they could be back-lit and read together on the light panel. Both sheets are hidden separately within the science lab and the cryo room. Neither is required to attempt assembly, but without them the correct component order must be discovered by trial and error.
 
-Piece 1 — Top Section (component list + installation slots 1 and 2):
-Found in the cryo room. Folded into the lining of Vance's personal effects kit stored in the base of pod 4's storage compartment, accessible once the pod is opened. Without this piece, the player has no formal component list and no angle data for the first two components.
+Schematic 1:
+Found in Vance's personal locker in the cryo room (Locker 004, Wall 4). Tucked flat at the bottom of the locker. Hard to make out without a light source behind it.
 
-Piece 2 — Middle Section (installation slots 3 and 4 with angle indicators):
-Found in the science lab. Wedged behind the side mounting bracket of the log terminal on Wall B. Requires close examination of the terminal to find.
+Schematic 2:
+Found in Vance's lab coat pocket on Wall A (Science Lab 2). The coat is hanging on the wall near the bridge door.
 
-Piece 3 — Bottom Section (installation slot 5 and final assembly notes):
-Found in the science lab. Buried in the stack of loose papers and component packaging under and around the workbench on Wall D.
-
-Piece 4 — Header and Angle Legend (the key to interpreting the rotational symbols):
-Found in the science lab. Pinned to the corkboard above the specimen experiment terminal on Wall C, among other technical diagrams and reference sheets. It reads as a routine technical key and is easy to overlook. Without this piece, the angle symbols on pieces 1–3 cannot be interpreted correctly.
-
-The schematic is not required to attempt assembly, but it is required to assemble the scanner correctly. A player who attempts assembly with incomplete or misread angles will find the scanner fails to calibrate.
+Both schematics can be placed on the backlit display panel on Wall D to read them properly. Together they reveal the scanner's component list and the correct installation order.
 
 Primary Goals (Science Lab):
 - Read Reyes' Log 1 (expedition record) and Log 2 (experiment record)
@@ -291,17 +277,20 @@ Primary Goals (Science Lab):
 - Scan Reyes' coded note at the terminal slot to unlock Log 3 (dispute record)
 - Enter the authorization code at the upgrade terminal on Wall A
 - Insert the crew keycard — receive the upgraded keycard
-- Go to the workbench and read Vance's notes — find the storage code (3-7-1), the experiment terminal stimulus sequence, and the schematic reference
-- Search the workbench carefully — find Schematic Piece 3 among the loose papers under the bench
-- Examine the log terminal closely — find Schematic Piece 2 behind the side bracket; recover the Signal Amplifier from the service panel beneath it
+- Go to the workbench and read Vance's notes — find the storage code (3-7-1) and the experiment terminal stimulus sequence
+- Retrieve Schematic 2 from the breast pocket of Vance's lab coat (Wall A)
+- Use metal shears to cut the cabinet lock on Wall B — open cabinet — retrieve the Signal Amplifier (scanner component 2 of 4)
 - Enter the code at the specimen storage panel — examine all three containers
-- Retrieve the Frequency Emitter from the utility tray beside Container A
+- Retrieve the Frequency Emitter from the drawer beside Container A (scanner component 3 of 4)
 - Note the live specimen in Container C
-- Go to the specimen experiment area — examine the corkboard above the terminal for Schematic Piece 4
-- Retrieve the Resonance Prism from the component rack
 - Enter the correct stimulus sequence at the experiment terminal — unlock Glitch Specimen 1 and Glitch Specimen 2
-- Collect Glitch Specimen 1 (scanner component) and Glitch Specimen 2 from the isolation tray
-- Begin scanner assembly at the workbench (Calibration Lens is already in place; four more components and all four schematic pieces are needed to complete it)
+- Collect Glitch Specimen 1 (scanner component 4 of 4) and Glitch Specimen 2 from the desk
+- Retrieve the Power Supply from the drawer on Wall A (scanner component 1 of 4)
+- Pick up the Metal Cover from the workbench on Wall D
+- Optionally place Schematic 1 and/or Schematic 2 on the backlit display panel to read the assembly order
+- Assemble the scanner at the workbench close-up: install all four components in the correct order, then seal with the Metal Cover
+- Enter code 0743 at the upgrade terminal → insert keycard → receive upgraded keycard
+- Use upgraded keycard at bridge door → bridge unlocked
 
 Important Clues:
 - The glitch is not a weapon and not a resource — it is a living thing that inhabits other living things.
@@ -499,7 +488,6 @@ The game should not feel like a simple sequence of rooms. Earlier rooms gain new
 Cryo Sleep Revisited:
 - Between the science lab and the bridge, the room is unchanged - the corpse is still in pod 4 and any backtracking here is uneventful
 - After the bridge door is unlocked, the next return trip reveals pod 4 is empty
-- Examine the base of pod 4's storage compartment — recover Schematic Piece 1 (top section of the scanner assembly diagram: component list and installation slots 1 and 2 with angle data), which was folded into Vance's personal effects kit
 - Open the frozen emergency kit (insulated grip, weapon housing)
 - Access deeper logs from the now-empty pod 4
 - Retrieve a high-density power cell
@@ -509,8 +497,6 @@ Science Lab Revisited:
 - Use the assembled scanner to detect glitch residue from the empty pod 4 and the trail through the lab
 - Analyze Container B residue with the scanner (confirms the infected entity is Vance)
 - Observe the live specimen in Container C with the scanner — this may reveal the glitch's weakness
-- If the schematic is not yet complete, recover any remaining pieces (Piece 2 from the log terminal bracket, Piece 3 from under the workbench, Piece 4 from the specimen experiment corkboard)
-- Assemble the scanner at the workbench once all five components and all four schematic pieces are in hand — set each component to the correct angle and install in the correct order
 - Recover any remaining weapon or tool components from the workbench or storage area
 
 Bridge Revisited:
@@ -699,17 +685,17 @@ Science Lab (first visit):
 - Read Reyes' Log 1 (expedition — includes mission auth code 0743)
 - Read Reyes' Log 2 (Vance's infection)
 - Scan coded note from Reyes' locker → unlock Log 3 (the Reyes/Tarn dispute)
-- Examine log terminal side bracket → find Schematic Piece 2
-- Open service panel beneath log terminal → recover Signal Amplifier (scanner component 2 of 5)
-- Go to Vance's workbench → read notes → find specimen storage code (3-7-1) and experiment terminal stimulus sequence
-- Search under workbench → find Schematic Piece 3
-- Note Calibration Lens already on workbench (scanner component 1 of 5)
+- Retrieve Schematic 2 from Vance's lab coat pocket on Wall A
+- Use metal shears to cut cabinet lock on Wall B → open cabinet → retrieve Signal Amplifier (scanner component 2 of 4)
+- Go to Vance's workbench (Wall D) → read notes → find specimen storage code (3-7-1) and experiment terminal stimulus sequence
+- Optionally place Schematic 1 and/or Schematic 2 on the backlit display to read assembly order
+- Pick up the Metal Cover from the workbench
+- Retrieve Power Supply from the drawer on Wall A (scanner component 1 of 4)
 - Unlock specimen storage → examine all three containers
-- Retrieve Frequency Emitter from utility tray beside Container A (scanner component 3 of 5)
-- Go to specimen experiment area → examine corkboard → find Schematic Piece 4
-- Retrieve Resonance Prism from component rack (scanner component 4 of 5)
+- Retrieve Frequency Emitter from drawer beside Container A (scanner component 3 of 4)
 - Enter correct stimulus sequence at experiment terminal → unlock Glitch Specimen 1 and Glitch Specimen 2
-- Collect Glitch Specimen 1 (scanner component 5 of 5) and Glitch Specimen 2
+- Collect Glitch Specimen 1 (scanner component 4 of 4) and Glitch Specimen 2 from the desk
+- Assemble scanner at the workbench close-up: install Power Supply → Signal Amplifier → Frequency Emitter → Glitch Specimen 1 in that order, then seal with the Metal Cover → scanner added to inventory
 - Enter code 0743 at the upgrade terminal → insert keycard → receive upgraded keycard
 - Use upgraded keycard at bridge door → bridge unlocked
 
@@ -722,7 +708,6 @@ Bridge:
 
 Cryo Room (revisit, after bridge unlocked):
 - Discover pod 4 is empty (the corpse was still there on any earlier backtrack)
-- Retrieve Schematic Piece 1 from Vance's personal effects kit in the base of pod 4's storage compartment
 - Open emergency kit (insulated grip + weapon housing)
 - Recover high-density power cell
 

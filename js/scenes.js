@@ -228,7 +228,7 @@ const ITEMS = {
   // it with the scanner cover. Used later to track Glitch signatures.
   scanner: {
     name: "Scanner",
-    icon: "Images/items/scanner.png",
+    icon: "Images/items/Scanner.png",
     description: "Vance's assembled glitch scanner. A compact device that detects and tracks Glitch energy signatures.",
   },
 };
@@ -1353,12 +1353,13 @@ const ROOMS = {
           },
           // ---- Workbench surface (227×58 at X561 Y573) ----
           // Opens the scanner assembly close-up. Hidden once the scanner
-          // has been fully built and collected.
+          // has been fully built and collected (no point returning).
           {
             id: "scilab_workbench_hs",
             shape: "rect",
             geom: [561, 573, 227, 58],
             label: "Workbench",
+            hideIf: { all: ["scanner_built"] },
             action: {
               type: "openCloseup",
               target: "scilab_workbench",
