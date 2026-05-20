@@ -4,11 +4,13 @@
    Backs the "scilab_workbench" HTML close-up.
    Close-up image: Images/closeups/Science Lab 1 Workbench.png
 
-   ASSEMBLY SEQUENCE
-   The player installs four components onto the phaser chassis in
-   a strict order. Installing out of order shows an error message;
-   installing in order reveals each component's overlay image and
-   progresses the build.
+   ASSEMBLY PUZZLE
+   The player can slot any of the four components into their
+   respective positions in any order — no early feedback is given.
+   Only once all four components are in place does the device
+   respond: if they were installed in the correct order it hums
+   to life; if not, nothing happens and the player must remove
+   components and try again.
 
    Correct order:
      1. Power Supply      (scanner_power_supply)
@@ -16,31 +18,38 @@
      3. Frequency Emitter (freq_emitter)
      4. Glitch 1          (glitch_specimen_1)
 
+   Install order is tracked in module-level memory (installOrder[]).
+   This resets on page reload, which is acceptable: if a player
+   saves with all four components installed in the wrong order they
+   can remove any one and re-seat it — the fresh tracking will
+   correctly assess the new attempt.
+
    REMOVAL
-   Clicking an installed component removes it and all components
-   that follow it in the sequence, returning each to inventory.
-   This resets the build past that point so the player can try again.
+   Clicking an installed component removes just that component and
+   returns it to inventory. The phaser-complete flag is also cleared
+   if it was set, so the player can redo the sequence.
 
    COMPLETION
-   Once all four components are installed in order, a success message
-   plays and a scanner cover slot appears (775×555 at X856 Y319).
-   Equipping the scanner cover and clicking the slot seals the
-   device, triggers a final success message, adds the completed
-   scanner to the player's inventory, and closes the close-up.
+   Once all four are installed in the correct order, a success
+   message plays and a scanner cover slot appears (775×555 at
+   X856 Y319). Equipping the scanner cover and clicking the slot
+   seals the device, triggers a final success message, adds the
+   completed scanner to inventory, and closes the close-up.
 
    STATE FLAGS
      wb_power_installed     — power supply seated on chassis
      wb_amplifier_installed — signal amplifier seated
      wb_freq_installed      — frequency emitter seated
-     wb_glitch_installed    — Glitch 1 seated; phaser core complete
-     wb_phaser_complete     — all four components in the right order
+     wb_glitch_installed    — Glitch 1 seated
+     wb_phaser_complete     — all four in the correct order
      scanner_built          — scanner cover placed; device assembled
    ============================================================ */
 
 (function () {
 
-  // === Component definitions — in required installation order ===
-  // The index in this array IS the required order (0 first, 3 last).
+  // === Component definitions ===
+  // Array index = the position each component must occupy in the
+  // correct build sequence (0 = first, 3 = last).
   const COMPONENTS = [
     {
       flag:  "wb_power_installed",
@@ -72,15 +81,20 @@
     },
   ];
 
+  const CORRECT_ORDER = "0,1,2,3"; // indices of COMPONENTS in required order
+
   const FLAG_COMPLETE = "wb_phaser_complete";
   const FLAG_BUILT    = "scanner_built";
 
   const SCANNER_COVER_ITEM = "scanner_cover";
   const SCANNER_ITEM       = "scanner";
 
-  // Scanner cover slot — only visible once phaser is complete.
   const COVER_GEOM  = { x: 856, y: 319, w: 775, h: 555 };
   const COVER_IMAGE = "Images/closeups/Science%20Lab%201%20Workbench%20Scanner%20Cover.png";
+
+  // Session-only install order tracking. Stores COMPONENTS indices
+  // in the sequence the player seated them. Resets on page reload.
+  let installOrder = [];
 
   /* ---- Helpers ---- */
 
@@ -111,29 +125,28 @@
   function buildUI(layer, ctx) {
     layer.innerHTML = "";
 
-    // Always show overlay images for any installed components.
+    // Overlay images for every installed component.
     COMPONENTS.forEach(comp => {
       if (ctx.hasFlag(comp.flag)) addImage(layer, comp.image);
     });
 
-    // Final state: scanner cover placed — show cover overlay, no buttons.
+    // Final state: scanner sealed — show cover overlay, no buttons.
     if (ctx.hasFlag(FLAG_BUILT)) {
       addImage(layer, COVER_IMAGE);
       return;
     }
 
-    // Component slot buttons.
-    // If phaser is complete all four slots are filled; only the cover slot matters.
+    // Component slot buttons (install / remove).
     if (!ctx.hasFlag(FLAG_COMPLETE)) {
       COMPONENTS.forEach((comp, i) => {
         if (ctx.hasFlag(comp.flag)) {
-          // Installed — click to remove this and anything after it.
+          // Installed — click to remove.
           addHotspot(layer, comp.geom, `${comp.label} (installed — click to remove)`, (e) => {
             e.stopPropagation();
-            removeFrom(layer, ctx, i);
+            removeComponent(layer, ctx, i);
           });
         } else {
-          // Empty slot — click to install equipped item.
+          // Empty slot — click to try installing equipped item.
           addHotspot(layer, comp.geom, comp.label, (e) => {
             e.stopPropagation();
             tryInstall(layer, ctx, i);
@@ -142,7 +155,7 @@
       });
     }
 
-    // Scanner cover slot — only appears once the phaser core is complete.
+    // Scanner cover slot — only visible once phaser core is complete.
     if (ctx.hasFlag(FLAG_COMPLETE)) {
       addHotspot(layer, COVER_GEOM, "Scanner cover slot", (e) => {
         e.stopPropagation();
@@ -151,13 +164,12 @@
     }
   }
 
-  /* ---- Install a component ---- */
+  /* ---- Install a component (no order enforcement) ---- */
 
   function tryInstall(layer, ctx, index) {
     const comp = COMPONENTS[index];
     const eq   = Inventory.getEquipped();
 
-    // Wrong item equipped (or nothing equipped).
     if (eq !== comp.item) {
       if (!eq) {
         ctx.showMessage("You'd need to equip a component to install it here.");
@@ -169,47 +181,47 @@
       return;
     }
 
-    // Order check: the previous component must already be installed.
-    if (index > 0 && !ctx.hasFlag(COMPONENTS[index - 1].flag)) {
-      ctx.showMessage(
-        "It doesn't seem to be working — something's missing. There must be a specific order."
-      );
-      return;
-    }
-
-    // Install: set flag, remove from inventory.
+    // Seat the component — no order feedback yet.
     ctx.setFlag(comp.flag);
     Inventory.removeItem(comp.item);
+    installOrder.push(index);
 
-    // Check whether all four components are now installed.
+    // Only reveal pass/fail once all four are in place.
     const allInstalled = COMPONENTS.every(c => ctx.hasFlag(c.flag));
     if (allInstalled) {
-      ctx.setFlag(FLAG_COMPLETE);
-      ctx.showMessage(
-        "You hear a low hum as the components align. It's working — the chassis is fully powered."
-      );
+      const orderCorrect = installOrder.join(",") === CORRECT_ORDER;
+      if (orderCorrect) {
+        ctx.setFlag(FLAG_COMPLETE);
+        ctx.showMessage(
+          "A low hum resonates through the chassis. It's working."
+        );
+      } else {
+        ctx.showMessage(
+          "Nothing happens. Something about the assembly isn't right."
+        );
+      }
     } else {
-      ctx.showMessage("The component slots into place with a soft click.");
+      ctx.showMessage("The component seats with a soft click.");
     }
 
     buildUI(layer, ctx);
     ctx.renderActive();
   }
 
-  /* ---- Remove a component (and all that follow it) ---- */
+  /* ---- Remove a single component ---- */
 
-  function removeFrom(layer, ctx, index) {
-    // Remove in reverse order so inventory additions feel natural.
-    for (let i = COMPONENTS.length - 1; i >= index; i--) {
-      if (ctx.hasFlag(COMPONENTS[i].flag)) {
-        ctx.clearFlag(COMPONENTS[i].flag);
-        Inventory.addItem(COMPONENTS[i].item);
-      }
-    }
-    // Clear phaser-complete flag if it was set.
-    if (ctx.hasFlag(FLAG_COMPLETE)) {
-      ctx.clearFlag(FLAG_COMPLETE);
-    }
+  function removeComponent(layer, ctx, index) {
+    const comp = COMPONENTS[index];
+    ctx.clearFlag(comp.flag);
+    Inventory.addItem(comp.item);
+
+    // Drop this component from the session order tracking.
+    const pos = installOrder.indexOf(index);
+    if (pos !== -1) installOrder.splice(pos, 1);
+
+    // Clear the phaser-complete flag so the player can retry.
+    if (ctx.hasFlag(FLAG_COMPLETE)) ctx.clearFlag(FLAG_COMPLETE);
+
     ctx.showMessage("You remove the component. It's back in your inventory.");
     buildUI(layer, ctx);
     ctx.renderActive();
@@ -237,17 +249,14 @@
     ctx.setFlag(FLAG_BUILT);
     Inventory.removeItem(SCANNER_COVER_ITEM);
 
-    // Show the cover overlay immediately.
     buildUI(layer, ctx);
     ctx.renderActive();
 
-    // Brief pause, then award the scanner and exit.
+    // Brief pause, then award the scanner and close.
     setTimeout(() => {
       Inventory.addItem(SCANNER_ITEM);
       ctx.showPickupNotification(SCANNER_ITEM);
-      ctx.showMessage(
-        "Assembly complete. The display flickers on — the scanner is ready."
-      );
+      ctx.showMessage("Assembly complete. The display flickers on — the scanner is ready.");
       setTimeout(() => {
         ctx.closeCloseup();
       }, 2200);
@@ -257,11 +266,19 @@
   /* ---- Mount / unmount ---- */
 
   function mount(layer, ctx) {
+    // Rebuild session order from current flag state on re-open.
+    // We can't know the original install sequence from flags alone,
+    // but a partial or complete wrong-order state is handled gracefully:
+    // the player can remove any component and re-seat it to reset.
+    installOrder = COMPONENTS
+      .map((comp, i) => ctx.hasFlag(comp.flag) ? i : null)
+      .filter(i => i !== null);
+
     buildUI(layer, ctx);
   }
 
   function unmount() {
-    // All state lives in engine flags — nothing to reset here.
+    // State lives in engine flags; installOrder resets on next mount.
   }
 
   Engine.registerCloseupController("scilab_workbench", { mount, unmount });
