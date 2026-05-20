@@ -292,6 +292,7 @@ const Engine = (() => {
         ctrl.mount(closeupHtml, {
           hasFlag,
           setFlag,
+          clearFlag,
           showMessage,
           renderActive,
           closeCloseup,

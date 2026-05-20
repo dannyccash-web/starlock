@@ -221,6 +221,16 @@ const ITEMS = {
     cursorSize: 80,
     description: "Clear acetate printed with a component diagram.",
   },
+
+  // Assembled on the workbench in Science Lab 1 (Wall D).
+  // Built by installing four components in order — power supply,
+  // signal amplifier, frequency emitter, Glitch 1 — then sealing
+  // it with the scanner cover. Used later to track Glitch signatures.
+  scanner: {
+    name: "Scanner",
+    icon: "Images/items/scanner.png",
+    description: "Vance's assembled glitch scanner. A compact device that detects and tracks Glitch energy signatures.",
+  },
 };
 
 const ROOMS = {
@@ -1293,6 +1303,14 @@ const ROOMS = {
             image: "Images/Science%20Lab%201%20workshop.png",
             x: 0, y: 0, w: 1920, h: 1080,
           },
+          // Scanner chassis sitting on the workbench. Visible until
+          // the player assembles and picks it up (scanner_built).
+          {
+            id: "scilab_wall_d_scanner_sprite",
+            image: "Images/Science%20Lab%201%20Scanner.png",
+            x: 0, y: 0, w: 1920, h: 1080,
+            hideIf: { all: ["scanner_built"] },
+          },
           // Schematic overlays on the backlit display — shown once the
           // player has placed the corresponding acetate sheet on it.
           // Both can appear simultaneously.
@@ -1318,6 +1336,34 @@ const ROOMS = {
         ],
         overlays: [],
         hotspots: [
+          // ---- Storage/drawer area (935×236 at X174 Y674) ----
+          // Large drawer unit under the workbench. Plays the door-open
+          // SFX (dragon-studio-opening-door-sfx-454240.mp3) and shows
+          // an "empty" message.
+          {
+            id: "scilab_wall_d_drawer_hs",
+            shape: "rect",
+            geom: [174, 674, 935, 236],
+            label: "Storage",
+            action: {
+              type: "message",
+              sound: "drawerOpen",
+              message: "empty",
+            },
+          },
+          // ---- Workbench surface (227×58 at X561 Y573) ----
+          // Opens the scanner assembly close-up. Hidden once the scanner
+          // has been fully built and collected.
+          {
+            id: "scilab_workbench_hs",
+            shape: "rect",
+            geom: [561, 573, 227, 58],
+            label: "Workbench",
+            action: {
+              type: "openCloseup",
+              target: "scilab_workbench",
+            },
+          },
           // ---- Backlit display ----
           // A light panel on the wall used to view transparent schematics.
           // Clicking opens the backlit display close-up where the player
@@ -1420,6 +1466,18 @@ const CLOSEUPS = {
     image: "Images/closeups/Science%20Lab%203%20Terminal.png",
     kind: "html",
     controller: "scilab_specimen_terminal",
+  },
+
+  // ---- Science Lab: Scanner workbench assembly ----
+  // The HTML controller handles installing four components in order
+  // (power supply → signal amplifier → frequency emitter → Glitch 1),
+  // enforcing the correct build sequence, allowing removal of components,
+  // and finally sealing the scanner with its cover before adding the
+  // completed scanner to the player's inventory.
+  scilab_workbench: {
+    image: "Images/closeups/Science%20Lab%201%20Workbench.png",
+    kind: "html",
+    controller: "scilab_workbench",
   },
 
   // ---- Science Lab: Backlit display ----
